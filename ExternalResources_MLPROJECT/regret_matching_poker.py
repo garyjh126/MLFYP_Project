@@ -9,6 +9,7 @@ import os
     Use regret-matching algorithm to play Scissors-Rock-Paper.
 '''
 
+<<<<<<< HEAD
 class PokerRound(Game):
 
     def __init__(self, actionsPlayer1, actionsPlayer2):
@@ -20,10 +21,14 @@ class PokerRound(Game):
 
 
 class PokerStreet:
+=======
+class Poker:
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
     # Must take in 2 cards from C++ Casino Program
     # Evaluate cards and make decision on action which corresponds to strategy
     # If bet, determine bet size which also corresponds to strategy
+<<<<<<< HEAD
 
     # In Hold'em, as with other forms of poker, the available actions are ‘fold’, ‘check’, ‘bet’, ‘call’ or ‘raise’.
     # We have the following representations:
@@ -34,16 +39,34 @@ class PokerStreet:
 
 
 
+=======
+	##
+    actions = ['ROCK', 'PAPER', 'SCISSORS']
+    n_actions = 3
+    utilities = pd.DataFrame([
+        # ROCK  PAPER  SCISSORS
+        [ 0,    -1,    1], # ROCK
+        [ 1,     0,   -1], # PAPER
+        [-1,     1,    0]  # SCISSORS
+    ], columns=actions, index=actions)
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
 
 
 
 class Player:
+<<<<<<< HEAD
     def __init__(self, name, list_of_actions):
         self.strategy, self.avg_strategy,\
         self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
         self.name = name
         self.list_of_actions = []
+=======
+    def __init__(self, name):
+        self.strategy, self.avg_strategy,\
+        self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
+        self.name = name
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
     def __repr__(self):
         return self.name
@@ -57,12 +80,18 @@ class Player:
         self.strategy[self.strategy < 0] = 0  # reset negative regrets to zero
 
         # Q: Why set negative regrets to zero?
+<<<<<<< HEAD
         # A: The strategy performance history is being tracked by strategy_sum.
         # 'Strategy' has it's negative regrets set to zero because it needs to
+=======
+        # A: The strategy performance history is being tracked by strategy_sum. 
+        # 'Strategy' has it's negative regrets set to zero because it needs to 
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         # evaluate new hand
 
 
         summation = sum(self.strategy)
+<<<<<<< HEAD
         # Q: But then why is sum of 'Strategy' being calculated if it doesn't
         # consider negative regrets?
         # A: Probably because you can't normalise with a array that has negative numbers
@@ -71,6 +100,16 @@ class Player:
         # play that option. For sake of simplictly, we only consider positive values
         # (Not diving by zero etc)
 
+=======
+        # Q: But then why is sum of 'Strategy' being calculated if it doesn't 
+        # consider negative regrets?
+        # A: Probably because you can't normalise with a array that has negative numbers
+        # Better Answer: It would make sense to think that a more negative value would 
+        # correspond to a bad action to take and so it would seem to be clever to not 
+        # play that option. For sake of simplictly, we only consider positive values 
+        # (Not diving by zero etc)
+        
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
 
         if summation > 0:
@@ -87,7 +126,11 @@ class Player:
         f = open('strategy_stats.txt','a+')
         if which_player_forprint == "p1":
             f.write("\nGAME_NUMBER: " + str(i) +"\n\t" + "\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
+<<<<<<< HEAD
         else:
+=======
+        else: 
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
         f.close()
 
@@ -104,28 +147,47 @@ class Player:
         regret = facts - result
         self.regret_sum += regret
 
+<<<<<<< HEAD
         # Q: what is the difference between a regret_sum and strategy_sum?
+=======
+        # Q: what is the difference between a regret_sum and strategy_sum?      
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         # A: regret_sum has affect on action(). straegy_sum is used for learn_avg_strategy
 
         f = open('strategy_stats.txt','a+')
         if which_player_forprint == "p2":
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n\n***********************************************")
+<<<<<<< HEAD
         else:
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
         f.close()
 
 
+=======
+        else: 
+            f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
+        f.close()
+
+        
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
     def action(self, i, which_player_forprint, use_avg=False):
         """
         select an action according to strategy probabilities
         """
+<<<<<<< HEAD
 
 
         strategy = self.avg_strategy if use_avg else self.strategy
         act = np.random.choice(Poker.actions, p=strategy)
 
 
+=======
+        strategy = self.avg_strategy if use_avg else self.strategy
+        act = np.random.choice(Poker.actions, p=strategy)
+        
+        
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         f = open('strategy_stats.txt','a+')
         f.write("\nPlayer_no: " + which_player_forprint + "\n\tAction: " + str(act) +"\n")
         f.close()
@@ -134,23 +196,37 @@ class Player:
 
     def learn_avg_strategy(self):
         # averaged strategy converges to Nash Equilibrium
+<<<<<<< HEAD
         summation = sum(self.strategy_sum)
+=======
+        summation = sum(self.strategy_sum) 
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         if summation > 0:
             self.avg_strategy = self.strategy_sum / summation
         else:
             self.avg_strategy = np.repeat(1/Poker.n_actions, Poker.n_actions)
+<<<<<<< HEAD
 
 
+=======
+        
+        
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         f = open('strategy_stats.txt','a+')
         f.write("\nself.strategy_sum: " + str(self.strategy_sum) + "\n")
         f.close()
 
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
 
 
 class Game:
     def __init__(self, max_game=5):
 
+<<<<<<< HEAD
 
         # Create more players for Poker game
         self.p1 = Player('Player 1', actions_player1)
@@ -163,6 +239,14 @@ class Game:
 
         ## Winner cannot be declared directly from the utility matrix
 
+=======
+        # Create more players for Poker game
+        self.p1 = Player('Gary')
+        self.p2 = Player('John')
+        self.max_game = max_game
+
+    def winner(self, a1, a2):
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         result = Poker.utilities.loc[a1, a2]
         if result == 1:     return self.p1
         elif result == -1:  return self.p2
@@ -200,7 +284,11 @@ class Game:
 
     def conclude(self):
         """
+<<<<<<< HEAD
         let two players conclude the average strategy from the previous strategy stats
+=======
+        let two players conclude the average strategy from the previous strategy stats 
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
         """
         self.p1.learn_avg_strategy()
         self.p2.learn_avg_strategy()
@@ -210,8 +298,16 @@ if __name__ == '__main__':
     os.remove("strategy_stats.txt")
     game = Game()
 
+<<<<<<< HEAD
     print('==== Use simple regret-matching strategy === ')
     game.play()
     print('==== Use averaged regret-matching strategy === ')
     game.conclude()
     game.play(avg_regret_matching=True)
+=======
+    print('==== Use simple regret-matching strategy === ') 
+    game.play()
+    print('==== Use averaged regret-matching strategy === ')
+    game.conclude()
+    game.play(avg_regret_matching=True)
+>>>>>>> 4040822570874223831b0dd940ce57bef523e1d3
