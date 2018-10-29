@@ -117,7 +117,7 @@ class Player:
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
         f.close()
 
-
+        variable_in_class_design_branch = 0
 
 
 
@@ -166,51 +166,51 @@ class Game:
         self.table = Table(player_list)
         self.max_game = max_game
 
-    # def winner(self, a1, a2):
-    #
-    #     ## Winner cannot be declared directly from the utility matrix
-    #
-    #     result = Poker.utilities.loc[a1, a2]
-    #     if result == 1:     return self.p1
-    #     elif result == -1:  return self.p2
-    #     else:               return 'Draw'
-    #
-    # def play(self, avg_regret_matching=False):
-    #     def play_regret_matching():
-    #         for i in range(0, self.max_game):
-    #             self.p1.update_strategy(i, "p1")
-    #             self.p2.update_strategy(i, "p2")
-    #             a1 = self.p1.action(i, "p1")
-    #             a2 = self.p2.action(i, "p2")
-    #             self.p1.regret(a1, a2, i, "p1")
-    #             self.p2.regret(a2, a1, i, "p2")
-    #
-    #
-    #             winner = self.winner(a1, a2)
-    #             num_wins[winner] += 1
-    #
-    #     def play_avg_regret_matching():
-    #         for i in range(0, self.max_game):
-    #             a1 = self.p1.action(i, "p1", use_avg=True)
-    #             a2 = self.p2.action(i, "p2", use_avg=True)
-    #             winner = self.winner(a1, a2)
-    #             num_wins[winner] += 1
-    #
-    #     num_wins = {
-    #         self.p1: 0,
-    #         self.p2: 0,
-    #         'Draw': 0
-    #     }
-    #
-    #     play_regret_matching() if not avg_regret_matching else play_avg_regret_matching()
-    #     print(num_wins)
-    #
-    # def conclude(self):
-    #     """
-    #     let two players conclude the average strategy from the previous strategy stats
-    #     """
-    #     self.p1.learn_avg_strategy()
-    #     self.p2.learn_avg_strategy()
+    def winner(self, a1, a2):
+
+        ## Winner cannot be declared directly from the utility matrix
+
+        result = Poker.utilities.loc[a1, a2]
+        if result == 1:     return self.p1
+        elif result == -1:  return self.p2
+        else:               return 'Draw'
+
+    def play(self, avg_regret_matching=False):
+        def play_regret_matching():
+            for i in range(0, self.max_game):
+                self.p1.update_strategy(i, "p1")
+                self.p2.update_strategy(i, "p2")
+                a1 = self.p1.action(i, "p1")
+                a2 = self.p2.action(i, "p2")
+                self.p1.regret(a1, a2, i, "p1")
+                self.p2.regret(a2, a1, i, "p2")
+
+
+                winner = self.winner(a1, a2)
+                num_wins[winner] += 1
+
+        def play_avg_regret_matching():
+            for i in range(0, self.max_game):
+                a1 = self.p1.action(i, "p1", use_avg=True)
+                a2 = self.p2.action(i, "p2", use_avg=True)
+                winner = self.winner(a1, a2)
+                num_wins[winner] += 1
+
+        num_wins = {
+            self.p1: 0,
+            self.p2: 0,
+            'Draw': 0
+        }
+
+        play_regret_matching() if not avg_regret_matching else play_avg_regret_matching()
+        print(num_wins)
+
+    def conclude(self):
+        """
+        let two players conclude the average strategy from the previous strategy stats
+        """
+        self.p1.learn_avg_strategy()
+        self.p2.learn_avg_strategy()
 
 
 class Table(Game):
