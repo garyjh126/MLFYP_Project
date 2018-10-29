@@ -8,7 +8,8 @@ import os
 '''
     Use regret-matching algorithm to play Scissors-Rock-Paper.
 '''
-
+class pok:
+    pass
 class RPS:
     actions = ['ROCK', 'PAPER', 'SCISSORS']
     n_actions = 3
