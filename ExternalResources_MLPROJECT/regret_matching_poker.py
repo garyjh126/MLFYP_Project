@@ -158,9 +158,7 @@ class Game:
         Player3 = Player(2 ,'Chris', CardHolding('-','-','-','-'), 2)
         Player4 = Player(3 ,'Dennis', CardHolding('-','-','-','-'), 3)
         num_of_players= 4
-
-        player_list = [Player1,Player2,Player3,Player4]
-
+        player_list = [Player1, Player2, Player3, Player4]
 
         # Create more players for Poker game
         self.table = Table(player_list, num_of_players)
@@ -216,7 +214,7 @@ class Game:
 class Table(Game):
 
 
-    num_of_players = 0
+    
     def __init__(self, players, num_of_players):
 
         for i in range(len(players)):
@@ -256,7 +254,7 @@ class Table(Game):
                 #pos = get_position_of_player(player)
                 list_of_players.remove(player)
 
-    
+
 
 
 if __name__ == '__main__':
