@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 import uuid
-
+from itertools import izip
 
 '''
     Use regret-matching algorithm to play Scissors-Rock-Paper.
@@ -61,67 +61,22 @@ class Game:
         Player3 = Player(uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
         Player4 = Player(uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
         player_list = [Player1, Player2, Player3, Player4]
-
+        position_list = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position}
         # Create more players for Poker game
-        self.table = Table(player_list)
+        self.table = Table(player_list, position_list)
         self.max_game = max_game
-
-    # def winner(self, a1, a2):
-    #
-    #     ## Winner cannot be declared directly from the utility matrix
-    #
-    #     result = Poker.utilities.loc[a1, a2]
-    #     if result == 1:     return self.p1
-    #     elif result == -1:  return self.p2
-    #     else:               return 'Draw'
-    #
-    # def play(self, avg_regret_matching=False):
-    #     def play_regret_matching():
-    #         for i in range(0, self.max_game):
-    #             self.p1.update_strategy(i, "p1")
-    #             self.p2.update_strategy(i, "p2")
-    #             a1 = self.p1.action(i, "p1")
-    #             a2 = self.p2.action(i, "p2")
-    #             self.p1.regret(a1, a2, i, "p1")
-    #             self.p2.regret(a2, a1, i, "p2")
-    #
-    #
-    #             winner = self.winner(a1, a2)
-    #             num_wins[winner] += 1
-    #
-    #     def play_avg_regret_matching():
-    #         for i in range(0, self.max_game):
-    #             a1 = self.p1.action(i, "p1", use_avg=True)
-    #             a2 = self.p2.action(i, "p2", use_avg=True)
-    #             winner = self.winner(a1, a2)
-    #             num_wins[winner] += 1
-    #
-    #     num_wins = {
-    #         self.p1: 0,
-    #         self.p2: 0,
-    #         'Draw': 0
-    #     }
-    #
-    #     play_regret_matching() if not avg_regret_matching else play_avg_regret_matching()
-    #     print(num_wins)
-    #
-    # def conclude(self):
-    #     """
-    #     let two players conclude the average strategy from the previous strategy stats
-    #     """
-    #     self.p1.learn_avg_strategy()
-    #     self.p2.learn_avg_strategy()
 
 
 class Table(Game):
 
-
     num_of_players = 0
-    def __init__(self, players):
+
+    def __init__(self, players, position_list):
+        # self.players = np.copy(players)
         for i in range(len(players)):
             self.players[i] = players[i]
-            self.position_list.append(players[i].position)
             num_of_players += 1
+        self.position_list = dict.copy(position_list)
 
     def get_players_at_table():
         return self.players
@@ -136,6 +91,11 @@ class Table(Game):
             if i == player:
                 return i.position
 
+    def set_position_of_player(player, position):
+        for pl in self.players:
+            if pl == player:
+                pl.position = position
+
     def get_number_of_players():
         return num_of_players
 
@@ -144,10 +104,27 @@ class Table(Game):
     #     playerA.position = playerB.position
     #     playerB.position = tmp
 
-    def rotate():
-        self.position_list.insert(0, self.position_list.pop())
-        for player in range(len(self.players)):
+    #def rotate():
+        # position_indexes = []
+        # count = 0
+        # for i in position_list:
+        #     position_indexes.append(count)
+        # self.position_list.insert(0, self.position_list.pop())
+        # for player_index in range(len(self.players)):
+        #     current_position = get_position_of_player(get_player_at_position(player_index))
+        #     index_of_current_position = self.position_list.index(current_position)
+        #     index_of_new_position = index_of_current_position + 1
+        #     new_position = ''
+        #     for pos in self.position_list:
+        #         if pos == current_position:
+        #             new_position = self.position_list[current_position+1]
+        #     set_position_of_player(get_player_at_position(player_index), )
 
+    def rotate_table(pos_dict):
+        values = pos_dict.values()
+        keys = pos_dict.keys()
+        values.insert(0, values.pop())
+        self.positions_list = dict(zip(list(keys)), values))
 
 
     def remove_player(player):
