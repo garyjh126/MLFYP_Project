@@ -29,7 +29,7 @@ class PokerStreet:
     # We have the following representations:
     #       raise and bet as BET,
     #       check and call as CALL.
-
+    pass
 
 
 
@@ -39,11 +39,12 @@ class PokerStreet:
 
 
 class Player:
-    def __init__(self, name, list_of_actions):
+    def __init__(self, name, cards, position):
         self.strategy, self.avg_strategy,\
         self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
         self.name = name
-        self.list_of_actions = []
+        self.cards = cards
+        self.position = position
 
     def __repr__(self):
         return self.name
@@ -59,7 +60,7 @@ class Player:
         # Q: Why set negative regrets to zero?
         # A: The strategy performance history is being tracked by strategy_sum.
         # 'Strategy' has it's negative regrets set to zero because it needs to
-        # evaluate new hand
+        # evaluate new hand. (Strategy is only used as a temp array)
 
 
         summation = sum(self.strategy)
@@ -152,11 +153,17 @@ class Game:
     def __init__(self, max_game=5):
 
 
+        Player1 = Player(0 ,'Adam', CardHolding('-','-','-','-'), 0)
+        Player2 = Player(1 ,'Bill', CardHolding('-','-','-','-'), 1)
+        Player3 = Player(2 ,'Chris', CardHolding('-','-','-','-'), 2)
+        Player4 = Player(3 ,'Dennis', CardHolding('-','-','-','-'), 3)
+        num_of_players= 4
+
+        player_list = [Player1,Player2,Player3,Player4]
+
+
         # Create more players for Poker game
-        self.p1 = Player('Player 1', actions_player1)
-        self.p2 = Player('Player 2', actions_player2)
-
-
+        self.table = Table(player_list, num_of_players)
         self.max_game = max_game
 
     def winner(self, a1, a2):
@@ -204,6 +211,52 @@ class Game:
         """
         self.p1.learn_avg_strategy()
         self.p2.learn_avg_strategy()
+
+
+class Table(Game):
+
+
+    num_of_players = 0
+    def __init__(self, players, num_of_players):
+
+        for i in range(len(players)):
+            self.position_list.append(players[i].position)
+            # Need to change ID
+            self.players[i] = players[i]
+            num_of_players += 1
+
+
+    def get_players_at_table():
+        return self.players
+
+    def get_player_at_position(position):
+        for i in self.players:
+            if i.position == position:
+                return i
+
+    def get_position_of_player(player):
+        for i in self.players:
+            if i == player:
+                return i.position
+
+    def get_number_of_players():
+        return num_of_players
+
+    def swap_player_position(playerA, playerB):
+        tmp = playerA.position
+        playerA.position = playerB.position
+        playerB.position = tmp
+
+    def rotate():
+        self.position_list.insert(0, self.position_list.pop())
+
+    def remove_player(player):
+        for i in players:
+            if i == player:
+                #pos = get_position_of_player(player)
+                list_of_players.remove(player)
+
+    
 
 
 if __name__ == '__main__':

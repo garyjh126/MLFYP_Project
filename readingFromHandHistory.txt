@@ -1,0 +1,20 @@
+heart - 0 (Correct)
+club - 1 (Correct)
+spade - 2 (Correct)
+Diamond - 3 (Correct)
+
+
+
+2 - 0
+3 - 1
+4 - 2
+5 - 3
+6 - 4
+7 - 5 
+8 - 6
+9 - 7
+10 - 8
+J - 9
+Q - 10 
+K - 11
+A - 12
