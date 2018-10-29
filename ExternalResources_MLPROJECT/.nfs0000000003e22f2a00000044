@@ -117,7 +117,7 @@ class Player:
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
         f.close()
 
-
+        variable_in_class_design_branch = 0
 
 
 
