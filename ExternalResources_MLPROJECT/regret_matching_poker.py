@@ -7,14 +7,104 @@ import uuid
 
 
 '''
-    Use regret-matching algorithm to play Scissors-Rock-Paper.
+    Use regret-matching algorithm to play Poker
 '''
 
-class PokerRound(Game):
+
+class Game:
+    def __init__(self, max_game=5):
+
+        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
+        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
+        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
+        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
+        player_list = [Player1, Player2, Player3, Player4]
+        positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position} # mutable
+        
+        # Create more players for Poker game
+        self.table = Table(player_list, positions_at_table)
+        self.max_game = max_game
+
+
+class Table(Game):
+
+
+    num_of_players = 0
+    def __init__(self, player_list, positions_at_table):
+        for i in range(len(player_list)):
+            self.player_list[i] = player_list[i]
+            #self.position_list.append(player_list[i].position)
+            num_of_players += 1
+        self.positions_at_table = positions_at_table.copy()
+
+    def get_players_at_table():
+        return self.player_list
+
+    def get_player_at_position(position):
+        for i in self.player_list:
+            if i.position == position:
+                return i
+    
+    def get_player_by_ID(ID):
+        for player in player_list:
+            if player.ID == ID: 
+                return player
+
+    def get_position_of_player(player):
+        for i in self.player_list:
+            if i == player:
+                return i.position
+
+    def get_number_of_players():
+        return num_of_players
+
+    def rotate():
+        keys = self.positions_at_table.keys()
+        values = self.positions_at_table.values()
+        shifted_values = values.insert(0, values.pop())
+        new_positions_at_table = dict(zip(keys, shifted_values))
+        self.positions_at_table = new_positions_at_table
+
+    def remove_player(player):
+        for i in self.player_list:
+            if i == player:
+                list_of_players.remove(player)
+        for index, pos in positions_at_table.items():
+            if pos == player.position:
+                del positions_at_table[pos]
+                reinstantiate_positions_at_table(pos)
+
+    def reinstantiate_positions_at_table(player_to_remove):
+        keys = []
+        for index in range(len(self.positions_at_table)):
+            keys.append(index)
+        values = self.positions_at_table.values()
+        new_dict = dict(zip(keys, values))
+        self.positions_at_table = new_dict
+
+
+class Player(Game):
+    def __init__(self, ID, name, card_holding, position):
+        self.ID = ID
+        self.name = name
+        self.card_holding = card_holding
+        self.position = position
+        self.strategy, self.avg_strategy,\
+        self.strategy_sum, self.regret_sum = np.zeros((4, 3))
+        self.list_of_actions_game = np.array([])
+
+    def __str__(self):
+        return self.name
+
+    def send_actions_to_game
+
+
+    
+
+class PokerRound(Table):
 
     def __init__(self, actionsPlayer1, actionsPlayer2):
-        super().__init__(max_game)
-        self.actionsPlayer1, self.actionsPlayer2 = np.zeros((2, 3))  # ASSUMING HEADS-UP
+        self.actionsPlayer1, self.actionsPlayer2 = np.zeros((2, 3)) 
         self.name = name
         self.list_of_actions_player1 = []
         self.list_of_actions_player2 = []
@@ -22,257 +112,12 @@ class PokerRound(Game):
 
 
 
-class PokerStreet:
-
-    # Must take in 2 cards from C++ Casino Program
-    # Evaluate cards and make decision on action which corresponds to strategy
-    # If bet, determine bet size which also corresponds to strategy\
-    # In Holdem, as with other forms of poker, the available actions are fold, check, call, bet or raise
-    # We have the following representations:
-    #       raise and bet as BET,
-    #       check and call as CALL.
-    pass
-
-
-
-
-
-
-
-
-class Player:
-    def __init__(self, name, cards, position):
-        self.strategy, self.avg_strategy,\
-        self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
-        self.name = name
-        self.cards = cards
-        self.position = position
-
-    def __repr__(self):
-        return self.name
-
-    def update_strategy(self, i, which_player_forprint):
-        """
-        set the preference (strategy) of choosing an action to be proportional to positive regrets
-        e.g, a strategy that prefers PAPER can be [0.2, 0.6, 0.2]
-        """
-        self.strategy = np.copy(self.regret_sum)
-        self.strategy[self.strategy < 0] = 0  # reset negative regrets to zero
-
-        # Q: Why set negative regrets to zero?
-        # A: The strategy performance history is being tracked by strategy_sum.
-        # 'Strategy' has it's negative regrets set to zero because it needs to
-        # evaluate new hand. (Strategy is only used as a temp array)
-
-
-        summation = sum(self.strategy)
-        # Q: But then why is sum of 'Strategy' being calculated if it doesn't
-        # consider negative regrets?
-        # A: Probably because you can't normalise with a array that has negative numbers
-        # Better Answer: It would make sense to think that a more negative value would
-        # correspond to a bad action to take and so it would seem to be clever to not
-        # play that option. For sake of simplictly, we only consider positive values
-        # (Not diving by zero etc)
-
-
-
-        if summation > 0:
-            # normalise
-            self.strategy /= summation
-        else:
-            # uniform distribution to reduce exploitability
-            self.strategy = np.repeat(1 / Poker.n_actions, Poker.n_actions)
-
-        self.strategy_sum += self.strategy
-
-        # Strategy is unique to player instance
-
-        f = open('strategy_stats.txt','a+')
-        if which_player_forprint == "p1":
-            f.write("\nGAME_NUMBER: " + str(i) +"\n\t" + "\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
-        else:
-            f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
-        f.close()
-
-
-    def regret(self, my_action, opp_action, i, which_player_forprint):
-        """
-        we here define the regret of not having chosen an action as the difference between the utility of that action
-        and the utility of the action we actually chose, with respect to the fixed choices of the other player.
-
-        compute the regret and add it to regret sum.
-        """
-        result = Poker.utilities.loc[my_action, opp_action] # At this point, it can the winner is established
-        facts = Poker.utilities.loc[:, opp_action].values
-        regret = facts - result
-        self.regret_sum += regret
-
-        # Q: what is the difference between a regret_sum and strategy_sum?
-        # A: regret_sum has affect on action(). straegy_sum is used for learn_avg_strategy
-
-        f = open('strategy_stats.txt','a+')
-        if which_player_forprint == "p2":
-            f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n\n***********************************************")
-        else:
-            f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
-        f.close()
-
-
-
-
-
-    def action(self, i, which_player_forprint, use_avg=False):
-        """
-        select an action according to strategy probabilities
-        """
-
-
-        strategy = self.avg_strategy if use_avg else self.strategy
-        act = np.random.choice(Poker.actions, p=strategy)
-
-
-        f = open('strategy_stats.txt','a+')
-        f.write("\nPlayer_no: " + which_player_forprint + "\n\tAction: " + str(act) +"\n")
-        f.close()
-
-        return act
-
-    def learn_avg_strategy(self):
-        # averaged strategy converges to Nash Equilibrium
-        summation = sum(self.strategy_sum)
-        if summation > 0:
-            self.avg_strategy = self.strategy_sum / summation
-        else:
-            self.avg_strategy = np.repeat(1/Poker.n_actions, Poker.n_actions)
-
-
-        f = open('strategy_stats.txt','a+')
-        f.write("\nself.strategy_sum: " + str(self.strategy_sum) + "\n")
-        f.close()
-
-
-
-
-class Game:
-    def __init__(self, max_game=5):
-
-        Player1 = Player(uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
-        Player2 = Player(uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
-        Player3 = Player(uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
-        Player4 = Player(uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
-        player_list = [Player1, Player2, Player3, Player4]
-
-        # Create more players for Poker game
-        self.table = Table(player_list)
-        self.max_game = max_game
-
-    def winner(self, a1, a2):
-
-        ## Winner cannot be declared directly from the utility matrix
-
-        result = Poker.utilities.loc[a1, a2]
-        if result == 1:     return self.p1
-        elif result == -1:  return self.p2
-        else:               return 'Draw'
-
-    def play(self, avg_regret_matching=False):
-        def play_regret_matching():
-            for i in range(0, self.max_game):
-                self.p1.update_strategy(i, "p1")
-                self.p2.update_strategy(i, "p2")
-                a1 = self.p1.action(i, "p1")
-                a2 = self.p2.action(i, "p2")
-                self.p1.regret(a1, a2, i, "p1")
-                self.p2.regret(a2, a1, i, "p2")
-
-
-                winner = self.winner(a1, a2)
-                num_wins[winner] += 1
-
-        def play_avg_regret_matching():
-            for i in range(0, self.max_game):
-                a1 = self.p1.action(i, "p1", use_avg=True)
-                a2 = self.p2.action(i, "p2", use_avg=True)
-                winner = self.winner(a1, a2)
-                num_wins[winner] += 1
-
-        num_wins = {
-            self.p1: 0,
-            self.p2: 0,
-            'Draw': 0
-        }
-
-        play_regret_matching() if not avg_regret_matching else play_avg_regret_matching()
-        print(num_wins)
-
-    def conclude(self):
-        """
-        let two players conclude the average strategy from the previous strategy stats
-        """
-        self.p1.learn_avg_strategy()
-        self.p2.learn_avg_strategy()
-
-
-class Table(Game):
-
-
-    num_of_players = 0
-    def __init__(self, players):
-        for i in range(len(players)):
-            self.players[i] = players[i]
-            self.position_list.append(players[i].position)
-            num_of_players += 1
-
-    def get_players_at_table():
-        return self.players
-
-    def get_player_at_position(position):
-        for i in self.players:
-            if i.position == position:
-                return i
-
-    def get_position_of_player(player):
-        for i in self.players:
-            if i == player:
-                return i.position
-
-    def get_number_of_players():
-        return num_of_players
-
-    # def swap_player_positions(playerA, playerB):
-    #     tmp = playerA.position
-    #     playerA.position = playerB.position
-    #     playerB.position = tmp
-
-    def rotate():
-        self.position_list.insert(0, self.position_list.pop())
-        for player in range(len(self.players)):
-
-
-
-    def remove_player(player):
-        for i in self.players:
-            if i == player:
-                #pos = get_position_of_player(player)
-                list_of_players.remove(player)
-        for pos in position_list:
-            if pos == player.position:
-                position_list.remove(pos)
-        rearrange_positions_at_table()
-
-    def switch_position_associations():
-        # Assume only 4 positions for the moment
-        for index in range(len(self.position_list)):
-            if index == 0:
-                self.
-
 
 
 
 if __name__ == '__main__':
     os.remove("strategy_stats.txt")
     game = Game()
-
     print('==== Use simple regret-matching strategy === ')
     game.play()
     print('==== Use averaged regret-matching strategy === ')
