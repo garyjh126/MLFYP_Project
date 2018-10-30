@@ -161,7 +161,7 @@ class Game:
         Player3 = Player(uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
         Player4 = Player(uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
         player_list = [Player1, Player2, Player3, Player4]
-
+        position_list = {0: Player1, 1: Player1, 0: Player1, 0: Player1,}
         # Create more players for Poker game
         self.table = Table(player_list)
         self.max_game = max_game
