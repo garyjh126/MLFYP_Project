@@ -36,7 +36,7 @@ class Table(Game):
     def __init__(self, player_list, positions_at_table):
         self.player_list= player_list.copy()
         for i in player_list:
-            num_of_players += 1
+            Table.num_of_players += 1
         self.positions_at_table = positions_at_table.copy()
 
     def get_players_at_table(self):
@@ -133,30 +133,90 @@ class Bet(Action):
     def __init__(self, amount):
         self.amount = amount
 
+    def determine_action(self):
+        pass
+
+    def determine_table_stats(self): 
+        pass
+        
+    def send_file(self): 
+        pass
+        
+    def get_action_of_preceding_player(self): 
+        pass
+        
+    def populate_regret_table(self): 
+        pass
+    
+
     
 
 class Call(Action):
-    pass
+    def __init__(self, amount):
+        self.amount = amount
 
+    def determine_if_this_action_works(self):
+        pass
+
+    def determine_table_stats(self): 
+        pass
+        
+    def send_file(self): 
+        pass
+        
+    def get_action_of_preceding_player(self): 
+        pass
+        
+    def populate_regret_table(self): 
+        pass
+    
 class Fold(Action):
-    pass
+
+    def __init__(self, amount):
+        self.amount = amount
+
+    def determine_action(self):
+        pass
+
+    def determine_table_stats(self): 
+        pass
+        
+    def send_file(self): 
+        pass
+        
+    def get_action_of_preceding_player(self): 
+        pass
+        
+    def populate_regret_table(self): 
+        pass
+    
+        
+        
+class CardHolding(Player):
+
+    def __init__(self, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
+        self.first_card_suit = first_card_suit
+        self.first_card_rank = first_card_rank 
+        self.second_card_suit = second_card_suit
+        self.second_card_rank = second_card_rank
+    
+    def __str__(self):
+        return self.first_card_suit, self.first_card_rank, self.second_card_suit, self.second_card_rank
 
 
 
 class PokerRound(Table):
 
-    def __init__(self, actionsPlayer1, actionsPlayer2):
-        self.actionsPlayer1, self.actionsPlayer2 = np.zeros((2, 3)) 
-        self.name = name
-        self.list_of_actions_player1 = []
-        self.list_of_actions_player2 = []
+    poker_round_count = 0
 
+    def __init__(self, sb, bb, pot):
+        PokerRound.poker_round_count += 1
+        self.sb = sb
+        self.bb = bb
+        self.pot = pot
 
-class CardHolding(Player):
-    pass
-
-
-
+    def deal_holecards(self):
+        pass
 
 if __name__ == '__main__':
     
