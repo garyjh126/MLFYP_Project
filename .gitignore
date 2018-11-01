@@ -2,11 +2,11 @@
 !UML/UML_PokerSystem.mdj
 
 
-!pokercasino/*
-!pokercasino/lasvegas.cpp
-!pokercasino/casino.cpp
-!pokercasino/bot.cpp
-!pokercasino/casino.h
-!pokercasino/includes.h
-!pokercasino/includes.h
-!pokercasino/botfiles/*
+# !pokercasino/*
+# !pokercasino/lasvegas.cpp
+# !pokercasino/casino.cpp
+# !pokercasino/bot.cpp
+# !pokercasino/casino.h
+# !pokercasino/includes.h
+# !pokercasino/includes.h
+# !pokercasino/botfiles/*
