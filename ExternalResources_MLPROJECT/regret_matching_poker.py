@@ -221,6 +221,10 @@ class PokerRound(Table):
 
 if __name__ == '__main__':
 
+
+    # Establish connection with interface:
+    
+
     game = Game()
 
     #os.remove("strategy_stats.txt")
