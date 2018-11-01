@@ -3,28 +3,50 @@ from random import random
 import numpy as np
 import pandas as pd
 import os
+import uuid
 
 
 '''
     Use regret-matching algorithm to play Scissors-Rock-Paper.
 '''
 
-class RPS:
-    actions = ['ROCK', 'PAPER', 'SCISSORS']
-    n_actions = 3
-    utilities = pd.DataFrame([
-        # ROCK  PAPER  SCISSORS
-        [ 0,    -1,    1], # ROCK
-        [ 1,     0,   -1], # PAPER
-        [-1,     1,    0]  # SCISSORS
-    ], columns=actions, index=actions)
+class PokerRound(Game):
+
+    def __init__(self, actionsPlayer1, actionsPlayer2):
+        super().__init__(max_game)
+        self.actionsPlayer1, self.actionsPlayer2 = np.zeros((2, 3))  # ASSUMING HEADS-UP
+        self.name = name
+        self.list_of_actions_player1 = []
+        self.list_of_actions_player2 = []
+
+
+
+
+class PokerStreet:
+
+    # Must take in 2 cards from C++ Casino Program
+    # Evaluate cards and make decision on action which corresponds to strategy
+    # If bet, determine bet size which also corresponds to strategy\
+    # In Holdem, as with other forms of poker, the available actions are fold, check, call, bet or raise
+    # We have the following representations:
+    #       raise and bet as BET,
+    #       check and call as CALL.
+    pass
+
+
+
+
+
+
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, cards, position):
         self.strategy, self.avg_strategy,\
-        self.strategy_sum, self.regret_sum = np.zeros((4, RPS.n_actions))
+        self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
         self.name = name
+        self.cards = cards
+        self.position = position
 
     def __repr__(self):
         return self.name
@@ -40,7 +62,7 @@ class Player:
         # Q: Why set negative regrets to zero?
         # A: The strategy performance history is being tracked by strategy_sum.
         # 'Strategy' has it's negative regrets set to zero because it needs to
-        # evaluate new hand.
+        # evaluate new hand. (Strategy is only used as a temp array)
 
 
         summation = sum(self.strategy)
@@ -50,7 +72,7 @@ class Player:
         # Better Answer: It would make sense to think that a more negative value would
         # correspond to a bad action to take and so it would seem to be clever to not
         # play that option. For sake of simplictly, we only consider positive values
-        # (Not dividing by zero etc)
+        # (Not diving by zero etc)
 
 
 
@@ -59,13 +81,13 @@ class Player:
             self.strategy /= summation
         else:
             # uniform distribution to reduce exploitability
-            self.strategy = np.repeat(1 / RPS.n_actions, RPS.n_actions)
+            self.strategy = np.repeat(1 / Poker.n_actions, Poker.n_actions)
 
         self.strategy_sum += self.strategy
 
-   
+        # Strategy is unique to player instance
 
-        f = open('strategy_stats_RPS.txt','a+')
+        f = open('strategy_stats.txt','a+')
         if which_player_forprint == "p1":
             f.write("\nGAME_NUMBER: " + str(i) +"\n\t" + "\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
         else:
@@ -80,20 +102,22 @@ class Player:
 
         compute the regret and add it to regret sum.
         """
-        result = RPS.utilities.loc[my_action, opp_action] # At this point, it can the winner is established
-        facts = RPS.utilities.loc[:, opp_action].values
+        result = Poker.utilities.loc[my_action, opp_action] # At this point, it can the winner is established
+        facts = Poker.utilities.loc[:, opp_action].values
         regret = facts - result
         self.regret_sum += regret
 
         # Q: what is the difference between a regret_sum and strategy_sum?
         # A: regret_sum has affect on action(). straegy_sum is used for learn_avg_strategy
 
-        f = open('strategy_stats_RPS.txt','a+')
+        f = open('strategy_stats.txt','a+')
         if which_player_forprint == "p2":
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n\n***********************************************")
         else:
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n")
         f.close()
+
+        variable_in_class_design_branch = 0
 
 
 
@@ -101,11 +125,13 @@ class Player:
         """
         select an action according to strategy probabilities
         """
-        strategy = self.avg_strategy if use_avg else self.strategy
-        act = np.random.choice(RPS.actions, p=strategy)  # Very important to understand this. This forms the basis for creating a good utility matrix in other game contexts (Poker).
-        # This is not just a uniform distribution, although initially it is. It changes shape throughout the game depending on how the strategy looks.
 
-        f = open('strategy_stats_RPS.txt','a+')
+
+        strategy = self.avg_strategy if use_avg else self.strategy
+        act = np.random.choice(Poker.actions, p=strategy)
+
+
+        f = open('strategy_stats.txt','a+')
         f.write("\nPlayer_no: " + which_player_forprint + "\n\tAction: " + str(act) +"\n")
         f.close()
 
@@ -117,10 +143,10 @@ class Player:
         if summation > 0:
             self.avg_strategy = self.strategy_sum / summation
         else:
-            self.avg_strategy = np.repeat(1/RPS.n_actions, RPS.n_actions)
+            self.avg_strategy = np.repeat(1/Poker.n_actions, Poker.n_actions)
 
 
-        f = open('strategy_stats_RPS.txt','a+')
+        f = open('strategy_stats.txt','a+')
         f.write("\nself.strategy_sum: " + str(self.strategy_sum) + "\n")
         f.close()
 
@@ -129,12 +155,22 @@ class Player:
 
 class Game:
     def __init__(self, max_game=5):
-        self.p1 = Player('Player1')
-        self.p2 = Player('Player2')
+
+        Player1 = Player(uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
+        Player2 = Player(uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
+        Player3 = Player(uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
+        Player4 = Player(uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
+        player_list = [Player1, Player2, Player3, Player4]
+
+        # Create more players for Poker game
+        self.table = Table(player_list)
         self.max_game = max_game
 
     def winner(self, a1, a2):
-        result = RPS.utilities.loc[a1, a2]
+
+        ## Winner cannot be declared directly from the utility matrix
+
+        result = Poker.utilities.loc[a1, a2]
         if result == 1:     return self.p1
         elif result == -1:  return self.p2
         else:               return 'Draw'
@@ -177,8 +213,64 @@ class Game:
         self.p2.learn_avg_strategy()
 
 
+class Table(Game):
+
+
+    num_of_players = 0
+    def __init__(self, players):
+        for i in range(len(players)):
+            self.players[i] = players[i]
+            self.position_list.append(players[i].position)
+            num_of_players += 1
+
+    def get_players_at_table():
+        return self.players
+
+    def get_player_at_position(position):
+        for i in self.players:
+            if i.position == position:
+                return i
+
+    def get_position_of_player(player):
+        for i in self.players:
+            if i == player:
+                return i.position
+
+    def get_number_of_players():
+        return num_of_players
+
+    # def swap_player_positions(playerA, playerB):
+    #     tmp = playerA.position
+    #     playerA.position = playerB.position
+    #     playerB.position = tmp
+
+    def rotate():
+        self.position_list.insert(0, self.position_list.pop())
+        for player in range(len(self.players)):
+
+
+
+    def remove_player(player):
+        for i in self.players:
+            if i == player:
+                #pos = get_position_of_player(player)
+                list_of_players.remove(player)
+        for pos in position_list:
+            if pos == player.position:
+                position_list.remove(pos)
+        rearrange_positions_at_table()
+
+    def switch_position_associations():
+        # Assume only 4 positions for the moment
+        for index in range(len(self.position_list)):
+            if index == 0:
+                self.
+
+
+
+
 if __name__ == '__main__':
-    os.remove("strategy_stats_RPS.txt")
+    os.remove("strategy_stats.txt")
     game = Game()
 
     print('==== Use simple regret-matching strategy === ')

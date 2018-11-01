@@ -4,66 +4,27 @@ import numpy as np
 import pandas as pd
 import os
 import uuid
-from itertools import izip
+from abc import abstractmethod, ABCMeta
+
+
 
 '''
-    Use regret-matching algorithm to play Scissors-Rock-Paper.
+    Use regret-matching algorithm to play Poker
 '''
-
-class PokerRound(Game):
-
-    def __init__(self, actionsPlayer1, actionsPlayer2):
-        super().__init__(max_game)
-        self.actionsPlayer1, self.actionsPlayer2 = np.zeros((2, 3))  # ASSUMING HEADS-UP
-        self.name = name
-        self.list_of_actions_player1 = []
-        self.list_of_actions_player2 = []
-
-
-
-
-class PokerStreet:
-
-    # Must take in 2 cards from C++ Casino Program
-    # Evaluate cards and make decision on action which corresponds to strategy
-    # If bet, determine bet size which also corresponds to strategy\
-    # In Holdem, as with other forms of poker, the available actions are fold, check, call, bet or raise
-    # We have the following representations:
-    #       raise and bet as BET,
-    #       check and call as CALL.
-    pass
-
-
-
-
-
-
-
-
-class Player:
-    def __init__(self, name, cards, position):
-        self.strategy, self.avg_strategy,\
-        self.strategy_sum, self.regret_sum = np.zeros((4, Poker.n_actions))
-        self.name = name
-        self.cards = cards
-        self.position = position
-
-    def __repr__(self):
-        return self.name
-
 
 
 class Game:
     def __init__(self, max_game=5):
 
-        Player1 = Player(uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
-        Player2 = Player(uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
-        Player3 = Player(uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
-        Player4 = Player(uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
+        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
+        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
+        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
+        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
         player_list = [Player1, Player2, Player3, Player4]
-        position_list = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position}
+        positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position} # mutable
+
         # Create more players for Poker game
-        self.table = Table(player_list, position_list)
+        self.table = Table(player_list, positions_at_table)
         self.max_game = max_game
 
 
@@ -71,87 +32,200 @@ class Table(Game):
 
     num_of_players = 0
 
-    def __init__(self, players, position_list):
-        # self.players = np.copy(players)
-        for i in range(len(players)):
-            self.players[i] = players[i]
-            num_of_players += 1
-        self.position_list = dict.copy(position_list)
+    def __init__(self, player_list, positions_at_table):
+        self.player_list= player_list.copy()
+        for i in player_list:
+            Table.num_of_players += 1
+        self.positions_at_table = positions_at_table.copy()
 
-    def get_players_at_table():
-        return self.players
+    def get_players_at_table(self):
+        return self.player_list
 
-    def get_player_at_position(position):
-        for i in self.players:
+    def get_player_at_position(self, position):
+        for i in self.player_list:
             if i.position == position:
                 return i
 
-    def get_position_of_player(player):
-        for i in self.players:
+    def get_player_by_ID(self, ID):
+        for player in self.player_list:
+            if player.ID == ID:
+                return player
+
+    def get_position_of_player(self, player):
+        for i in self.player_list:
             if i == player:
                 return i.position
 
-    def set_position_of_player(player, position):
-        for pl in self.players:
-            if pl == player:
-                pl.position = position
+    def get_number_of_players(self):
+        return self.num_of_players
 
-    def get_number_of_players():
-        return num_of_players
+    def rotate(self):
+        keys = self.positions_at_table.keys()
+        values = self.positions_at_table.values()
+        shifted_values = values.insert(0, values.pop())
+        new_positions_at_table = dict(zip(keys, shifted_values))
+        self.positions_at_table = new_positions_at_table
 
-    # def swap_player_positions(playerA, playerB):
-    #     tmp = playerA.position
-    #     playerA.position = playerB.position
-    #     playerB.position = tmp
-
-    #def rotate():
-        # position_indexes = []
-        # count = 0
-        # for i in position_list:
-        #     position_indexes.append(count)
-        # self.position_list.insert(0, self.position_list.pop())
-        # for player_index in range(len(self.players)):
-        #     current_position = get_position_of_player(get_player_at_position(player_index))
-        #     index_of_current_position = self.position_list.index(current_position)
-        #     index_of_new_position = index_of_current_position + 1
-        #     new_position = ''
-        #     for pos in self.position_list:
-        #         if pos == current_position:
-        #             new_position = self.position_list[current_position+1]
-        #     set_position_of_player(get_player_at_position(player_index), )
-
-    def rotate_table(pos_dict):
-        values = pos_dict.values()
-        keys = pos_dict.keys()
-        values.insert(0, values.pop())
-        self.positions_list = dict(zip(list(keys)), values))
-
-
-    def remove_player(player):
-        for i in self.players:
+    def remove_player(self, player):
+        for i in self.player_list:
             if i == player:
-                #pos = get_position_of_player(player)
-                list_of_players.remove(player)
-        for pos in position_list:
+                self.player_list.remove(player)
+        for index, pos in self.positions_at_table.items():
             if pos == player.position:
-                position_list.remove(pos)
-        rearrange_positions_at_table()
+                del self.positions_at_table[pos]
+                self.reinstantiate_positions_at_table(pos)
 
-    def switch_position_associations():
-        # Assume only 4 positions for the moment
-        for index in range(len(self.position_list)):
-            if index == 0:
-                self.
+    def reinstantiate_positions_at_table(self, player_to_remove):
+        keys = []
+        for index in range(len(self.positions_at_table)):
+            keys.append(index)
+        values = self.positions_at_table.values()
+        new_dict = dict(zip(keys, values))
+        self.positions_at_table = new_dict
 
+
+class Player(Game):
+
+
+    def __init__(self, ID, name, card_holding, position, stack_size = 50):
+        self.ID = ID
+        self.name = name
+        self.card_holding = card_holding
+        self.position = position
+        self.strategy, self.avg_strategy,\
+        self.strategy_sum, self.regret_sum = np.zeros((4, 3))
+        self.list_of_actions_game = np.array([])
+        self.stack_size = stack_size
+        self.action = ''
+
+    def __str__(self):
+        return self.name
+
+    def take_action(self):
+        pass
+
+
+#INTERFACE
+class Action(Player):
+
+    __metaclass_ = ABCMeta
+
+
+    @abstractmethod
+    def determine_action(self): pass
+
+    @abstractmethod
+    def determine_table_stats(self): pass
+
+    @abstractmethod
+    def send_file(self): pass
+
+    @abstractmethod
+    def get_action_of_preceding_player(self): pass
+
+    @abstractmethod
+    def populate_regret_table(self): pass
+
+
+class Bet(Action):
+
+    def __init__(self, amount):
+        self.amount = amount
+
+    def determine_action(self):
+        pass
+
+    def determine_table_stats(self):
+        pass
+
+    def send_file(self):
+        pass
+
+    def get_action_of_preceding_player(self):
+        pass
+
+    def populate_regret_table(self):
+        pass
+
+
+
+
+class Call(Action):
+    def __init__(self, amount):
+        self.amount = amount
+
+    def determine_if_this_action_works(self):
+        pass
+
+    def determine_table_stats(self):
+        pass
+
+    def send_file(self):
+        pass
+
+    def get_action_of_preceding_player(self):
+        pass
+
+    def populate_regret_table(self):
+        pass
+
+class Fold(Action):
+
+    def __init__(self, amount):
+        self.amount = amount
+
+    def determine_action(self):
+        pass
+
+    def determine_table_stats(self):
+        pass
+
+    def send_file(self):
+        pass
+
+    def get_action_of_preceding_player(self):
+        pass
+
+    def populate_regret_table(self):
+        pass
+
+
+
+class CardHolding(Player):
+
+    def __init__(self, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
+        self.first_card_suit = first_card_suit
+        self.first_card_rank = first_card_rank
+        self.second_card_suit = second_card_suit
+        self.second_card_rank = second_card_rank
+
+    def __str__(self):
+        return self.first_card_suit, self.first_card_rank, self.second_card_suit, self.second_card_rank
+
+
+
+class PokerRound(Table):
+
+    poker_round_count = 0
+
+    def __init__(self, sb, bb, pot):
+        PokerRound.poker_round_count += 1
+        self.sb = sb
+        self.bb = bb
+        self.pot = pot
+
+    def deal_holecards(self):
+        pass
 
 
 
 if __name__ == '__main__':
-    os.remove("strategy_stats.txt")
+
     game = Game()
 
-    print('==== Use simple regret-matching strategy === ')
-    game.play()
-    print('==== Use averaged regret-matching strategy === ')
-    game.conclude()
-    game.play(avg_regret_matching=True)
+    #os.remove("strategy_stats.txt")
+    #print('==== Use simple regret-matching strategy === ')
+    #game.play()
+    #print('==== Use averaged regret-matching strategy === ')
+    #game.conclude()
+    #game.play(avg_regret_matching=True)
