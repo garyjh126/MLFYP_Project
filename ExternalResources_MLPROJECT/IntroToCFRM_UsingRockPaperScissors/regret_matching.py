@@ -63,9 +63,9 @@ class Player:
 
         self.strategy_sum += self.strategy
 
-        # Strategy is unique to player instance
+   
 
-        f = open('strategy_stats.txt','a+')
+        f = open('strategy_stats_RPS.txt','a+')
         if which_player_forprint == "p1":
             f.write("\nGAME_NUMBER: " + str(i) +"\n\t" + "\nPlayer_no: " + which_player_forprint + "\n\tself.self_strategy: " + str(self.strategy) +"\n\t" + "self.strategy_sum: " + str(self.strategy_sum) + "\n")
         else:
@@ -88,7 +88,7 @@ class Player:
         # Q: what is the difference between a regret_sum and strategy_sum?
         # A: regret_sum has affect on action(). straegy_sum is used for learn_avg_strategy
 
-        f = open('strategy_stats.txt','a+')
+        f = open('strategy_stats_RPS.txt','a+')
         if which_player_forprint == "p2":
             f.write("\nPlayer_no: " + which_player_forprint + "\n\tself.regret_sum: " + str(self.regret_sum) +"\n\n***********************************************")
         else:
@@ -102,10 +102,10 @@ class Player:
         select an action according to strategy probabilities
         """
         strategy = self.avg_strategy if use_avg else self.strategy
-        act = np.random.choice(RPS.actions, p=strategy)
+        act = np.random.choice(RPS.actions, p=strategy)  # Very important to understand this. This forms the basis for creating a good utility matrix in other game contexts (Poker).
+        # This is not just a uniform distribution, although initially it is. It changes shape throughout the game depending on how the strategy looks.
 
-
-        f = open('strategy_stats.txt','a+')
+        f = open('strategy_stats_RPS.txt','a+')
         f.write("\nPlayer_no: " + which_player_forprint + "\n\tAction: " + str(act) +"\n")
         f.close()
 
@@ -120,7 +120,7 @@ class Player:
             self.avg_strategy = np.repeat(1/RPS.n_actions, RPS.n_actions)
 
 
-        f = open('strategy_stats.txt','a+')
+        f = open('strategy_stats_RPS.txt','a+')
         f.write("\nself.strategy_sum: " + str(self.strategy_sum) + "\n")
         f.close()
 
@@ -178,7 +178,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    os.remove("strategy_stats.txt")
+    os.remove("strategy_stats_RPS.txt")
     game = Game()
 
     print('==== Use simple regret-matching strategy === ')

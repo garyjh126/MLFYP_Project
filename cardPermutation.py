@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-class HoldingCards(): 
+class HoldingCards():
 	firstCardRank = '-'
 	firstCardSuit = '-'
 	secondCardRank = '-'
@@ -25,18 +25,18 @@ list_of_cards = []
 for loopACard in range(len(card)):
 	# if card[loopACard] == '2':
 	# 	break
-	
+
 	for loopBCard in range(loopACard, len(card)):
 
 		for i in range(len(arr)):
 			noteFirst = 0
-			
+
 			if loopACard == loopBCard:
 				noteFirst = i+1
 				if arr[i]=='d':
 					break
-			
-			
+
+
 			for j in range(noteFirst, len(arr)):
 				#print(card[loopACard], arr[i], card[loopBCard], arr[j])
 				hc = HoldingCards(card[loopACard], arr[i], card[loopBCard], arr[j])
