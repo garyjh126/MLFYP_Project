@@ -1,10 +1,27 @@
 *UML/*
+<<<<<<< HEAD
+!UML/UML_PokerSystem.mdj
+=======
+<<<<<<< HEAD
+>>>>>>> class_design
+
+
+pokercasino/*
+!pokercasino/lasvegas.cpp
+<<<<<<< HEAD
+=======
+=======
 !UML/UML_PokerSystem.mdj
 
 
 pokercasino/*
 !pokercasino/lasvegas.cpp
+>>>>>>> class_design
 !pokercasino/casino.cpp
 !pokercasino/bot.cpp
 !pokercasino/casino.h
 !pokercasino/includes.h
+<<<<<<< HEAD
+=======
+>>>>>>> 9b82d9c63db196f5301bc9f8ff941fc953d21e88
+>>>>>>> class_design
