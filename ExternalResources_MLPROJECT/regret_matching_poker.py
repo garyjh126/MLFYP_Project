@@ -1,11 +1,60 @@
 from __future__ import division
+import re
 from random import random
 import numpy as np
 import pandas as pd
 import os
 import uuid
 from abc import abstractmethod, ABCMeta
+import pyinotify
 
+class MyEventHandler(pyinotify.ProcessEvent):
+    def process_IN_ACCESS(self, event):
+        pass #print "ACCESS event:", event.pathname
+
+    def process_IN_ATTRIB(self, event):
+        pass #print "ATTRIB event:", event.pathname
+
+    def process_IN_CLOSE_NOWRITE(self, event):
+        pass #print "CLOSE_NOWRITE event:", event.pathname
+
+    def process_IN_CLOSE_WRITE(self, event):
+        pass #print "CLOSE_WRITE event:", event.pathname
+
+    def process_IN_CREATE(self, event):
+        pass #print "CREATE event:", event.pathname
+
+    def process_IN_DELETE(self, event):
+        pass #print "DELETE event:", event.pathname
+
+    def process_IN_MODIFY(self, event):
+        print "MODIFY event:", event.pathname
+
+    def process_IN_OPEN(self, event):
+        pass #print "OPEN event:", event.pathname
+
+class main_watch_manager():
+    def __init__(self, communication_files_directory):
+        self.communication_files_directory = communication_files_directory
+
+        # watch manager
+        wm = pyinotify.WatchManager()
+        wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
+
+        # event handler
+        eh = MyEventHandler()
+
+        # notifier
+        notifier = pyinotify.Notifier(wm, eh)
+        notifier.loop()
+
+    def get_status_from_CTB_file(self):
+        data = ''
+        with open(self.communication_files_directory + CTB_file, 'rt') as f:
+            data = f.read()
+        return data
+
+    
 
 
 '''
@@ -13,27 +62,44 @@ from abc import abstractmethod, ABCMeta
 '''
 
 
+
+
+
+
 class Game:
     def __init__(self, max_game=5):
-
-        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN')
-        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB')
-        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB')
-        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO')
-        player_list = [Player1, Player2, Player3, Player4]
+        
+        
+        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN', 'casinoToBot0')
+        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB', 'casinoToBot1')
+        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB', 'casinoToBot2')
+        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO', 'casinoToBot3')
+        self.player_list = [Player1, Player2, Player3, Player4]
         positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position} # mutable
 
         # Create more players for Poker game
-        self.table = Table(player_list, positions_at_table)
+        self.table = Table(self.player_list, positions_at_table)
         self.max_game = max_game
+        self.parse_data_from_CTB()
+        #self.table.assign_cards_per_player_at_table()
 
+        
+
+    def parse_data_from_CTB(self):
+        communication_files_directory = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
+        
+        for player in self.player_list:    
+            mwm_bot = main_watch_manager(communication_files_directory)
+            CTB_Status = mwm_bot.get_status_from_CTB_file(player.CTB_file)
+            player.CTB_Parsing(CTB_Status)
 
 class Table(Game):
 
     num_of_players = 0
 
     def __init__(self, player_list, positions_at_table):
-        self.player_list= player_list.copy()
+        self.player_list= list(player_list)
+        #print(type(player_list))
         for i in player_list:
             Table.num_of_players += 1
         self.positions_at_table = positions_at_table.copy()
@@ -83,11 +149,14 @@ class Table(Game):
         new_dict = dict(zip(keys, values))
         self.positions_at_table = new_dict
 
+    
+
+
 
 class Player(Game):
 
 
-    def __init__(self, ID, name, card_holding, position, stack_size = 50):
+    def __init__(self, ID, name, card_holding, position, CTB_file, stack_size = 50):
         self.ID = ID
         self.name = name
         self.card_holding = card_holding
@@ -95,6 +164,7 @@ class Player(Game):
         self.strategy, self.avg_strategy,\
         self.strategy_sum, self.regret_sum = np.zeros((4, 3))
         self.list_of_actions_game = np.array([])
+        self.CTB_file = CTB_file
         self.stack_size = stack_size
         self.action = ''
 
@@ -104,6 +174,15 @@ class Player(Game):
     def take_action(self):
         pass
 
+    def CTB_Parsing(self, CTB_Status):
+        # CTB_STATUS = <hand number>D<button position>A<holecard1>B<holecard2>
+        #re.split(r'[DAB]',CTB_Status)
+        print(CTB_Status)
+
+    def assign_cards(self, cards):
+        self.card_holding = cards
+                
+        
 
 #INTERFACE
 class Action(Player):
@@ -220,10 +299,6 @@ class PokerRound(Table):
 
 
 if __name__ == '__main__':
-
-
-    # Establish connection with interface:
-    
 
     game = Game()
 
