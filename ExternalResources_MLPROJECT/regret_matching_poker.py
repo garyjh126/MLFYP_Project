@@ -28,7 +28,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         pass #print "DELETE event:", event.pathname
 
     def process_IN_MODIFY(self, event):
-        print "MODIFY event:", event.pathname
+        pass #print "MODIFY event:", event.pathname
 
     def process_IN_OPEN(self, event):
         pass #print "OPEN event:", event.pathname
@@ -68,12 +68,12 @@ class main_watch_manager():
 
 class Game:
     def __init__(self, max_game=5):
+        communication_files_directory = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
         
-        
-        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN', 'casinoToBot0')
-        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB', 'casinoToBot1')
-        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB', 'casinoToBot2')
-        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO', 'casinoToBot3')
+        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN', 'casinoToBot0', main_watch_manager(communication_files_directory))
+        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB', 'casinoToBot1', main_watch_manager(communication_files_directory))
+        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB', 'casinoToBot2', main_watch_manager(communication_files_directory))
+        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO', 'casinoToBot3', main_watch_manager(communication_files_directory))
         self.player_list = [Player1, Player2, Player3, Player4]
         positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position} # mutable
 
@@ -86,10 +86,10 @@ class Game:
         
 
     def parse_data_from_CTB(self):
-        communication_files_directory = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
+        
         
         for player in self.player_list:    
-            mwm_bot = main_watch_manager(communication_files_directory)
+            player.mwm_bot = main_watch_manager(communication_files_directory)
             CTB_Status = mwm_bot.get_status_from_CTB_file(player.CTB_file)
             player.CTB_Parsing(CTB_Status)
 
@@ -156,7 +156,7 @@ class Table(Game):
 class Player(Game):
 
 
-    def __init__(self, ID, name, card_holding, position, CTB_file, stack_size = 50):
+    def __init__(self, ID, name, card_holding, position, CTB_file, mwm, stack_size = 50):
         self.ID = ID
         self.name = name
         self.card_holding = card_holding
@@ -165,6 +165,7 @@ class Player(Game):
         self.strategy_sum, self.regret_sum = np.zeros((4, 3))
         self.list_of_actions_game = np.array([])
         self.CTB_file = CTB_file
+        self.mwm = mwm
         self.stack_size = stack_size
         self.action = ''
 
