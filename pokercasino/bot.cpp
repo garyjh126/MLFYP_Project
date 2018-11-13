@@ -8,7 +8,7 @@ void Bot::setSeat(int pos){
 
 void Bot::setHand(int handno, int button, tuple<int, int> hand) {
 	mHand = hand;
-	ofstream fout("./botfiles/casinoToBot" + to_string(getSeat()), ios_base::trunc);
+	ofstream fout("./botfiles/give_hand_bot" + to_string(getSeat()), ios_base::trunc);
 	if (!fout.good()) {
 		cerr << "Error while opening output file for bot " << getSeat() << endl;
 	}

@@ -34,7 +34,8 @@ class MyEventHandler(pyinotify.ProcessEvent):
         pass #print "OPEN event:", event.pathname
 
 class main_watch_manager():
-    def __init__(self, communication_files_directory):
+    
+    def __init__(self, communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
         self.communication_files_directory = communication_files_directory
 
         # watch manager
@@ -48,7 +49,7 @@ class main_watch_manager():
         notifier = pyinotify.Notifier(wm, eh)
         notifier.loop()
 
-    def get_status_from_CTB_file(self):
+    def get_status_from_CTB_file(self, CTB_file):
         data = ''
         with open(self.communication_files_directory + CTB_file, 'rt') as f:
             data = f.read()
@@ -67,16 +68,19 @@ class main_watch_manager():
 
 
 class Game:
+
+    cards = []
+
     def __init__(self, max_game=5):
-        communication_files_directory = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
+         
         
-        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN', 'casinoToBot0', main_watch_manager(communication_files_directory))
-        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB', 'casinoToBot1', main_watch_manager(communication_files_directory))
-        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB', 'casinoToBot2', main_watch_manager(communication_files_directory))
-        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO', 'casinoToBot3', main_watch_manager(communication_files_directory))
+        Player1 = Player(uuid.uuid1() ,'Adam', CardHolding('-','-','-','-'), 'BTN', '/give_hand_bot0', None)
+        Player2 = Player(uuid.uuid1() ,'Bill', CardHolding('-','-','-','-'), 'SB', '/give_hand_bot1', None)
+        Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-'), 'BB', '/give_hand_bot2', None)
+        Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-'), 'CO', '/give_hand_bot3',None)
         self.player_list = [Player1, Player2, Player3, Player4]
         positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position, 3: Player4.position} # mutable
-
+        cards = self.create_cards_for_game()
         # Create more players for Poker game
         self.table = Table(self.player_list, positions_at_table)
         self.max_game = max_game
@@ -87,11 +91,23 @@ class Game:
 
     def parse_data_from_CTB(self):
         
-        
-        for player in self.player_list:    
-            player.mwm_bot = main_watch_manager(communication_files_directory)
-            CTB_Status = mwm_bot.get_status_from_CTB_file(player.CTB_file)
+        for player in self.player_list: 
+            player.mwm_bot = main_watch_manager()   
+            player_mwm = player.mwm_bot
+            CTB_Status = player_mwm.get_status_from_CTB_file(player.CTB_file)
             player.CTB_Parsing(CTB_Status)
+
+    def create_cards_for_game(self):
+        suits = ['h','c','s','d']
+        cards = []
+       
+        for suit in suits:
+            for rank in range(13):
+                card_str = str(rank)+suit
+                cards.append(card_str)
+                
+        return cards
+    
 
 class Table(Game):
 
@@ -177,13 +193,66 @@ class Player(Game):
 
     def CTB_Parsing(self, CTB_Status):
         # CTB_STATUS = <hand number>D<button position>A<holecard1>B<holecard2>
-        #re.split(r'[DAB]',CTB_Status)
-        print(CTB_Status)
+        # cards are 4 * rank + suit where rank is 0 .. 12 for deuce to ace, and suits is 0 .. 3
+
+        deck_size = 52
+        arr = re.split(r'[DAB]',CTB_Status)
+        print(arr) #debug
+        suits = ['h','c','s','d']
+
+        card_a = arr[2] 
+        card_a_suit = ''
+        card_a_rank = 0
+        for card in Game.cards:
+            for suit in suits:
+                st = re.split(r'[]',card)
+                if card_a % 4 == suits.index(suit):
+                    card_a_suit = suit
+                card_a_rank
+
+        for card in Game.cards:
+            if card_b == card:
+                card_b = card
+
+
+        # card_A = arr[2] 
+        # card_a_suit = card_A / deck_size
+
+        # card_b = arr[3]
+        # card_b_suit = card_B / deck_size
+        
+        # card_ranks = {a: 0, b: 0}
+
+        # for rank in card_ranks:
+        #     for partition in partitions:
+        #         note_partition = partitions[0]
+        #         if card_ranks[rank] > partition:
+        #             pass
+        #         else:
+        #             note_partition = partition
+        #             break
+            
+
+       
+            
 
     def assign_cards(self, cards):
         self.card_holding = cards
                 
-        
+
+
+class CardHolding(Player):
+
+    def __init__(self, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
+        self.first_card_suit = first_card_suit
+        self.first_card_rank = first_card_rank
+        self.second_card_suit = second_card_suit
+        self.second_card_rank = second_card_rank
+
+    def __str__(self):
+        return self.first_card_suit, self.first_card_rank, self.second_card_suit, self.second_card_rank
+
+
 
 #INTERFACE
 class Action(Player):
@@ -270,20 +339,6 @@ class Fold(Action):
         pass
 
 
-
-class CardHolding(Player):
-
-    def __init__(self, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
-        self.first_card_suit = first_card_suit
-        self.first_card_rank = first_card_rank
-        self.second_card_suit = second_card_suit
-        self.second_card_rank = second_card_rank
-
-    def __str__(self):
-        return self.first_card_suit, self.first_card_rank, self.second_card_suit, self.second_card_rank
-
-
-
 class PokerRound(Table):
 
     poker_round_count = 0
@@ -296,7 +351,6 @@ class PokerRound(Table):
 
     def deal_holecards(self):
         pass
-
 
 
 if __name__ == '__main__':
