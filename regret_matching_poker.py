@@ -7,6 +7,61 @@ import os
 import uuid
 from abc import abstractmethod, ABCMeta
 import pyinotify
+from treys import *
+import regret_matching_poker
+
+
+class HandEvaluation():
+
+    def __init__(self, card_holding, evaluation = None):
+        self.card_holding = card_holding
+        self.card_a, self.card_b = self.parse_cards()
+        self.evaluation = self.evaluate()
+        self.rc = ''
+    def __str__(self):
+        st = "\nCards: {}{}\n".format(Card.int_to_pretty_str(self.hand[0]), Card.int_to_pretty_str(self.hand[1]))
+        st += "Board {}{}{}\n".format(Card.int_to_pretty_str(self.board[0]), Card.int_to_pretty_str(self.board[1]), Card.int_to_pretty_str(self.board[2]))
+        st += "Evaluation: {} ({}), Rank_Class: {}, \n".format(self.evaluation[0], self.evaluation[2], self.evaluation[1])
+        return st
+
+    def parse_cards(self):
+        a, b = self.card_holding.get_card(0) , self.card_holding.get_card(1)
+        a_rank, a_suit = a
+        b_rank, b_suit = b
+        
+        a_card = Card.new(str(a_rank) + str(a_suit))
+        b_card = Card.new(str(b_rank) + str(b_suit))
+    
+        return [a_card, b_card]
+
+    def setup_board(self, board):
+        #Example board -- DEBUG
+        if board == None:
+            board = [
+                Card.new('Ah'),
+                Card.new('Kd'),
+                Card.new('Jc')
+            ]
+        
+        return board
+
+    def evaluate(self):
+        global evaluation
+        self.board = self.setup_board(None)
+        self.hand = self.parse_cards()
+        evaluator = Evaluator()
+        evaluation = evaluator.evaluate(self.board, self.hand)
+        rc = self.rank_class(evaluator, evaluation)
+        score_desc = evaluator.class_to_string(rc)
+        return evaluation, rc, score_desc
+
+    def get_evaluation(self):
+        return self.evaluation
+
+    def rank_class(self, evaluator, evaluation):
+        rc = evaluator.get_rank_class(evaluation)
+        return rc
+
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_ACCESS(self, event):
@@ -91,7 +146,6 @@ class Game:
             player.take_action(card_holding)
             # self.compute_starting_random_actions(player)
 
-   
 
     def create_cards_for_game(self):
         suits = ['h','c','s','d']
@@ -99,7 +153,9 @@ class Game:
         
         for rank in range(13):
             for suit in suits:
-                if(rank == 9):
+                if(rank == 8):
+                    card_r = 'T'
+                elif(rank == 9):
                     card_r = 'J'
                 elif(rank == 10):
                     card_r = 'Q'
@@ -138,10 +194,14 @@ class Player(Game):
         return st
 
     def take_action(self, card_holding):
-        my_action = Bet(7)
+        self.hand_evaluate(card_holding)
 
+    def hand_evaluate(self, card_holding):
+        he = HandEvaluation(self.card_holding) #Unique to player instance
+        print(he)
 
     def GHB_Parsing(self, GHB_Status):
+        
         # GHB_STATUS = <hand number>D<button position>A<holecard1>B<holecard2>
         # cards are 4 * rank + suit where rank is 0 .. 12 for deuce to ace, and suits is 0 .. 3
         deck_size = 52
@@ -158,10 +218,10 @@ class Player(Game):
             if(str(self.cards.index(card)) == card_a):
                 if(len(card) == 2):
                     a,b = card
-                elif(len(card) == 3):
-                    a,b,c = card
-                    a = a+b
-                    b = c
+                # elif(len(card) == 3):
+                #     a,b,c = card
+                #     a = a+b
+                #     b = c
             elif(str(self.cards.index(card))== card_b):
                 if(len(card) == 2):
                     x,y = card
@@ -169,10 +229,12 @@ class Player(Game):
                     x,y,z = card
                     x = x+y
                     y = z
-
-        self.card_holding = CardHolding(self.name,a,b,x,y)
-       # print(self.card_holding)
-
+        card_a_rank = a
+        card_a_suit = b
+        card_b_rank = x
+        card_b_suit = y
+        self.card_holding = CardHolding(self.name,card_a_suit,card_a_rank,card_b_suit, card_b_rank)
+       
         return self.card_holding
 
         
@@ -191,7 +253,15 @@ class CardHolding(Player):
         second_card = self.second_card_suit, self.second_card_rank
         st = 'Name: {}'.format(self.name) + '\tFirst Card: {}'.format(str(first_card)) + '\tSecond Card: {}\n'.format(str(second_card))
         return (str(st))
-
+    
+    def get_card(self, card_no):
+        if card_no == 0:
+            return self.first_card_rank + self.first_card_suit
+            
+        else:
+            return self.second_card_rank,self.second_card_suit
+            
+    
 
 class Table(Game):
 
