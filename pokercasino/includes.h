@@ -17,9 +17,9 @@
 using namespace std;
 
 //Magic numbers:
-const int nBots = 4; // : number of bots
+const int nBots = 2; // : number of bots
 const int nMaxRaises = 3;
-const int nRounds = 4; // number of rounds to test the bots
+const int nRounds = 2; // number of rounds to test the bots
 const int nLogFrequency = 10; // frequency of result logs
 const std::chrono::milliseconds kDelay(10); // time given to each bot is set in the function attend()
 const array<string, 52> eRank = {

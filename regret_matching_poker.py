@@ -89,7 +89,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         pass #print "CLOSE_NOWRITE event:", event.pathname
 
     def process_IN_CLOSE_WRITE(self, event):
-        pass #print "CLOSE_WRITE event:", event.pathname
+        print("CLOSE_WRITE event:", event.pathname)
 
     def process_IN_CREATE(self, event):
         pass #print "CREATE event:", event.pathname
@@ -158,7 +158,7 @@ class Game:
             card_str = '{}{}'.format(Card.int_to_pretty_str(he.parse_cards()[0]), Card.int_to_pretty_str(he.parse_cards()[1]))
             print(card_str, evaluation, rc, score_desc)
 
-            make_action()
+            #make_action()
 
     def flop(self):
         player.hand_evaluate_flop(card_holding)
@@ -200,7 +200,7 @@ class Game:
         return li
 
     def make_action(self):
-        
+        pass
 
 class Player(Game):
 
