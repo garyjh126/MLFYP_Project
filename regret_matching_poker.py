@@ -38,49 +38,45 @@ class HandEvaluation():
     
         return [a_card, b_card]
 
-    def setup_board(self, board, random = False):
+    def setup_board(self, board, random, hand = None):
         #Example board -- DEBUG
         b = []
-        if board == None:
+        if board == None and random == 'False': #FLOP
+            #import from file giving hand status
             b = [
                 Card.new('Ah'),
                 Card.new('Kd'),
                 Card.new('Jc')
             ]
-        if random == True:
-            b = [
-                Card.new('Ad'),
-                Card.new('Kd'),
-                Card.new('Jd')
-            ] 
+        if board == None and random == 'True': #PREFLOP
+            deck = Deck()
+            b = deck.draw(3)
         return b
 
     def evaluate(self, event):
         evaluator = Evaluator()
         if event == "Preflop":
-            self.board = self.setup_board(None, random = True)
             self.hand = self.parse_cards()
+            self.board = self.setup_board(None, 'True', self.hand)
             evaluation = evaluator.evaluate(self.hand, self.board)
             rc = self.rank_class(evaluator, evaluation)
             score_desc = evaluator.class_to_string(rc)
             return evaluation, rc, score_desc, event 
         
         elif event == "Flop":
-            self.board = self.setup_board(None, random = False)
             self.hand = self.parse_cards()
-                   
+            self.board = self.setup_board(None, 'False')     # Only pass in none for now
             evaluation = evaluator.evaluate(self.hand, self.board)
             rc = self.rank_class(evaluator, evaluation)
             score_desc = evaluator.class_to_string(rc)
             return evaluation, rc, score_desc, event
 
-    def get_evaluation(self):
-        return self.evaluation
-
     def rank_class(self, evaluator, evaluation):
         rc = evaluator.get_rank_class(evaluation)
         return rc
 
+    def get_evaluation(self):
+        return self.evaluation
 
 class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_ACCESS(self, event):
@@ -151,7 +147,21 @@ class Game:
         self.table = Table(self.player_list, positions_at_table)
         self.max_game = max_game
         self.parse_data_from_GHB()
+        self.preflop()
+        
 
+    def preflop(self):
+        for player in self.player_list:             
+            he, evaluation, rc, score_desc, _ =  player.hand_evaluate_preflop()
+            #print(evaluation, rc, score_desc)
+            evaluator = Evaluator()
+            card_str = '{}{}'.format(Card.int_to_pretty_str(he.parse_cards()[0]), Card.int_to_pretty_str(he.parse_cards()[1]))
+            print(card_str, evaluation, rc, score_desc)
+
+            make_action()
+
+    def flop(self):
+        player.hand_evaluate_flop(card_holding)
 
     def parse_data_from_GHB(self):
 
@@ -161,8 +171,8 @@ class Game:
             player_mwm = player.mwm_bot
             GHB_Status = player_mwm.get_status_from_GHB_file(player.GHB_file)
 
-            card_holding = player.GHB_Parsing(GHB_Status) #check cards
-            player.take_action(card_holding)
+            player.card_holding = player.GHB_Parsing(GHB_Status) #check cards
+            #player.take_action(card_holding)
             # self.compute_starting_random_actions(player)
 
 
@@ -189,6 +199,8 @@ class Game:
               
         return li
 
+    def make_action(self):
+        
 
 class Player(Game):
 
@@ -209,18 +221,17 @@ class Player(Game):
 
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
-        st = 'ID: {}, Name: {}, Position: {}, Stack Size: {}'.format(str(st))
-        return st
+        return 'ID: {}, Name: {}, Position: {}, Stack Size: {}'.format(str(self.ID), str(self.name), str(self.position), str(self.stack_size))
+        
 
-    def take_action(self, card_holding):
-        self.hand_evaluate_preflop(card_holding)
-        self.hand_evaluate_postflop(card_holding)
+   
 
-    def hand_evaluate_preflop(self, card_holding):
+    def hand_evaluate_preflop(self):
         he = HandEvaluation(self.card_holding, self.name, event = 'Preflop') #Unique to player instance
-        print(he) 
+        evaluation, rc, score_desc, event = he.get_evaluation()
+        return he, evaluation, rc, score_desc, event 
 
-    def hand_evaluate_postflop(self, card_holding):
+    def hand_evaluate_flop(self, card_holding):
         limit = 5
         he = HandEvaluation(self.card_holding, self.name, event = 'Flop') #Unique to player instance
         print(he)   
