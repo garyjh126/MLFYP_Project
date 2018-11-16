@@ -10,6 +10,7 @@ import pyinotify
 from treys import *
 import regret_matching_poker
 
+most_recent_file_changed = ''
 
 class HandEvaluation():
 
@@ -78,52 +79,14 @@ class HandEvaluation():
     def get_evaluation(self):
         return self.evaluation
 
-class MyEventHandler(pyinotify.ProcessEvent):
-    def process_IN_ACCESS(self, event):
-        pass #print "ACCESS event:", event.pathname
 
-    def process_IN_ATTRIB(self, event):
-        pass #print "ATTRIB event:", event.pathname
 
-    def process_IN_CLOSE_NOWRITE(self, event):
-        pass #print "CLOSE_NOWRITE event:", event.pathname
 
-    def process_IN_CLOSE_WRITE(self, event):
-        print("CLOSE_WRITE event:", event.pathname)
-
-    def process_IN_CREATE(self, event):
-        pass #print "CREATE event:", event.pathname
-
-    def process_IN_DELETE(self, event):
-        pass #print "DELETE event:", event.pathname
-
-    def process_IN_MODIFY(self, event):
-        pass #print "MODIFY event:", event.pathname
-
-    def process_IN_OPEN(self, event):
-        pass #print "OPEN event:", event.pathname
-
-class main_watch_manager():
-    
-    def __init__(self, communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
-        self.communication_files_directory = communication_files_directory
-
-        # watch manager
-        wm = pyinotify.WatchManager()
-        wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
-
-        # event handler
-        eh = MyEventHandler()
-
-        # notifier
-        notifier = pyinotify.Notifier(wm, eh)
-        notifier.loop()
-
-    def get_status_from_GHB_file(self, GHB_file):
-        data = ''
-        with open(self.communication_files_directory + GHB_file, 'rt') as f:
-            data = f.read()
-        return data
+def get_status_from_GHB_file(GHB_file, player_mwm):
+    data = ''
+    with open(player_mwm.communication_files_directory + GHB_file, 'rt') as f:
+        data = f.read()
+    return data
 
 
 '''
@@ -147,8 +110,8 @@ class Game:
         self.table = Table(self.player_list, positions_at_table)
         self.max_game = max_game
         self.parse_data_from_GHB()
-        self.preflop()
-        
+        #self.preflop()
+        #print(most_recent_file_changed)
 
     def preflop(self):
         for player in self.player_list:             
@@ -161,17 +124,18 @@ class Game:
             #make_action()
 
     def flop(self):
+        pass
         player.hand_evaluate_flop(card_holding)
 
     def parse_data_from_GHB(self):
 
         for player in self.player_list: 
             # Instantiate watch manager here 
-            player.mwm_bot = main_watch_manager()   
+            player.mwm_bot = main_watch_manager(player)  ## inside here is an event handler that will respond to writing of files 
             player_mwm = player.mwm_bot
-            GHB_Status = player_mwm.get_status_from_GHB_file(player.GHB_file)
+            #GHB_Status = get_status_from_GHB_file(player.GHB_file, player_mwm)
+            #player.card_holding = player.GHB_Parsing(GHB_Status) #check cards
 
-            player.card_holding = player.GHB_Parsing(GHB_Status) #check cards
             #player.take_action(card_holding)
             # self.compute_starting_random_actions(player)
 
@@ -201,6 +165,67 @@ class Game:
 
     def make_action(self):
         pass
+
+
+class MyEventHandler(pyinotify.ProcessEvent):
+    def my_init(self, player):
+        """
+        This is your constructor it is automatically called from
+        ProcessEvent.__init__(), And extra arguments passed to __init__() would
+        be delegated automatically to my_init().
+        """
+        self.player = player
+
+    def process_IN_ACCESS(self, event):
+        pass #print "ACCESS event:", event.pathname
+
+    def process_IN_ATTRIB(self, event):
+        pass #print "ATTRIB event:", event.pathname
+
+    def process_IN_CLOSE_NOWRITE(self, event):
+        pass #print "CLOSE_NOWRITE event:", event.pathname
+
+    def process_IN_CLOSE_WRITE(self, event):
+        ### declaring a bot_number and event_type 
+        global file_changed
+        arr = re.split(r'[/]',event.pathname)
+        most_recent_file_changed = (arr[len(arr)-1])
+        last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
+        bot_number = last_letter if (last_letter =='0' or last_letter == '1') else ''
+        event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
+        print(event_type+bot_number)
+        print(self.player)
+        #get_status_from_GHB_file(event_type+bot_number, Game.player_mwm)
+
+    def process_IN_CREATE(self, event):
+        pass #print "CREATE event:", event.pathname
+
+    def process_IN_DELETE(self, event):
+        pass #print "DELETE event:", event.pathname
+
+    def process_IN_MODIFY(self, event):
+        pass #print "MODIFY event:", event.pathname
+
+    def process_IN_OPEN(self, event):
+        pass #print "OPEN event:", event.pathname
+
+class main_watch_manager():
+    
+    def __init__(self, player, communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
+        self.communication_files_directory = communication_files_directory
+        self.player = player
+        # watch manager
+        wm = pyinotify.WatchManager()
+        wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
+
+        # event handler
+        eh = MyEventHandler(1)
+
+        # notifier
+        notifier = pyinotify.Notifier(wm, eh)
+        notifier.loop()
+
+
 
 class Player(Game):
 
