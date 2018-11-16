@@ -13,15 +13,19 @@ import regret_matching_poker
 
 class HandEvaluation():
 
-    def __init__(self, card_holding, evaluation = None):
+    def __init__(self, card_holding, playerID, evaluation = None, event = "Preflop"):
         self.card_holding = card_holding
         self.card_a, self.card_b = self.parse_cards()
-        self.evaluation = self.evaluate()
+        self.evaluation = self.evaluate(event)
         self.rc = ''
+        self.event = event
+        self.playerID = playerID
+
     def __str__(self):
-        st = "\nCards: {}{}\n".format(Card.int_to_pretty_str(self.hand[0]), Card.int_to_pretty_str(self.hand[1]))
+        st = "{}\t\t Player ID: {}\n".format(self.event, self.playerID) if self.event=="Preflop" else "{}\t\t\t Player ID: {}\n".format(self.event, self.playerID) 
+        st += "Cards: {}{}\n".format(Card.int_to_pretty_str(self.hand[0]), Card.int_to_pretty_str(self.hand[1]))
         st += "Board {}{}{}\n".format(Card.int_to_pretty_str(self.board[0]), Card.int_to_pretty_str(self.board[1]), Card.int_to_pretty_str(self.board[2]))
-        st += "Evaluation: {} ({}), Rank_Class: {}, \n".format(self.evaluation[0], self.evaluation[2], self.evaluation[1])
+        st += "Evaluation: {} ({}), Rank_Class: {}, \n".format(self.evaluation[0], self.evaluation[2], self.evaluation[1]) if self.event=="Preflop" else "Evaluation: {} ({}), Rank_Class: {}, \n-----------------".format(self.evaluation[0], self.evaluation[2], self.evaluation[1])
         return st
 
     def parse_cards(self):
@@ -34,26 +38,41 @@ class HandEvaluation():
     
         return [a_card, b_card]
 
-    def setup_board(self, board):
+    def setup_board(self, board, random = False):
         #Example board -- DEBUG
+        b = []
         if board == None:
-            board = [
+            b = [
                 Card.new('Ah'),
                 Card.new('Kd'),
                 Card.new('Jc')
             ]
-        
-        return board
+        if random == True:
+            b = [
+                Card.new('Ad'),
+                Card.new('Kd'),
+                Card.new('Jd')
+            ] 
+        return b
 
-    def evaluate(self):
-        global evaluation
-        self.board = self.setup_board(None)
-        self.hand = self.parse_cards()
+    def evaluate(self, event):
         evaluator = Evaluator()
-        evaluation = evaluator.evaluate(self.board, self.hand)
-        rc = self.rank_class(evaluator, evaluation)
-        score_desc = evaluator.class_to_string(rc)
-        return evaluation, rc, score_desc
+        if event == "Preflop":
+            self.board = self.setup_board(None, random = True)
+            self.hand = self.parse_cards()
+            evaluation = evaluator.evaluate(self.hand, self.board)
+            rc = self.rank_class(evaluator, evaluation)
+            score_desc = evaluator.class_to_string(rc)
+            return evaluation, rc, score_desc, event 
+        
+        elif event == "Flop":
+            self.board = self.setup_board(None, random = False)
+            self.hand = self.parse_cards()
+                   
+            evaluation = evaluator.evaluate(self.hand, self.board)
+            rc = self.rank_class(evaluator, evaluation)
+            score_desc = evaluator.class_to_string(rc)
+            return evaluation, rc, score_desc, event
 
     def get_evaluation(self):
         return self.evaluation
@@ -194,11 +213,29 @@ class Player(Game):
         return st
 
     def take_action(self, card_holding):
-        self.hand_evaluate(card_holding)
+        self.hand_evaluate_preflop(card_holding)
+        self.hand_evaluate_postflop(card_holding)
 
-    def hand_evaluate(self, card_holding):
-        he = HandEvaluation(self.card_holding) #Unique to player instance
-        print(he)
+    def hand_evaluate_preflop(self, card_holding):
+        he = HandEvaluation(self.card_holding, self.name, event = 'Preflop') #Unique to player instance
+        print(he) 
+
+    def hand_evaluate_postflop(self, card_holding):
+        limit = 5
+        he = HandEvaluation(self.card_holding, self.name, event = 'Flop') #Unique to player instance
+        print(he)   
+
+        #  for starting training, if hand is "sufficiently good" (If evaluation score is good), then c/r. 
+        # Otherwise fold. 
+
+        my_eval_score = he.get_evaluation()[0]
+        if my_eval_score < 3000:  ## Account for position
+            act = Bet(limit)
+        elif my_eval_score >= 3000 and my_eval_score < 7000:
+            act = Call(limit)
+        else:
+            #First check if free to fold but do this in subclass
+            act = Fold()
 
     def GHB_Parsing(self, GHB_Status):
         
@@ -321,7 +358,7 @@ class Table(Game):
 
 
 #INTERFACE
-class Action(object):
+class Action(Player):
 
     __metaclass_ = ABCMeta
 
