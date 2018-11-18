@@ -168,13 +168,13 @@ class Game:
 
 
 class MyEventHandler(pyinotify.ProcessEvent):
-    def my_init(self, player):
-        """
-        This is your constructor it is automatically called from
-        ProcessEvent.__init__(), And extra arguments passed to __init__() would
-        be delegated automatically to my_init().
-        """
-        self.player = player
+    # def my_init(self, player):
+    #     """
+    #     This is your constructor it is automatically called from
+    #     ProcessEvent.__init__(), And extra arguments passed to __init__() would
+    #     be delegated automatically to my_init().
+    #     """
+    #     self.player = player
 
     def process_IN_ACCESS(self, event):
         pass #print "ACCESS event:", event.pathname
@@ -219,7 +219,7 @@ class main_watch_manager():
         wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
 
         # event handler
-        eh = MyEventHandler(self.player)
+        eh = MyEventHandler()
 
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
