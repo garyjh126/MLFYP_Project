@@ -219,7 +219,7 @@ class main_watch_manager():
         wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
 
         # event handler
-        eh = MyEventHandler()
+        eh = MyEventHandler(self.player)
 
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
