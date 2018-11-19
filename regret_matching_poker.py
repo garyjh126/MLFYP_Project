@@ -82,9 +82,9 @@ class HandEvaluation():
 
 
 
-def get_status_from_GHB_file(GHB_file, player_mwm):
+def get_status_from_file(file_name):
     data = ''
-    with open(player_mwm.communication_files_directory + GHB_file, 'rt') as f:
+    with open('/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/' + file_name, 'rt') as f:
         data = f.read()
     return data
 
@@ -113,33 +113,28 @@ class Game:
         #self.preflop()
         #print(most_recent_file_changed)
 
-    def preflop(self):
-        for player in self.player_list:             
-            he, evaluation, rc, score_desc, _ =  player.hand_evaluate_preflop()
-            #print(evaluation, rc, score_desc)
-            evaluator = Evaluator()
-            card_str = '{}{}'.format(Card.int_to_pretty_str(he.parse_cards()[0]), Card.int_to_pretty_str(he.parse_cards()[1]))
-            print(card_str, evaluation, rc, score_desc)
+    # def preflop(self):
+    #     for player in self.player_list:             
+    #         he, evaluation, rc, score_desc, _ =  player.hand_evaluate_preflop()
+    #         #print(evaluation, rc, score_desc)
+    #         evaluator = Evaluator()
+    #         card_str = '{}{}'.format(Card.int_to_pretty_str(he.parse_cards()[0]), Card.int_to_pretty_str(he.parse_cards()[1]))
+    #         print(card_str, evaluation, rc, score_desc)
 
             #make_action()
 
-    def flop(self):
-        pass
-        player.hand_evaluate_flop(card_holding)
+    # def flop(self):
+    #     pass
+    #     player.hand_evaluate_flop(card_holding)
 
     def parse_data_from_GHB(self):
 
-        for player in self.player_list: 
-            # Instantiate watch manager here 
-            player.mwm_bot = main_watch_manager(player)  ## inside here is an event handler that will respond to writing of files 
-            player_mwm = player.mwm_bot
-            #GHB_Status = get_status_from_GHB_file(player.GHB_file, player_mwm)
-            #player.card_holding = player.GHB_Parsing(GHB_Status) #check cards
+        #player.take_action(card_holding)
+        # self.compute_starting_random_actions(player)
 
-            #player.take_action(card_holding)
-            # self.compute_starting_random_actions(player)
-
-
+        self.main_watch_manager = main_watch_manager(self.player_list)
+        #print(self.player_list[0].card_holding)
+        
     def create_cards_for_game(self):
         suits = ['h','c','s','d']
         li = []
@@ -166,15 +161,19 @@ class Game:
     def make_action(self):
         pass
 
+    
 
 class MyEventHandler(pyinotify.ProcessEvent):
-    def my_init(self, player):
+    casino_to_bot_list_b1 = []
+    times = 0
+    def my_init(self, **kargs):
         """
         This is your constructor it is automatically called from
         ProcessEvent.__init__(), And extra arguments passed to __init__() would
         be delegated automatically to my_init().
         """
-        self.player = player
+        self.player_list = kargs["player_list"]
+        
 
     def process_IN_ACCESS(self, event):
         pass #print "ACCESS event:", event.pathname
@@ -187,39 +186,85 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
+        #print(event.pathname)
         global file_changed
         arr = re.split(r'[/]',event.pathname)
         most_recent_file_changed = (arr[len(arr)-1])
         last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
         bot_number = last_letter if (last_letter =='0' or last_letter == '1') else ''
         event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
-        print(event_type+bot_number)
-        print(self.player)
-        #get_status_from_GHB_file(event_type+bot_number, Game.player_mwm)
+        filename = str(event_type+bot_number)
+        file_data = get_status_from_file(str(filename))
 
-    def process_IN_CREATE(self, event):
-        pass #print "CREATE event:", event.pathname
+        if event_type == "give_hand_bot":
+        
+            # for i in range(len(self.player_list)):
+            if bot_number == '0':
+                self.player_list[0].card_holding = self.player_list[0].GHB_Parsing(file_data) #check cards
+                #print(self.player_list[0].card_holding)
+                he, evaluation, rc, score_desc, _ = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
+                print(he, evaluation, rc, score_desc)
 
-    def process_IN_DELETE(self, event):
-        pass #print "DELETE event:", event.pathname
+            elif bot_number == '1':
+                self.player_list[1].card_holding = self.player_list[1].GHB_Parsing(file_data) #check cards
+                #print(self.player_list[0].card_holding)
+                he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
+                print(he, evaluation, rc, score_desc)
 
-    def process_IN_MODIFY(self, event):
-        pass #print "MODIFY event:", event.pathname
+        if event_type == "casinoToBot":   
+            
+            if bot_number == '0':
+                #self.player_list[0].game_state = self.casinoToBot_Parsing(file_data) #check cards
+                pass
 
-    def process_IN_OPEN(self, event):
-        pass #print "OPEN event:", event.pathname
+            elif bot_number == '1':
+                self.player_list[1].game_state.append(self.casinoToBot_Parsing(file_data)) #check cards
+                #print(self.player_list[1].game_state)
+
+ 
+
+    def casinoToBot_Parsing(self, file_data):
+        # <hand number> D <dealer button position> P <action by all players in order from first to 
+        # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
+        # T <turn card> T <turn action> R <river card> R <river action>
+
+        arr = re.split(r'[DPFFFFTTRR]',file_data)
+        # dictionary = {"hand_num" : arr[0],
+        #                 "button" : arr[1] ,
+        #                 "preflop_action" : arr[2],
+        #                 "flop_card_1" : arr[3] ,
+        #                 "flop_card_2" : arr[4],
+        #                 "flop_card_3" : arr[5] ,
+        #                 "flop_action" : arr[6] ,
+        #                 "turn_card" : arr[7],
+        #                 "turn_action" : arr[8],
+        #                 "river_card" : arr[9],
+        #                 "river_action" : arr[10]}
+       
+        for i in range(len(arr)):
+            print(i, arr[i], arr)
+            # if arr[i] not in self.casino_to_bot_list_b1:
+            if(arr[i] != self.casino_to_bot_list_b1[i])
+            
+            #     #return block
+            self.casino_to_bot_list_b1.append(arr[i])
+            #     return block
+
+        #return self.casino_to_bot_list_b1
+        
 
 class main_watch_manager():
-    
-    def __init__(self, player, communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
+    #build one for all players
+    def __init__(self, player_list ,communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
         self.communication_files_directory = communication_files_directory
-        self.player = player
+        self.player_list = player_list
         # watch manager
         wm = pyinotify.WatchManager()
         wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
 
         # event handler
-        eh = MyEventHandler(1)
+        kwargs = {"player_list": self.player_list}
+        eh = MyEventHandler(**kwargs)  #**kwargs
 
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
@@ -242,33 +287,57 @@ class Player(Game):
         self.GHB_file = GHB_file
         self.mwm = mwm
         self.stack_size = stack_size
+        self.game_state = []
         
-
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
         return 'ID: {}, Name: {}, Position: {}, Stack Size: {}'.format(str(self.ID), str(self.name), str(self.position), str(self.stack_size))
         
-
-   
-
-    def hand_evaluate_preflop(self):
-        he = HandEvaluation(self.card_holding, self.name, event = 'Preflop') #Unique to player instance
+    def hand_evaluate_preflop(self, card_holding, name):
+        he = HandEvaluation(card_holding, name, event = 'Preflop') #Unique to player instance
         evaluation, rc, score_desc, event = he.get_evaluation()
+        
+        self.take_action_flop(he, evaluation, rc, score_desc)
         return he, evaluation, rc, score_desc, event 
 
-    def hand_evaluate_flop(self, card_holding):
+    def take_action_flop(self, he, evaluation, rc, score_desc):
+        # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
+        # distinctly ranked hands in poker. Once again, refer to my blog post for a more mathematically complete explanation of why this is so.
         limit = 5
-        he = HandEvaluation(self.card_holding, self.name, event = 'Flop') #Unique to player instance
-        print(he)   
+        act = Action()
+        position = self.position
+        game_state = self.game_state
+        #print(position, game_state)
+
+        #self.CFR_table[]
+        cut_lower = 3000
+        cut_upper = 7000
+
+        # How tight do I want to play? This will determine the cut values. 
+        # It depends on my current position and values from the CFR table. 
+        # If a hand has a low evaluation but negative regret, then it may 
+        # be preferable to fold.
+
+        if evaluation < cut_lower:  ## Account for position
+            act = Bet(limit, self)
+        elif evaluation >= cut_lower and evaluation < cut_upper:
+            act = Call(limit, self)
+        else:
+            #First check if free to fold but do this in subclass
+            act = Fold()
+
+    def hand_evaluate_flop(self, card_holding, name):
+        limit = 5
+        he = HandEvaluation(self.card_holding, name, event = 'Flop') #Unique to player instance
+        #print(he)   
 
         #  for starting training, if hand is "sufficiently good" (If evaluation score is good), then c/r. 
         # Otherwise fold. 
-
         my_eval_score = he.get_evaluation()[0]
         if my_eval_score < 3000:  ## Account for position
-            act = Bet(limit)
+            act = Bet(limit, self)
         elif my_eval_score >= 3000 and my_eval_score < 7000:
-            act = Call(limit)
+            act = Call(limit, self)
         else:
             #First check if free to fold but do this in subclass
             act = Fold()
@@ -277,6 +346,8 @@ class Player(Game):
         
         # GHB_STATUS = <hand number>D<button position>A<holecard1>B<holecard2>
         # cards are 4 * rank + suit where rank is 0 .. 12 for deuce to ace, and suits is 0 .. 3
+
+        #restrict to just give_hand_bot files
         deck_size = 52
         arr = re.split(r'[DAB]',GHB_Status)
         suits = ['h','c','s','d']
@@ -310,8 +381,8 @@ class Player(Game):
        
         return self.card_holding
 
-        
-
+    
+    
 class CardHolding(Player):
 
     def __init__(self, name, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
@@ -394,11 +465,11 @@ class Table(Game):
 
 
 #INTERFACE
-class Action(Player):
+class Action(object):
 
     __metaclass_ = ABCMeta
 
-
+    communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
     @abstractmethod
     def determine_action(self): pass
 
@@ -417,25 +488,27 @@ class Action(Player):
 
 class Bet(Action):
 
-    def __init__(self, amount):
+    def __init__(self, amount, player):
         self.amount = amount
-
-    def determine_action(self):
-        pass
+        self.player = player
 
     def determine_table_stats(self):
         pass
 
     def send_file(self):
-        pass
+        btc_file = "botToCasino0" if self.player.name == "Adam" else "botToCasino1"
+        file_name = self.communication_files_directory + btc_file 
+        with open(file_name, 'wt') as f:
+            f.write('r')
 
     def populate_regret_table(self):
         pass
 
 
 class Call(Action):
-    def __init__(self, amount):
+    def __init__(self, amount, player):
         self.amount = amount
+        self.player = player
 
     def determine_if_this_action_works(self):
         pass
@@ -444,7 +517,10 @@ class Call(Action):
         pass
 
     def send_file(self):
-        pass
+        btc_file = "botToCasino0" if self.player.name == "Adam" else "botToCasino1"
+        file_name = self.communication_files_directory + btc_file 
+        with open(file_name, 'wt') as f:
+            f.write('c')
 
     def get_action_of_preceding_player(self):
         pass
@@ -455,8 +531,8 @@ class Call(Action):
 
 class Fold(Action):
 
-    def __init__(self, amount):
-        self.amount = amount
+    def __init__(self):
+        pass
 
     def determine_action(self):
         pass
