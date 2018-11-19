@@ -2,14 +2,20 @@
 #include "casino.h"
 #include "bot.h"
 #include <thread>
+#include <iostream>
+#include <WS2tcpip.h>
+
+// Include the Winsock library (lib) file
+#pragma comment (lib, "ws2_32.lib")
+
 //
-// casino methods: 
-// 
+// casino methods:
+//
 void Casino::shuffleDeck() { // randomly shuffles input deck todo only go to 2* players + 5
 	array<int, 52> orderedDeck; // contains all cards from 0 to 51
 	for (int i = 0; i < 52; i++)
 		orderedDeck[i] = i;
-	for (int i = 0; i < 52; i++) { 
+	for (int i = 0; i < 52; i++) {
 		int k = rand() % (52 - i); // next card drawn
 		int counter = 0;
 		for (int j = 0; j < 52; j++) { // we fetch k-th undrawn card, i.e. among those not = 99
@@ -19,11 +25,11 @@ void Casino::shuffleDeck() { // randomly shuffles input deck todo only go to 2* 
 			       orderedDeck[j] = 99;
 			       mDeck[i] = j;
 		       		break;
-			}		
-			
+			}
+
 		}
 	}
-	
+
 }
 
 void Casino::populateTable(){
@@ -56,7 +62,7 @@ void Casino::tellHandSummary() {
 		fout << mCurrentHand;
 	}
 	else {
-		ofstream fout("./botfiles/handSummaryOdd", ios_base::trunc); 
+		ofstream fout("./botfiles/handSummaryOdd", ios_base::trunc);
 		if (!fout.good()) {
 			cerr << "Error opening handSummaryOdd file " << endl;
 		}
@@ -75,7 +81,7 @@ void Casino::showdown(){
 		mCurrentHand += "W" + to_string(v);
 	}
 	mCurrentHand += 'E'; // end of hand
-}	
+}
 
 
 
@@ -89,11 +95,61 @@ void Casino::prepareNext() {
 }
 
 void Bot::tellAction(string handStatus) {
-	ofstream fout("./botfiles/casinoToBot" + to_string(getSeat()), ios_base::trunc); 
-	if (!fout.good()) {
-		cerr << "Error while opening output file for bot " << getSeat() << endl;
-	}
-	fout << handStatus;
+	// ofstream fout("./botfiles/casinoToBot" + to_string(getSeat()), ios_base::trunc);
+	// if (!fout.good()) {
+	// 	cerr << "Error while opening output file for bot " << getSeat() << endl;
+	// }
+	// fout << handStatus;
+	////////////////////////////////////////////////////////////
+		// INITIALIZE WINSOCK
+		////////////////////////////////////////////////////////////
+
+		// Structure to store the WinSock version. This is filled in
+		// on the call to WSAStartup()
+		WSADATA data;
+
+		// To start WinSock, the required version must be passed to
+		// WSAStartup(). This server is going to use WinSock version
+		// 2 so I create a word that will store 2 and 2 in hex i.e.
+		// 0x0202
+		WORD version = MAKEWORD(2, 2);
+
+		// Start WinSock
+		int wsOk = WSAStartup(version, &data);
+		if (wsOk != 0)
+		{
+			// Not ok! Get out quickly
+			cout << "Can't start Winsock! " << wsOk;
+			return;
+		}
+
+		////////////////////////////////////////////////////////////
+		// CONNECT TO THE SERVER
+		////////////////////////////////////////////////////////////
+
+		// Create a hint structure for the server
+		sockaddr_in server;
+		server.sin_family = AF_INET; // AF_INET = IPv4 addresses
+		server.sin_port = htons(54000); // Little to big endian conversion
+		inet_pton(AF_INET, "127.0.0.1", &server.sin_addr); // Convert from string to byte array
+
+		// Socket creation, note that the socket type is datagram
+		SOCKET out = socket(AF_INET, SOCK_DGRAM, 0);
+
+		// Write out to that socket
+		string s(argv[1]);
+		int sendOk = sendto(out, s.c_str(), s.size() + 1, 0, (sockaddr*)&server, sizeof(server));
+
+		if (sendOk == SOCKET_ERROR)
+		{
+			cout << "That didn't work! " << WSAGetLastError() << endl;
+		}
+
+		// Close the socket
+		closesocket(out);
+
+		// Close down Winsock
+		WSACleanup();
 }
 void Casino::getPreflopBets() {
 	table.clear();
@@ -153,7 +209,7 @@ void Casino::getPreflopBets() {
 char Bot::getAction(){
 	ifstream fin("./botfiles/botToCasino" + to_string(getSeat()));
 	if (!fin) {
-		cerr << "error opening file botToCasino" << getSeat()  << endl;	
+		cerr << "error opening file botToCasino" << getSeat()  << endl;
 		return 'e';
 	}
 	else {
@@ -171,7 +227,7 @@ char Bot::getAction(){
 
 void Casino::getFlopBets() {
 	for (int j = 0; j < nBots; j++){// get next to act front of queue
-		for (int i = 0; i < table.size(); i++){ 
+		for (int i = 0; i < table.size(); i++){
 			Bot* frontPlayer = table.front();
 			if (frontPlayer->getSeat() == ((mButton + j + 1) % nBots))
 				goto tableOrdered;
@@ -411,4 +467,3 @@ void Casino::printHandSummary() {
 	cout << endl << "hand history :" << endl;
 	cout << mCurrentHand << endl;
 }
-
