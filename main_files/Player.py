@@ -1,18 +1,25 @@
 from abc import abstractmethod, ABCMeta
 import re
 import Hand
+import low_level_functions as llf
+from includes import *
+
 class Player():
 
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
+        self.hand_num = 0
         self.cards = cards
         self.ID = ID
         self.name = name
         self.card_holding = card_holding
-        self.position = position
+        self.position = ''
         self.GHB_file = GHB_file 
         self.mwm = mwm
         self.stack_size = stack_size
         self.game_state = []
+        self.dealer_status = False
+        self.perspective_opposing_player = ''
+        self.available_options = []
         
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
@@ -21,28 +28,80 @@ class Player():
     def hand_evaluate_preflop(self, card_holding, name):
         he = Hand.HandEvaluation(card_holding, name, event = 'Preflop') #Unique to player instance
         evaluation, rc, score_desc, event = he.get_evaluation()
-        
-        self.take_action_flop(he, evaluation, rc, score_desc)
+        self.take_action_preflop(he, evaluation, rc, score_desc)
         return he, evaluation, rc, score_desc, event 
 
+    def take_action_preflop(self, he, evaluation, rc, score_desc):
+        # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
+        # distinctly ranked hands in poker. 
+        act = Action()
+        
+        is_dealer = self.dealer_status
+        #dealer is last to move on preflop
+        if(is_dealer): #if i_am_first_to_act_in_street == False: ## I am dealer
+            i_am_dealer(preceding_move)
+        else:
+            not_dealer(preceding_move)
+            # I am not dealer 
+            
+
+        def i_am_dealer(preceding_move):
+            #get preceding move
+            if(game_state[len(game_state)-1] == 'r'): 
+                # opposing player is strong/aggresive/trying to win pot
+                self.perspective_opposing_player = 'Aggressive'
+                # Available options: rcf
+
+                del self.available_options
+                self.available_options.append('r')
+                self.available_options.append('c')
+                self.available_options.append('f')
+
+            elif(game_state[len(game_state)-1] == 'c'):
+                # is_he_limping/seeing a flop cheaply?
+                self.perspective_opposing_player = 'Limping'
+                # Available options: rc
+
+                del self.available_options
+                self.available_options.append('r')
+                self.available_options.append('c')
+                
+
+            elif(game_state[len(game_state)-1] == 'f'): ## If player folds a free hand, there may be an ISSUE with bots strategy
+                # I won game
+                
+                del self.available_options
+
+            if evaluation < preflop_range_upper_truedealer: 
+                act = Bet(limit, self)
+            else:
+                act = Fold(self)
+            if 
+
+        def not_dealer(preceding_move):
+            pass
+        
+        # elif evaluation >= cut_lower and evaluation < cut_upper:
+        #     act = Call(limit, self)
+        # else:
+        #     #First check if free to fold but do this in subclass
+        #     act = Fold()
+       
     def take_action_flop(self, he, evaluation, rc, score_desc):
         # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
-        # distinctly ranked hands in poker. Once again, refer to my blog post for a more mathematically complete explanation of why this is so.
-        limit = 5
-        act = Action()
+        # distinctly ranked hands in poker. 
+        act = Action(self)
         position = self.position
-        game_state = self.game_state
-        #print(position, game_state)
+       
 
         #self.CFR_table[]
-        cut_lower = 3000
-        cut_upper = 7000
+    
 
         # How tight do I want to play? This will determine the cut values. 
         # It depends on my current position and values from the CFR table. 
         # If a hand has a low evaluation but negative regret, then it may 
         # be preferable to fold.
-
+        
         if evaluation < cut_lower:  ## Account for position
             act = Bet(limit, self)
         elif evaluation >= cut_lower and evaluation < cut_upper:
@@ -52,7 +111,6 @@ class Player():
             act = Fold()
 
     def hand_evaluate_flop(self, card_holding, name):
-        limit = 5
         he = Hand.HandEvaluation(self.card_holding, name, event = 'Flop') #Unique to player instance
         #print(he)   
 
@@ -67,44 +125,6 @@ class Player():
             #First check if free to fold but do this in subclass
             act = Fold()
 
-    def GHB_Parsing(self, GHB_Status):
-        
-        # GHB_STATUS = <hand number>D<button position>A<holecard1>B<holecard2>
-        # cards are 4 * rank + suit where rank is 0 .. 12 for deuce to ace, and suits is 0 .. 3
-
-        #restrict to just give_hand_bot files
-        deck_size = 52
-        arr = re.split(r'[DAB]',GHB_Status)
-        suits = ['h','c','s','d']
-        card_a = arr[2] #card from file / REPRESENTS INDEX OF SELF.CARDS
-        card_a_suit = ''
-        card_a_rank = ''
-        card_b = arr[3] #card from file / REPRESENTS INDEX OF SELF.CARDS
-        card_b_suit = ''
-        card_b_rank = ''
-        a,b,c,x,y,z = ('', '', '', '', '', '')
-        for card in self.cards:
-            if(str(self.cards.index(card)) == card_a):
-                if(len(card) == 2):
-                    a,b = card
-                # elif(len(card) == 3):
-                #     a,b,c = card
-                #     a = a+b
-                #     b = c
-            elif(str(self.cards.index(card))== card_b):
-                if(len(card) == 2):
-                    x,y = card
-                elif(len(card) == 3):
-                    x,y,z = card
-                    x = x+y
-                    y = z
-        card_a_rank = a
-        card_a_suit = b
-        card_b_rank = x
-        card_b_suit = y
-        self.card_holding = CardHolding(self.name,card_a_suit,card_a_rank,card_b_suit, card_b_rank)
-       
-        return self.card_holding
 
 class CardHolding(Player):
 
@@ -155,6 +175,7 @@ class Bet(Action):
     def __init__(self, amount, player):
         self.amount = amount
         self.player = player
+        print("Player: {} bets {}".format(player.ID, amount))
 
     def determine_table_stats(self):
         pass
@@ -173,7 +194,8 @@ class Call(Action):
     def __init__(self, amount, player):
         self.amount = amount
         self.player = player
-
+        print("Player: {} calls {}".format(player.ID, amount))
+        
     def determine_if_this_action_works(self):
         pass
 
@@ -195,8 +217,8 @@ class Call(Action):
 
 class Fold(Action):
 
-    def __init__(self):
-        pass
+    def __init__(self, player):
+        print("Player: {} folds".format(player.ID))
 
     def determine_action(self):
         pass

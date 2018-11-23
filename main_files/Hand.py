@@ -1,4 +1,4 @@
-import regret_matching_poker as rm_poker
+import main as rm_poker
 from treys import *
 class HandEvaluation():
 
