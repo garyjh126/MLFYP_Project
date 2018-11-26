@@ -3,6 +3,27 @@ import re
 import Hand
 import low_level_functions as llf
 from includes import *
+import heapq
+import main as main
+
+
+class PriorityQueue:
+    def __init__(self):
+        self._queue = []
+        self._index = 0
+    def push(self, item, priority):
+        heapq.heappush(self._queue, (-priority, self._index, item))
+        self._index += 1
+    def pop(self):
+        return heapq.heappop(self._queue)[-1]
+
+   
+
+class Item:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return 'Item({!r})'.format(self.name)
 
 class Player():
 
@@ -19,68 +40,101 @@ class Player():
         self.game_state = []
         self.dealer_status = False
         self.perspective_opposing_player = ''
-        self.available_options = []
+        #self.available_options = []
+        
         
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
         return 'ID: {}, Name: {}, Position: {}, Stack Size: {}'.format(str(self.ID), str(self.name), str(self.position), str(self.stack_size))
         
+    def get_opposing_player(self):
+        g = main.Game
+        player_list = g.return_table_list
+        for player_num in range(len(player_list)):
+            if player_list[player_num] == self:
+                if player_num == 0:
+                    return player_list[1]
+                elif player_num == 1:
+                    return player_list[0]
+        
+
     def hand_evaluate_preflop(self, card_holding, name):
         he = Hand.HandEvaluation(card_holding, name, event = 'Preflop') #Unique to player instance
         evaluation, rc, score_desc, event = he.get_evaluation()
-        self.take_action_preflop(he, evaluation, rc, score_desc)
-        return he, evaluation, rc, score_desc, event 
+        player_action = self.take_action_preflop(he, evaluation, rc, score_desc)
+        return he, evaluation, rc, score_desc, player_action
 
     def take_action_preflop(self, he, evaluation, rc, score_desc):
         # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
         # distinctly ranked hands in poker. 
         act = Action()
-        
-        is_dealer = self.dealer_status
-        #dealer is last to move on preflop
-        if(is_dealer): #if i_am_first_to_act_in_street == False: ## I am dealer
-            i_am_dealer(preceding_move)
-        else:
-            not_dealer(preceding_move)
-            # I am not dealer 
-            
-
-        def i_am_dealer(preceding_move):
+        q = PriorityQueue()
+        #print(self.name, self.game_state)
+        def i_am_dealer():
+            # Assuming no 3-bets
             #get preceding move
-            if(game_state[len(game_state)-1] == 'r'): 
+            
+            if(self.game_state[len(self.game_state)-1] == 'r'):     
+                
                 # opposing player is strong/aggresive/trying to win pot
                 self.perspective_opposing_player = 'Aggressive'
                 # Available options: rcf
+                #print("case 1\t", self.game_state[len(self.game_state)-1])
+                #print("\n")
 
-                del self.available_options
-                self.available_options.append('r')
-                self.available_options.append('c')
-                self.available_options.append('f')
-
-            elif(game_state[len(game_state)-1] == 'c'):
+                q.push(Item('Raise'), 1)
+                q.push(Item('Call'), 3)
+                q.push(Item('Fold'), 3)
+                #print("i_am_dealer_preflop_r")
+            elif(self.game_state[len(self.game_state)-1] == 'c'):
                 # is_he_limping/seeing a flop cheaply?
                 self.perspective_opposing_player = 'Limping'
                 # Available options: rc
+                #print("case 2\t", self.game_state[len(self.game_state)-1])
+                #print("\n")
 
-                del self.available_options
-                self.available_options.append('r')
-                self.available_options.append('c')
-                
+                q.push(Item('Raise'), 3)
+                q.push(Item('Call'), 2)
+                #print("i_am_dealer_preflop_c")
 
-            elif(game_state[len(game_state)-1] == 'f'): ## If player folds a free hand, there may be an ISSUE with bots strategy
+            elif(self.game_state[len(self.game_state)-1] == 'f'): ## If player folds a free hand, there may be an ISSUE with bots strategy
                 # I won game
-                
-                del self.available_options
+                #print("case 3\t", self.game_state[len(self.game_state)-1])
+                #print("\n")
+                pass
 
-            if evaluation < preflop_range_upper_truedealer: 
+        def not_dealer():
+            # Has first move 
+            if evaluation < preflop_range_upper_notdealer: 
                 act = Bet(limit, self)
+                #print("case 4\n")
             else:
-                act = Fold(self)
-            if 
+                act = Call(limit, self)
+                #print("case 5\n")
+            
 
-        def not_dealer(preceding_move):
-            pass
+
+        #act = Bet(limit, self)
+            # if evaluation < preflop_range_upper_truedealer: 
+            #     act = Bet(limit, self)
+            # else:
+            #     act = Fold(self)
+            # if 
+
         
+       
+
+        is_dealer = self.dealer_status
+        #dealer is last to move on preflop
+        if(is_dealer): #if i_am_first_to_act_in_street == False: ## I am dealer
+            i_am_dealer()
+
+        else:
+            not_dealer()
+            # I am not dealer 
+            
+        return act
+         
         # elif evaluation >= cut_lower and evaluation < cut_upper:
         #     act = Call(limit, self)
         # else:
@@ -175,14 +229,19 @@ class Bet(Action):
     def __init__(self, amount, player):
         self.amount = amount
         self.player = player
-        print("Player: {} bets {}".format(player.ID, amount))
+        self.send_file()
+        #print("Player: {} bets {}".format(player.ID, amount))
+
 
     def determine_table_stats(self):
         pass
 
     def send_file(self):
-        btc_file = "botToCasino0" if self.player.name == "Adam" else "botToCasino1"
+        
+        btc_file = "/botToCasino0" if self.player.name == "Adam" else "/botToCasino1"
+        print("printing bet to file", btc_file)
         file_name = self.communication_files_directory + btc_file 
+        #print(file_name)
         with open(file_name, 'wt') as f:
             f.write('r')
 
@@ -194,7 +253,8 @@ class Call(Action):
     def __init__(self, amount, player):
         self.amount = amount
         self.player = player
-        print("Player: {} calls {}".format(player.ID, amount))
+        self.send_file()
+        #print("Player: {} calls {}".format(player.ID, amount))
         
     def determine_if_this_action_works(self):
         pass
@@ -203,7 +263,9 @@ class Call(Action):
         pass
 
     def send_file(self):
-        btc_file = "botToCasino0" if self.player.name == "Adam" else "botToCasino1"
+        
+        btc_file = "/botToCasino0" if self.player.name == "Adam" else "/botToCasino1"
+        print("printing call to file", btc_file)
         file_name = self.communication_files_directory + btc_file 
         with open(file_name, 'wt') as f:
             f.write('c')

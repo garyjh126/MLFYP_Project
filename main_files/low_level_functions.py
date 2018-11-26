@@ -24,16 +24,21 @@ def create_cards_for_game(self):
             
     return li
 
-def casinoToBot_Parsing(self, file_data, plr, player_list):
+def append_to_game_state(self, file_data):
+    pass
+
+def casinoToBot_Parsing(self, file_data, plr, player_list, player_action):
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
     # T <turn card> T <turn action> R <river card> R <river action>
 
     arr =  re.split(r'[DPFFFFTTRR]',file_data)
+    print(arr)
+    #print("arr from low level functions yet to be updated", arr)
 
     if arr[0] != None:
         plr.hand_num = arr[0]
-   
+    
     if arr[1] != None:
         for i in range(len(player_list)):
             if str(arr[1]) == str(i):
@@ -42,8 +47,9 @@ def casinoToBot_Parsing(self, file_data, plr, player_list):
             else: 
                 player_list[i].dealer_status = False
                 player_list[i].position = "BB"
-            
-
+    
+    #arr[2] = player_action
+    print(plr, arr)
     # dictionary = {"hand_num" : arr[0],
     #             "button" : arr[1] ,
     #             "preflop_action" : arr[2],

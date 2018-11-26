@@ -22,8 +22,8 @@ class Game:
     def __init__(self, max_game=5):
         global cards
         cards =  llf.create_cards_for_game(self)
-        Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), 'BTN', '/give_hand_bot0', cards, None)
-        Player2 = p.Player(1 ,'Bill', p.CardHolding('-','-','-','-','-'), 'SB', '/give_hand_bot1', cards, None)
+        Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot0', cards, None)
+        Player2 = p.Player(1 ,'Bill', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot1', cards, None)
         #Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-','-'), 'BB', '/give_hand_bot2', cards, None)
         #Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-','-'), 'CO', '/give_hand_bot3', cards, None)
         self.player_list = [Player1, Player2] #, Player3, Player4]
@@ -35,14 +35,18 @@ class Game:
     def parse_data_from_GHB(self):
 
         self.main_watch_manager = main_watch_manager(self.player_list)
-        
+
+    def return_table_list(self):
+        return self.player_list
 
 def get_status_from_file(file_name):
     data = ''
     with open('/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/' + file_name, 'rt') as f:
         data = f.read()
     return data
-    
+
+   
+        
 
 class MyEventHandler(pyinotify.ProcessEvent):
 
@@ -55,9 +59,49 @@ class MyEventHandler(pyinotify.ProcessEvent):
         """
         self.player_list = kargs["player_list"]
 
+    # def process_IN_ACCESS(self, event):
+    #     print("ACCESS event:", event.pathname)
+
+    # def process_IN_ATTRIB(self, event):
+    #     print("ATTRIB event:", event.pathname)
+
+    # def process_IN_CLOSE_NOWRITE(self, event):
+    #     print("CLOSE_NOWRITE event:", event.pathname)
+
+    # def process_IN_MODIFY(self, event):
+    #     print("MODIFY event:", event.pathname)
+
+    def process_IN_OPEN(self, event):
+        
+        global file_changed
+        arr = re.split(r'[/]',event.pathname)
+        most_recent_file_changed = (arr[len(arr)-1])
+        last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
+        bot_number = last_letter if (last_letter =='0' or last_letter == '1') else ''
+        event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
+        filename = str(event_type+bot_number)
+        file_data = ""
+        
+        if event_type == "botToCasino":
+            print("IN_OPEN event:", event.pathname)
+            
+            print(file_data)
+            if bot_number == '1':
+                file_data = get_status_from_file(str("casinoToBot1"))
+                player_action = ''
+                self.player_list[0].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[0], self.player_list, player_action)) #check cards
+            
+            elif bot_number == '0':
+                file_data = get_status_from_file(str("casinoToBot0"))
+                player_action = ''
+                self.player_list[1].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
+            #self.player_list[bot_number].game_state = llf.append_to_game_state(file_data)
+            
+
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
-       # print(event.pathname)
+        print("IN_CLOSE_WRITE event:", event.pathname)
+        
         global file_changed
         arr = re.split(r'[/]',event.pathname)
         most_recent_file_changed = (arr[len(arr)-1])
@@ -66,7 +110,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
-
+        #print(file_data)
         if event_type == "give_hand_bot":
         
             if bot_number == '0':
@@ -88,17 +132,22 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
                 #bot 1 now has his cards
 
-        if event_type == "casinoToBot":   
+        if event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
             
             if bot_number == '0':
-                self.player_list[0].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[0], self.player_list)) #check cards
-                he, evaluation, rc, score_desc, _ = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
+                he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
+                self.player_list[0].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[0], self.player_list, player_action)) #check cards
+                #self.player_list[1].game_state =  (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
+                
                 #print(he, evaluation, rc, score_desc)
                 #print(self.player_list[0].game_state)
 
             elif bot_number == '1':
-                self.player_list[1].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list)) #check cards
-                he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
+                he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
+                self.player_list[1].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
+                
+                #print(self.player_list[1].game_state)
+                
                 #print(he, evaluation, rc, score_desc)
                 #print(self.player_list[1].game_state)
 

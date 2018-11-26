@@ -2,7 +2,7 @@ limit = 2
 
 #preflop ranges (Dealer moves last)
 preflop_range_upper_truedealer = 7000
-preflop_range_upper_notdealer = 5000
+preflop_range_upper_notdealer = 5000  # CHANGED FOR TESTING. Needs to be changed back.
 
 #flop ranges (Dealer moves first)
 postflop_range_upper_truedealer = 4000
