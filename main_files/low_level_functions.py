@@ -24,18 +24,28 @@ def create_cards_for_game(self):
             
     return li
 
-def append_to_game_state(self, file_data):
-    pass
+def casinoToBot_ParsingUpdateUniversal(self, file_data_original_change, plr, player_list, player_action):
+    
+    arr =  re.split(r'[DPFFFFTTRR]',file_data_original_change)
+    pre_flop_last_move = arr[2]
+    btc_file = "/casinoToBotUniversal"
+    file_name = communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles' + btc_file 
+    with open(file_name, 'wt') as f:
+        f.append(pre_flop_last_move)
+        f.close()
+    print("last_move:", pre_flop_last_move)
+    
 
-def casinoToBot_Parsing(self, file_data, plr, player_list, player_action):
+def casinoToBot_ParsingRead(self, file_data_original_change, plr, player_list):
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
     # T <turn card> T <turn action> R <river card> R <river action>
 
-    arr =  re.split(r'[DPFFFFTTRR]',file_data)
-    print(arr)
-    #print("arr from low level functions yet to be updated", arr)
+    arr =  re.split(r'[DPFFFFTTRR]',file_data_original_change)
+    #print("inside casinoToBot_Parsing printing original reading of file: ", arr)
+    
 
+    #print("arr from low level functions yet to be updated", arr)
     if arr[0] != None:
         plr.hand_num = arr[0]
     
@@ -47,21 +57,6 @@ def casinoToBot_Parsing(self, file_data, plr, player_list, player_action):
             else: 
                 player_list[i].dealer_status = False
                 player_list[i].position = "BB"
-    
-    #arr[2] = player_action
-    print(plr, arr)
-    # dictionary = {"hand_num" : arr[0],
-    #             "button" : arr[1] ,
-    #             "preflop_action" : arr[2],
-    #             "flop_card_1" : arr[3] ,
-    #             "flop_card_2" : arr[4],
-    #             "flop_card_3" : arr[5] ,
-    #             "flop_action" : arr[6] ,
-    #             "turn_card" : arr[7],
-    #             "turn_action" : arr[8],
-    #             "river_card" : arr[9],
-    #             "river_action" : arr[10]}
-
 
     return arr
 

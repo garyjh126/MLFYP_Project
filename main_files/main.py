@@ -85,17 +85,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         if event_type == "botToCasino":
             print("IN_OPEN event:", event.pathname)
             
-            print(file_data)
-            if bot_number == '1':
-                file_data = get_status_from_file(str("casinoToBot1"))
-                player_action = ''
-                self.player_list[0].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[0], self.player_list, player_action)) #check cards
             
-            elif bot_number == '0':
-                file_data = get_status_from_file(str("casinoToBot0"))
-                player_action = ''
-                self.player_list[1].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
-            #self.player_list[bot_number].game_state = llf.append_to_game_state(file_data)
             
 
     def process_IN_CLOSE_WRITE(self, event):
@@ -135,21 +125,21 @@ class MyEventHandler(pyinotify.ProcessEvent):
         if event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
             
             if bot_number == '0':
+                p.Player.game_state = (llf.casinoToBot_ParsingRead(self, file_data, self.player_list[0], self.player_list)) #check cards
                 he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
-                self.player_list[0].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[0], self.player_list, player_action)) #check cards
-                #self.player_list[1].game_state =  (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
-                
-                #print(he, evaluation, rc, score_desc)
-                #print(self.player_list[0].game_state)
+                llf.casinoToBot_ParsingUpdateUniversal(self, file_data, self.player_list[0], self.player_list, player_action)
 
             elif bot_number == '1':
+                p.Player.game_state = (llf.casinoToBot_ParsingRead(self, file_data, self.player_list[1], self.player_list)) #check cards
                 he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
-                self.player_list[1].game_state = (llf.casinoToBot_Parsing(self, file_data, self.player_list[1], self.player_list, player_action)) #check cards
+                llf.casinoToBot_ParsingUpdateUniversal(self, file_data, self.player_list[1], self.player_list, player_action)
                 
+                #print("Game state after : ", p.Player.game_state)
                 #print(self.player_list[1].game_state)
                 
                 #print(he, evaluation, rc, score_desc)
                 #print(self.player_list[1].game_state)
+
 
 
 class main_watch_manager():
