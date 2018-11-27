@@ -69,27 +69,31 @@ class Player():
                     return player_list[0]
         
 
-    def hand_evaluate_preflop(self, card_holding, name):
+    def hand_evaluate_preflop(self, card_holding, name, is_preflop_action_filled):
         he = Hand.HandEvaluation(card_holding, name, event = 'Preflop') #Unique to player instance
         evaluation, rc, score_desc, event = he.get_evaluation()
-        player_action = self.take_action_preflop(he, evaluation, rc, score_desc)
+        player_action = self.take_action_preflop(he, evaluation, rc, score_desc, is_preflop_action_filled)
         return he, evaluation, rc, score_desc, player_action
 
-    def take_action_preflop(self, he, evaluation, rc, score_desc):
+    def take_action_preflop(self, he, evaluation, rc, score_desc, is_preflop_action_filled):
         # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
         # distinctly ranked hands in poker. 
         
         q = PriorityQueue()
-        last_seq_move = Player.game_state['action_preflop']
-        last_move = last_seq_move[-1]
+        last_seq_move = ''
+        last_move = ''
+        if is_preflop_action_filled:
+            last_seq_move = Player.game_state['action_preflop']
+            last_move = last_seq_move[-1]
 
         def i_am_dealer():
 
             #print("last move: ", Player.game_state['action_preflop'])
             # Assuming no 3-bets
             #get preceding move
-            
-            print("last_move: ", last_move)
+            if last_move != '':
+                print("last_move: ", last_move)
+
             if(last_move == 'r'):     
                 
                 # opposing player is strong/aggresive/trying to win pot
@@ -144,18 +148,24 @@ class Player():
                     return act_string
 
             ## facing 2nd go:
-            elif len(last_seq_move) == 2:
+            elif len(last_seq_move) >= 2:  # (use >= because of 'r' autocompleting rest of sequence)
+                ## Need to fix casino which autompletes [0,0,'c'] to [0, 0, 'crc', 41, 2, 33]
                 if last_move == 'r':
+                    print("Case 6")
                     act = Call(limit, self)
                     act_string = 'c'
                     return act_string
 
         is_dealer = self.dealer_status
         if(is_dealer):
+            print("i_am_dealer")
             action_taken = i_am_dealer()
+            
             return action_taken
         else:
+            print("not_dealer")
             action_taken = not_dealer()
+            
             return action_taken
             # I am not dealer 
      

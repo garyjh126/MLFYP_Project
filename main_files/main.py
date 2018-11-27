@@ -126,15 +126,15 @@ class MyEventHandler(pyinotify.ProcessEvent):
             
             if bot_number == '0':
                 is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[0], self.player_list) #check cards
-                if is_preflop_action_filled:
-                    he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)   
-                
+                #if is_preflop_action_filled:
+                he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name, is_preflop_action_filled)   
+                print("BOTNumber0 complete\n")
 
             elif bot_number == '1':
                 is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[1], self.player_list) #check cards
-                if is_preflop_action_filled:
-                    he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)   
-
+                #if is_preflop_action_filled:
+                he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name, is_preflop_action_filled)   
+                print("BOTNumber1 complete\n")
                 #llf.casinoToBot_ParsingUpdateUniversal(self, file_data, self.player_list[1], self.player_list, player_action)
                 
                 #print("Game state after : ", p.Player.game_state)

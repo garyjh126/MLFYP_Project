@@ -42,7 +42,7 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list):
     # T <turn card> T <turn action> R <river card> R <river action>
     is_preflop_action_filled = True
     file_data_change_CTB =  re.split(r'[DPFFFFTTRR]',file_data_change_CTB)
-    print(file_data_change_CTB)
+    print(plr, file_data_change_CTB)
     
     # Here we must update the local static game_state variable to the status read from CasinoToBot
 
