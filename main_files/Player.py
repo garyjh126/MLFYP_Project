@@ -26,7 +26,18 @@ class Item:
         return 'Item({!r})'.format(self.name)
 
 class Player():
-    game_state = []
+    game_state = {'hand_no': '',
+                'dealer_position': '',
+                'action_preflop': '',
+                'flop1': '',
+                'flop2': '',
+                'flop3': '',
+                'action_flop': '',
+                'turn': '',
+                'action_turn': '',
+                'river': '',
+                'action_river': ''}
+
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         self.hand_num = 0
         self.cards = cards
@@ -69,98 +80,85 @@ class Player():
         # distinctly ranked hands in poker. 
         
         q = PriorityQueue()
-        #print(self.name, self.game_state)
+        last_seq_move = Player.game_state['action_preflop']
+        last_move = last_seq_move[-1]
+
         def i_am_dealer():
 
-            print("last move: ", Player.game_state[len(Player.game_state)-1])
+            #print("last move: ", Player.game_state['action_preflop'])
             # Assuming no 3-bets
             #get preceding move
             
-            if(Player.game_state[len(Player.game_state)-1] == 'r'):     
+            print("last_move: ", last_move)
+            if(last_move == 'r'):     
                 
                 # opposing player is strong/aggresive/trying to win pot
                 self.perspective_opposing_player = 'Aggressive'
                 # Available options: rcf
-                #print("case 1\t", self.game_state[len(self.game_state)-1])
-                #print("\n")
 
                 q.push(Item('Raise'), 1)
                 q.push(Item('Call'), 3)
                 q.push(Item('Fold'), 3)
-
+                print("Case 1")
                 act = Call(limit, self)
                 return act
-                #print("i_am_dealer_preflop_r")
-            elif(Player.game_state[len(Player.game_state)-1] == 'c'):
+
+            elif(last_move == 'c'):
                 # is_he_limping/seeing a flop cheaply?
                 self.perspective_opposing_player = 'Limping'
                 # Available options: rc
-                #print("case 2\t", self.game_state[len(self.game_state)-1])
                 #print("\n")
 
                 q.push(Item('Raise'), 3)
                 q.push(Item('Call'), 2)
-
+                print("Case 2")
                 act = Bet(limit, self)
                 return act
-                #print("i_am_dealer_preflop_c")
 
-            elif(Player.game_state[len(Player.game_state)-1] == 'f'): ## If player folds a free hand, there may be an ISSUE with bots strategy
+            elif(last_move == 'f'): ## If player folds a free hand, there may be an ISSUE with bots strategy
                 # I won game
-                #print("case 3\t", self.game_state[len(self.game_state)-1])
                 #print("\n")
+                print("Case 3")
                 pass
 
         def not_dealer():
-            act_string = 'a'
             # Has first move 
-            #global act_string
-            if evaluation < preflop_range_upper_notdealer: 
-                
 
-                act = Bet(limit, self)
-                #global act_string
-                #print("case 4\n")
-                act_string = 'r'
-                #print(act_string)
-                return act_string
+            if len(last_seq_move) == 1:
+                act_string = 'a'
+                if evaluation < preflop_range_upper_notdealer: 
+                    print("Case 4")
+                    act = Bet(limit, self)
+                    #global act_string
+                    #print("case 4\n")
+                    act_string = 'r'
+                    #print(act_string)
+                    return act_string
+                    
+                else:
+                    print("Case 5")
+                    act = Call(limit, self)
+                    #global act_string
+                    #print("case 5\n")
+                    act_string = 'c'
+                    return act_string
 
-            else:
-
-                act = Call(limit, self)
-                #global act_string
-                #print("case 5\n")
-                act_string = 'c'
-                return act_string
-            #print("act_string", act_string)
-        #act = Bet(limit, self)
-            # if evaluation < pref  lop_range_upper_truedealer: 
-            #     act = Bet(limit, self)
-            # else:
-            #     act = Fold(self)
-            # if 
-
-        
-       
+            ## facing 2nd go:
+            elif len(last_seq_move) == 2:
+                if last_move == 'r':
+                    act = Call(limit, self)
+                    act_string = 'c'
+                    return act_string
 
         is_dealer = self.dealer_status
-        #dealer is last to move on preflop
-        if(is_dealer): #if i_am_first_to_act_in_street == False: ## I am dealer
+        if(is_dealer):
             action_taken = i_am_dealer()
             return action_taken
-
         else:
             action_taken = not_dealer()
             return action_taken
             # I am not dealer 
-            
-        
-         
-        # elif evaluation >= cut_lower and evaluation < cut_upper:
-        #     act = Call(limit, self)
-        # else:
-        #     #First check if free to fold but do this in subclass
-        #     act = Fold()
+     
        
     def take_action_flop(self, he, evaluation, rc, score_desc):
         # Hand strength is valued on a scale of 1 to 7462, where 1 is a Royal Flush and 7462 is unsuited 7-5-4-3-2, as there are only 7642 
@@ -255,7 +253,7 @@ class Bet(Action):
         self.amount = amount
         self.player = player
         self.send_file()
-        #print("Player: {} bets {}".format(player.ID, amount))
+        print("Player: {} bets {}".format(player.ID, amount))
 
     def __str__(self): 
         return "r"
@@ -266,9 +264,7 @@ class Bet(Action):
     def send_file(self):
         
         btc_file = "/botToCasino0" if self.player.name == "Adam" else "/botToCasino1"
-        #print("printing bet to file", btc_file)
         file_name = self.communication_files_directory + btc_file 
-        #print(file_name)
         with open(file_name, 'wt') as f:
             f.write('r')
             f.close()
@@ -285,7 +281,7 @@ class Call(Action):
         self.amount = amount
         self.player = player
         self.send_file()
-        #print("Player: {} calls {}".format(player.ID, amount))
+        print("Player: {} calls".format(player.ID))
         
     def __str__(self): 
         return "c"
@@ -302,7 +298,6 @@ class Call(Action):
     def send_file(self):
         
         btc_file = "/botToCasino0" if self.player.name == "Adam" else "/botToCasino1"
-        #print("printing call to file", btc_file)
         file_name = self.communication_files_directory + btc_file 
         with open(file_name, 'wt') as f:
             f.write('c')

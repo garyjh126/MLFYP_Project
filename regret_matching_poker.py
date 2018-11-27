@@ -176,13 +176,19 @@ class MyEventHandler(pyinotify.ProcessEvent):
         
 
     def process_IN_ACCESS(self, event):
-        pass #print "ACCESS event:", event.pathname
+        print "ACCESS event:", event.pathname
 
     def process_IN_ATTRIB(self, event):
-        pass #print "ATTRIB event:", event.pathname
+        print "ATTRIB event:", event.pathname
 
     def process_IN_CLOSE_NOWRITE(self, event):
-        pass #print "CLOSE_NOWRITE event:", event.pathname
+        print "CLOSE_NOWRITE event:", event.pathname
+
+     def process_IN_MODIFY(self, event):
+        print "MODIFY event:", event.pathname
+
+    def process_IN_OPEN(self, event):
+        print "OPEN event:", event.pathname
 
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 

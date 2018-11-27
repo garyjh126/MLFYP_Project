@@ -100,7 +100,6 @@ void Bot::tellAction(string handStatus) {
 		cerr << "Error while opening output file for bot " << getSeat() << endl;
 	}
 	fout << handStatus;
-	
 }
 void Casino::getPreflopBets() {
 	table.clear();
