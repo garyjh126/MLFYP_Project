@@ -8,6 +8,7 @@
 // Include the Winsock library (lib) file
 //#pragma comment (lib, "ws2_32.lib")
 
+
 //
 // casino methods:
 //
@@ -102,18 +103,21 @@ void Bot::tellAction(string handStatus) {
 	fout << handStatus;
 }
 void Casino::getPreflopBets() {
+	// Edit: Gary Harney
+	// modifying for heads up 2/4 limit
+
 	table.clear();
 	vector<int> vpip(nBots, 0); // track record of how many bets each bot already called
-	for (int i = 0;  i < nBots; i++){
-		table.push_back(mPlayers[(mButton + 3 + i) % nBots]); // queue of players, first player is first to act after sb / My_note: BB??
+	for (int i = 0;  i < nBots; i++){ 
+		table.push_back(mPlayers[(mButton + i) % nBots]); // queue of players, first player is first to act after sb / My_note: BB??
 	}
-	mPlayers[(mButton + 1) % nBots]->addStack(-1); // collect small blind
-	vpip[(mButton + 1) % nBots]++; // he paid 1 bet
-	mPlayers[(mButton + 2) % nBots]->addStack(-1); // big blind simplification: two players post a 1$ blind (no small or big) todo change
-	vpip[(mButton + 2) % nBots]++; // big blind simplification: two players post a 1$ blind (no small or big) todo change
-	mPot = 2; // two blinds
+	mPlayers[(mButton) % nBots]->addStack(-1); // collect small blind
+	vpip[(mButton) % nBots]++; // he paid 1 bet
+	mPlayers[(mButton + 1) % nBots]->addStack(-2); // big blind simplification: two players post a 1$ blind (no small or big) todo change
+	vpip[(mButton + 1) % nBots]++; // big blind simplification: two players post a 1$ blind (no small or big) todo change
+	mPot = 3; // two blinds
 	int calls = 0;
-	int raises = 1; // count blinds as one raise
+	int raises = 1; 
 	mCurrentHand = to_string(mCounter) + "D" + to_string(mButton) + "P"; // current hand is coded hand number + D + button position + "P"
 	while (calls < nBots && table.size() > 1){
 		Bot* currentPlayer = table.front(); // get first element

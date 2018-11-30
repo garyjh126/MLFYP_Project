@@ -11,6 +11,10 @@ from treys import *
 import Hand
 import Player as p
 import low_level_functions as llf
+import subprocess
+import matplotlib
+
+
 
 most_recent_file_changed = ''
 
@@ -19,7 +23,7 @@ class Game:
 
     cards = []
 
-    def __init__(self, max_game=5):
+    def __init__(self):
         global cards
         cards =  llf.create_cards_for_game(self)
         Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot0', cards, None)
@@ -28,12 +32,9 @@ class Game:
         #Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-','-'), 'CO', '/give_hand_bot3', cards, None)
         self.player_list = [Player1, Player2] #, Player3, Player4]
         positions_at_table = {0: Player1.position, 1: Player2.position} #, 2: Player3.position, 3: Player4.position} # mutable
-        self.max_game = max_game
         self.parse_data_from_GHB()
-        
 
     def parse_data_from_GHB(self):
-
         self.main_watch_manager = main_watch_manager(self.player_list)
 
     def return_table_list(self):
@@ -91,7 +92,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
         #print("IN_CLOSE_WRITE event:", event.pathname)
-        
+        print(event.pathname)
         global file_changed
         arr = re.split(r'[/]',event.pathname)
         most_recent_file_changed = (arr[len(arr)-1])
@@ -146,11 +147,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
 
 class main_watch_manager():
-    
+
     def __init__(self, player_list ,communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
         self.communication_files_directory = communication_files_directory
         self.player_list = player_list
 
+        # call bash for ./lasvegas
+               
         # watch manager
         wm = pyinotify.WatchManager()
         wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
@@ -158,15 +161,22 @@ class main_watch_manager():
         # event handler
         kwargs = {"player_list": self.player_list}
         eh = MyEventHandler(**kwargs)
-
+        wd = os.getcwd()
+        os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
+        subprocess.Popen("./lasvegas")
+        os.chdir(wd)
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
+
         notifier.loop()
 
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
+    
+        
     game = Game()
+    
 
 
 
