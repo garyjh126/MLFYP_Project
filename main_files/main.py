@@ -22,7 +22,7 @@ most_recent_file_changed = ''
 class Game:
 
     cards = []
-
+    game_count = 0
     def __init__(self):
         global cards
         cards =  llf.create_cards_for_game(self)
@@ -39,6 +39,7 @@ class Game:
 
     def return_table_list(self):
         return self.player_list
+
 
 def get_status_from_file(file_name):
     data = ''
@@ -59,6 +60,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         be delegated automatically to my_init().
         """
         self.player_list = kargs["player_list"]
+        self.game_count = 0
 
     # def process_IN_ACCESS(self, event):
     #     print("ACCESS event:", event.pathname)
@@ -102,9 +104,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
         #print(file_data)
+        self.game_count = 0
         if event_type == "give_hand_bot":
-        
+            
+            
             if bot_number == '0':
+
                 self.player_list[0].card_holding = llf.GHB_Parsing(self.player_list[0], file_data) #check cards
                 #print(self.player_list[0].card_holding)
 
@@ -124,15 +129,18 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 #bot 1 now has his cards
 
         if event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            
+            dealer_no = file_data[1] 
+
             if bot_number == '0':
-                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[0], self.player_list) #check cards
+                
+                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[0], self.player_list, bot_number) #check cards
                 #if is_preflop_action_filled:
                 he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name, is_preflop_action_filled)   
                 print("BOTNumber0 complete\n")
 
             elif bot_number == '1':
-                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[1], self.player_list) #check cards
+                
+                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[1], self.player_list, bot_number) #check cards
                 #if is_preflop_action_filled:
                 he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name, is_preflop_action_filled)   
                 print("BOTNumber1 complete\n")
@@ -161,10 +169,13 @@ class main_watch_manager():
         # event handler
         kwargs = {"player_list": self.player_list}
         eh = MyEventHandler(**kwargs)
-        wd = os.getcwd()
-        os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
-        subprocess.Popen("./lasvegas")
-        os.chdir(wd)
+
+        ## automate process of using bash
+        # wd = os.getcwd()
+        # os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
+        # subprocess.Popen("./lasvegas")
+        # os.chdir(wd)
+
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
 

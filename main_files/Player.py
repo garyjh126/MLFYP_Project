@@ -41,7 +41,7 @@ class Player():
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         self.hand_num = 0
         self.cards = cards
-        self.ID = ID
+        self.ID = ID  ## acts as position tracker using 0 and 1
         self.name = name
         self.card_holding = card_holding
         self.position = ''
@@ -56,7 +56,7 @@ class Player():
         
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
-        return 'ID: {}, Name: {}, Position: {}, Stack Size: {}'.format(str(self.ID), str(self.name), str(self.position), str(self.stack_size))
+        return 'ID: {}, Name: {}, Position (UNSURE): {}'.format(str(self.ID), str(self.name), str(self.position))
         
     def get_opposing_player(self):
         g = main.Game
