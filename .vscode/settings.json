@@ -10,5 +10,17 @@
     },
     "python.linting.pylintEnabled": false,
     "python.linting.pep8Enabled": true,
-    "python.linting.enabled": false
+    "python.linting.enabled": false,
+    "python.pythonPath": "/usr/bin/python3",
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        "./main_files",
+        "-p",
+        "*_test.py"
+    ],
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.promptToConfigure": false
 }

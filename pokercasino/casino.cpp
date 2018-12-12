@@ -3,10 +3,11 @@
 #include "bot.h"
 #include <thread>
 #include <iostream>
-#include <WS2tcpip.h>
+//#include <WS2tcpip.h>
 
 // Include the Winsock library (lib) file
-#pragma comment (lib, "ws2_32.lib")
+//#pragma comment (lib, "ws2_32.lib")
+
 
 //
 // casino methods:
@@ -95,75 +96,28 @@ void Casino::prepareNext() {
 }
 
 void Bot::tellAction(string handStatus) {
-	// ofstream fout("./botfiles/casinoToBot" + to_string(getSeat()), ios_base::trunc);
-	// if (!fout.good()) {
-	// 	cerr << "Error while opening output file for bot " << getSeat() << endl;
-	// }
-	// fout << handStatus;
-	////////////////////////////////////////////////////////////
-		// INITIALIZE WINSOCK
-		////////////////////////////////////////////////////////////
-
-		// Structure to store the WinSock version. This is filled in
-		// on the call to WSAStartup()
-		WSADATA data;
-
-		// To start WinSock, the required version must be passed to
-		// WSAStartup(). This server is going to use WinSock version
-		// 2 so I create a word that will store 2 and 2 in hex i.e.
-		// 0x0202
-		WORD version = MAKEWORD(2, 2);
-
-		// Start WinSock
-		int wsOk = WSAStartup(version, &data);
-		if (wsOk != 0)
-		{
-			// Not ok! Get out quickly
-			cout << "Can't start Winsock! " << wsOk;
-			return;
-		}
-
-		////////////////////////////////////////////////////////////
-		// CONNECT TO THE SERVER
-		////////////////////////////////////////////////////////////
-
-		// Create a hint structure for the server
-		sockaddr_in server;
-		server.sin_family = AF_INET; // AF_INET = IPv4 addresses
-		server.sin_port = htons(54000); // Little to big endian conversion
-		inet_pton(AF_INET, "127.0.0.1", &server.sin_addr); // Convert from string to byte array
-
-		// Socket creation, note that the socket type is datagram
-		SOCKET out = socket(AF_INET, SOCK_DGRAM, 0);
-
-		// Write out to that socket
-		string s(argv[1]);
-		int sendOk = sendto(out, s.c_str(), s.size() + 1, 0, (sockaddr*)&server, sizeof(server));
-
-		if (sendOk == SOCKET_ERROR)
-		{
-			cout << "That didn't work! " << WSAGetLastError() << endl;
-		}
-
-		// Close the socket
-		closesocket(out);
-
-		// Close down Winsock
-		WSACleanup();
+	ofstream fout("./botfiles/casinoToBot" + to_string(getSeat()), ios_base::trunc);
+	if (!fout.good()) {
+		cerr << "Error while opening output file for bot " << getSeat() << endl;
+	}
+	fout << handStatus;
 }
 void Casino::getPreflopBets() {
+	// Edit: Gary Harney
+	// modifying for heads up 2/4 limit
+
 	table.clear();
 	vector<int> vpip(nBots, 0); // track record of how many bets each bot already called
-	for (int i = 0;  i < nBots; i++){
-		table.push_back(mPlayers[(mButton + 3 + i) % nBots]); // queue of players, first player is first to act after sb / My_note: BB??
+	for (int i = 0;  i < nBots; i++){ 
+		table.push_back(mPlayers[(mButton + i) % nBots]); // queue of players, first player is first to act after sb / My_note: BB??
 	}
-	mPlayers[(mButton + 1) % nBots]->addStack(-1); // collect small blind
-	vpip[(mButton + 1) % nBots]++; // he paid 1 bet
-	mPlayers[(mButton + 2) % nBots]->addStack(-1); // big blind simplification: two players post a 1$ blind (no small or big) todo change
-	vpip[(mButton + 2) % nBots]++; // big blind simplification: two players post a 1$ blind (no small or big) todo change
-	mPot = 2; // two blinds
+	mPlayers[(mButton) % nBots]->addStack(-1); // collect small blind
+	vpip[(mButton) % nBots]++; // he paid 1 bet
+	mPlayers[(mButton + 1) % nBots]->addStack(-2); // big blind simplification: two players post a 1$ blind (no small or big) todo change
+	vpip[(mButton + 1) % nBots]++; // big blind simplification: two players post a 1$ blind (no small or big) todo change
+	mPot = 3; // two blinds
 	int calls = 0;
-	int raises = 1; // count blinds as one raise
+	int raises = 1; 
 	mCurrentHand = to_string(mCounter) + "D" + to_string(mButton) + "P"; // current hand is coded hand number + D + button position + "P"
 	while (calls < nBots && table.size() > 1){
 		Bot* currentPlayer = table.front(); // get first element

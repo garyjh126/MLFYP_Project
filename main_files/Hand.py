@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import regret_matching_poker as rm_poker
+=======
+import main as rm_poker
+>>>>>>> cleanup
 from treys import *
 class HandEvaluation():
 
