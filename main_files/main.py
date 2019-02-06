@@ -15,9 +15,10 @@ import subprocess
 import matplotlib
 
 
-
+path_to_file_changed1 = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
+path_to_file_changed2 = '/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 most_recent_file_changed = ''
-
+new_file_data = '0D0P'        
 
 class Game:
 
@@ -25,16 +26,17 @@ class Game:
     game_count = 0
     def __init__(self):
         global cards
-        cards =  llf.create_cards_for_game(self)
+        cards =  llf.create_cards_for_game()
         Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot0', cards, None)
         Player2 = p.Player(1 ,'Bill', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot1', cards, None)
-        #Player3 = Player(uuid.uuid1() ,'Chris', CardHolding('-','-','-','-','-'), 'BB', '/give_hand_bot2', cards, None)
+        Player3 = p.Player(2 ,'Chris', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot2', cards, None)
         #Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-','-'), 'CO', '/give_hand_bot3', cards, None)
-        self.player_list = [Player1, Player2] #, Player3, Player4]
-        positions_at_table = {0: Player1.position, 1: Player2.position} #, 2: Player3.position, 3: Player4.position} # mutable
+        self.player_list = [Player1, Player2, Player3] #, Player3, Player4]
+        positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position} #, 3: Player4.position} # mutable
         self.parse_data_from_GHB()
 
     def parse_data_from_GHB(self):
+        # GHB is an abbreviation for 'give_hand_botX'
         self.main_watch_manager = main_watch_manager(self.player_list)
 
     def return_table_list(self):
@@ -43,7 +45,7 @@ class Game:
 
 def get_status_from_file(file_name):
     data = ''
-    with open('/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/' + file_name, 'rt') as f:
+    with open(path_to_file_changed2 + file_name, 'rt') as f:
         data = f.read()
     return data
 
@@ -74,44 +76,46 @@ class MyEventHandler(pyinotify.ProcessEvent):
     # def process_IN_MODIFY(self, event):
     #     print("MODIFY event:", event.pathname)
 
-    def process_IN_OPEN(self, event):
+    # def process_IN_OPEN(self, event):
+    #     #print(event.pathname)
+    #     global file_changed
+    #     arr = re.split(r'[/]',event.pathname)
+    #     most_recent_file_changed = (arr[len(arr)-1])
+    #     last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
+    #     bot_number = last_letter if (last_letter =='0' or last_letter == '1' or last_letter =='2') else ''
+    #     event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
+    #     filename = str(event_type+bot_number)
+    #     file_data = ""
         
-        global file_changed
-        arr = re.split(r'[/]',event.pathname)
-        most_recent_file_changed = (arr[len(arr)-1])
-        last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
-        bot_number = last_letter if (last_letter =='0' or last_letter == '1') else ''
-        event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
-        filename = str(event_type+bot_number)
-        file_data = ""
-        
-        if event_type == "botToCasino":
-            pass #print("IN_OPEN event:", event.pathname)
+    #     if event_type == "botToCasino":
+    #         pass #print("IN_OPEN event:", event.pathname)
             
             
-            
+
 
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
         #print("IN_CLOSE_WRITE event:", event.pathname)
-        print(event.pathname)
+        
         global file_changed
         arr = re.split(r'[/]',event.pathname)
-        most_recent_file_changed = (arr[len(arr)-1])
+        most_recent_file_changed = (arr[len(arr)-1]) # last string in file path
         last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
-        bot_number = last_letter if (last_letter =='0' or last_letter == '1') else ''
+        bot_number = last_letter if (last_letter =='0' or last_letter == '1' or last_letter == '2') else ''
         event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
+        # global new_file_data
+        # test_file_data = new_file_data
         #print(file_data)
-        self.game_count = 0
+        #self.game_count = self.game_count+1
         if event_type == "give_hand_bot":
             
             
             if bot_number == '0':
 
                 self.player_list[0].card_holding = llf.GHB_Parsing(self.player_list[0], file_data) #check cards
-                #print(self.player_list[0].card_holding)
+                
 
                 #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
                 #he, evaluation, rc, score_desc, _ = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
@@ -127,36 +131,132 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 #he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
 
                 #bot 1 now has his cards
+            
+            elif bot_number == '2':
+                self.player_list[2].card_holding = llf.GHB_Parsing(self.player_list[2], file_data) #check cards
+                #print(self.player_list[0].card_holding)
 
-        if event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            dealer_no = file_data[1] 
+                #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
+                #he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
 
-            if bot_number == '0':
+                #bot 1 now has his cards
+
+        elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
+            
+            
+            ctb_file_content =  re.split(r'[DPFFFFTTRR]',file_data) # DEBUG: test_file_data
+            dealer_no = ctb_file_content[1]
+            # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
+            #  T <turn card> T <turn action> R <river card> R <river action>
+            
+            bot_n = int(bot_number)
+            bot_cards = self.player_list[bot_n].card_holding
+            bot_name = self.player_list[bot_n].name
+            
+            # we want to check if ONLY the preflop action is filled
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
+
+            player_action = None
+
+            if(is_preflop_action_filled == False and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is only preflop filled?                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                if self.player_list[bot_n].evaluation_preflop["he"] == '':
+                    self.player_list[bot_n].evaluation_preflop["he"] = he
+                    self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
+                    self.player_list[bot_n].evaluation_preflop["rc"] = rc
+                    self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
+                    self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
                 
-                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[0], self.player_list, bot_number) #check cards
-                #if is_preflop_action_filled:
-                he, evaluation, rc, score_desc, player_action = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name, is_preflop_action_filled)   
-                print("BOTNumber0 complete\n")
+            elif(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
+                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                if self.player_list[bot_n].evaluation_preflop["he"] == '':
+                    self.player_list[bot_n].evaluation_preflop["he"] = he
+                    self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
+                    self.player_list[bot_n].evaluation_preflop["rc"] = rc
+                    self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
+                    self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
 
-            elif bot_number == '1':
+            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
+                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_flop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                if self.player_list[bot_n].evaluation_flop["he"] == '':
+                    self.player_list[bot_n].evaluation_flop["he"] = he
+                    self.player_list[bot_n].evaluation_flop["evaluation"] = evaluation
+                    self.player_list[bot_n].evaluation_flop["rc"] = rc
+                    self.player_list[bot_n].evaluation_flop["score_desc"] = score_desc
+                    self.player_list[bot_n].evaluation_flop["player_action"] = player_action
                 
-                is_preflop_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[1], self.player_list, bot_number) #check cards
-                #if is_preflop_action_filled:
-                he, evaluation, rc, score_desc, player_action = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name, is_preflop_action_filled)   
-                print("BOTNumber1 complete\n")
-                #llf.casinoToBot_ParsingUpdateUniversal(self, file_data, self.player_list[1], self.player_list, player_action)
-                
-                #print("Game state after : ", p.Player.game_state)
-                #print(self.player_list[1].game_state)
-                
-                #print(he, evaluation, rc, score_desc)
-                #print(self.player_list[1].game_state)
 
+            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
+                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_turn(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                if self.player_list[bot_n].evaluation_turn["he"] == '':
+                    self.player_list[bot_n].evaluation_turn["he"] = he
+                    self.player_list[bot_n].evaluation_turn["evaluation"] = evaluation
+                    self.player_list[bot_n].evaluation_turn["rc"] = rc
+                    self.player_list[bot_n].evaluation_turn["score_desc"] = score_desc
+                    self.player_list[bot_n].evaluation_turn["player_action"] = player_action
 
+                
+
+            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == True): #is river filled yet?
+                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_river(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                if self.player_list[bot_n].evaluation_river["he"] == '':
+                    self.player_list[bot_n].evaluation_river["he"] = he
+                    self.player_list[bot_n].evaluation_river["evaluation"] = evaluation
+                    self.player_list[bot_n].evaluation_river["rc"] = rc
+                    self.player_list[bot_n].evaluation_river["score_desc"] = score_desc
+                    self.player_list[bot_n].evaluation_river["player_action"] = player_action
+                # DEBUGGING PURPOSES: Remove preflop, flop and turn after finished with debugging. The reason why
+                # all have been included is because the file is already written to with pre-existing actions
+                # which means the file is full of actions already. 
+                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                # if self.player_list[bot_n].evaluation_preflop["he"] == '':
+                #     self.player_list[bot_n].evaluation_preflop["he"] = he
+                #     self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
+                #     self.player_list[bot_n].evaluation_preflop["rc"] = rc
+                #     self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
+                #     self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
+
+                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_flop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                # if self.player_list[bot_n].evaluation_flop["he"] == '':
+                #     self.player_list[bot_n].evaluation_flop["he"] = he
+                #     self.player_list[bot_n].evaluation_flop["evaluation"] = evaluation
+                #     self.player_list[bot_n].evaluation_flop["rc"] = rc
+                #     self.player_list[bot_n].evaluation_flop["score_desc"] = score_desc
+                #     self.player_list[bot_n].evaluation_flop["player_action"] = player_action
+
+                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_turn(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                # if self.player_list[bot_n].evaluation_turn["he"] == '':
+                #     self.player_list[bot_n].evaluation_turn["he"] = he
+                #     self.player_list[bot_n].evaluation_turn["evaluation"] = evaluation
+                #     self.player_list[bot_n].evaluation_turn["rc"] = rc
+                #     self.player_list[bot_n].evaluation_turn["score_desc"] = score_desc
+                #     self.player_list[bot_n].evaluation_turn["player_action"] = player_action
+
+                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_river(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                # if self.player_list[bot_n].evaluation_river["he"] == '':
+                #     self.player_list[bot_n].evaluation_river["he"] = he
+                #     self.player_list[bot_n].evaluation_river["evaluation"] = evaluation
+                #     self.player_list[bot_n].evaluation_river["rc"] = rc
+                #     self.player_list[bot_n].evaluation_river["score_desc"] = score_desc
+                #     self.player_list[bot_n].evaluation_river["player_action"] = player_action
+            
+            # # file_data_new = file_data + player_action
+            
+            # if str(player_action) == 'None':
+            #     p_a = 'f'
+            # elif str(player_action) == 'r':
+            #     p_a = 'r'
+            # elif str(player_action) == 'c':
+            #     p_a = 'c'
+
+            # with open(path_to_file_changed2 + filename, 'wt') as f:
+            #     f.write(test_file_data + p_a)
+            
+            # new_file_data = test_file_data + p_a
 
 class main_watch_manager():
 
-    def __init__(self, player_list ,communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'):
+    def __init__(self, player_list ,communication_files_directory=path_to_file_changed2):
         self.communication_files_directory = communication_files_directory
         self.player_list = player_list
 
@@ -170,9 +270,10 @@ class main_watch_manager():
         kwargs = {"player_list": self.player_list}
         eh = MyEventHandler(**kwargs)
 
-        ## automate process of using bash
+        # automate process of using bash
         # wd = os.getcwd()
-        # os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
+        # #os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
+        # os.chdir("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino")
         # subprocess.Popen("./lasvegas")
         # os.chdir(wd)
 
@@ -185,7 +286,6 @@ class main_watch_manager():
 
 if __name__ == '__main__':
     
-        
     game = Game()
     
 

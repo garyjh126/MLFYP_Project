@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "C++ Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/pokercasino/a.out",
+            "args": ["arg1", "arg2"],
+            "environment": [{"name": "squid", "value": "clam"}],
+            "cwd": "${workspaceRoot}"
+        },
+        {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
             "request": "launch",
