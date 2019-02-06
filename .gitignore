@@ -13,3 +13,5 @@ pokercasino/*
 =======
 !pokercasino/botfiles/
 >>>>>>> 826758caf97737fcdebcbf425b9526f7c736ed41
+
+__pycache__/*
