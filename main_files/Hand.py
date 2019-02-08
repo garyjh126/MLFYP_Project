@@ -59,7 +59,7 @@ class HandEvaluation():
         return b
 
     def evaluate(self, event):
-        evaluator = rm_poker.Evaluator()
+        evaluator = Evaluator()
         self.hand = self.parse_cards()
         self.board = ''
         if event == "Preflop":
@@ -71,7 +71,7 @@ class HandEvaluation():
         evaluation = evaluator.evaluate(self.hand, self.board)
         rc = self.rank_class(evaluator, evaluation)
         score_desc = evaluator.class_to_string(rc)
-        return evaluation, rc, score_desc, event 
+        return evaluation, rc, score_desc, self.hand, self.board
         
     def rank_class(self, evaluator, evaluation):
         rc = evaluator.get_rank_class(evaluation)

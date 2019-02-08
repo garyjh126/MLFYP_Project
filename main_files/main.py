@@ -20,7 +20,7 @@ path_to_file_changed2 = '/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercas
 most_recent_file_changed = ''
 new_file_data = '0D0P'        
 
-class Game:
+class Game():
 
     cards = []
     game_count = 0
@@ -32,7 +32,8 @@ class Game:
         Player3 = p.Player(2 ,'Chris', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot2', cards, None)
         #Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-','-'), 'CO', '/give_hand_bot3', cards, None)
         self.player_list = [Player1, Player2, Player3] #, Player3, Player4]
-        positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position} #, 3: Player4.position} # mutable
+        p.save_player_list(self.player_list)
+        #positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position} #, 3: Player4.position} # mutable
         self.parse_data_from_GHB()
 
     def parse_data_from_GHB(self):
@@ -41,6 +42,7 @@ class Game:
 
     def return_table_list(self):
         return self.player_list
+
 
 
 def get_status_from_file(file_name):
@@ -105,23 +107,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
         event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
-        # global new_file_data
-        # test_file_data = new_file_data
-        #print(file_data)
-        #self.game_count = self.game_count+1
         if event_type == "give_hand_bot":
-            
-            
+
             if bot_number == '0':
-
                 self.player_list[0].card_holding = llf.GHB_Parsing(self.player_list[0], file_data) #check cards
-                
-
                 #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
                 #he, evaluation, rc, score_desc, _ = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
-
                 # bot 0 now has his cards
-
 
             elif bot_number == '1':
                 self.player_list[1].card_holding = llf.GHB_Parsing(self.player_list[1], file_data) #check cards
@@ -139,10 +131,10 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
                 #he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
 
-                #bot 1 now has his cards
+                #bot 1 now has his cards    
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            
+            Card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
             
             ctb_file_content =  re.split(r'[DPFFFFTTRR]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
@@ -155,104 +147,66 @@ class MyEventHandler(pyinotify.ProcessEvent):
             
             # we want to check if ONLY the preflop action is filled
             is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
-
-            player_action = None
-
-            if(is_preflop_action_filled == False and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is only preflop filled?                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                if self.player_list[bot_n].evaluation_preflop["he"] == '':
-                    self.player_list[bot_n].evaluation_preflop["he"] = he
-                    self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
-                    self.player_list[bot_n].evaluation_preflop["rc"] = rc
-                    self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
-                    self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
-                
-            elif(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
-                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                if self.player_list[bot_n].evaluation_preflop["he"] == '':
-                    self.player_list[bot_n].evaluation_preflop["he"] = he
-                    self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
-                    self.player_list[bot_n].evaluation_preflop["rc"] = rc
-                    self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
-                    self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
-
-            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
-                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_flop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                if self.player_list[bot_n].evaluation_flop["he"] == '':
-                    self.player_list[bot_n].evaluation_flop["he"] = he
-                    self.player_list[bot_n].evaluation_flop["evaluation"] = evaluation
-                    self.player_list[bot_n].evaluation_flop["rc"] = rc
-                    self.player_list[bot_n].evaluation_flop["score_desc"] = score_desc
-                    self.player_list[bot_n].evaluation_flop["player_action"] = player_action
-                
-
-            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
-                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_turn(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                if self.player_list[bot_n].evaluation_turn["he"] == '':
-                    self.player_list[bot_n].evaluation_turn["he"] = he
-                    self.player_list[bot_n].evaluation_turn["evaluation"] = evaluation
-                    self.player_list[bot_n].evaluation_turn["rc"] = rc
-                    self.player_list[bot_n].evaluation_turn["score_desc"] = score_desc
-                    self.player_list[bot_n].evaluation_turn["player_action"] = player_action
-
-                
-
-            elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == True): #is river filled yet?
-                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_river(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                if self.player_list[bot_n].evaluation_river["he"] == '':
-                    self.player_list[bot_n].evaluation_river["he"] = he
-                    self.player_list[bot_n].evaluation_river["evaluation"] = evaluation
-                    self.player_list[bot_n].evaluation_river["rc"] = rc
-                    self.player_list[bot_n].evaluation_river["score_desc"] = score_desc
-                    self.player_list[bot_n].evaluation_river["player_action"] = player_action
-                # DEBUGGING PURPOSES: Remove preflop, flop and turn after finished with debugging. The reason why
-                # all have been included is because the file is already written to with pre-existing actions
-                # which means the file is full of actions already. 
-                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                # if self.player_list[bot_n].evaluation_preflop["he"] == '':
-                #     self.player_list[bot_n].evaluation_preflop["he"] = he
-                #     self.player_list[bot_n].evaluation_preflop["evaluation"] = evaluation
-                #     self.player_list[bot_n].evaluation_preflop["rc"] = rc
-                #     self.player_list[bot_n].evaluation_preflop["score_desc"] = score_desc
-                #     self.player_list[bot_n].evaluation_preflop["player_action"] = player_action
-
-                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_flop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                # if self.player_list[bot_n].evaluation_flop["he"] == '':
-                #     self.player_list[bot_n].evaluation_flop["he"] = he
-                #     self.player_list[bot_n].evaluation_flop["evaluation"] = evaluation
-                #     self.player_list[bot_n].evaluation_flop["rc"] = rc
-                #     self.player_list[bot_n].evaluation_flop["score_desc"] = score_desc
-                #     self.player_list[bot_n].evaluation_flop["player_action"] = player_action
-
-                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_turn(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                # if self.player_list[bot_n].evaluation_turn["he"] == '':
-                #     self.player_list[bot_n].evaluation_turn["he"] = he
-                #     self.player_list[bot_n].evaluation_turn["evaluation"] = evaluation
-                #     self.player_list[bot_n].evaluation_turn["rc"] = rc
-                #     self.player_list[bot_n].evaluation_turn["score_desc"] = score_desc
-                #     self.player_list[bot_n].evaluation_turn["player_action"] = player_action
-
-                # he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_river(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                # if self.player_list[bot_n].evaluation_river["he"] == '':
-                #     self.player_list[bot_n].evaluation_river["he"] = he
-                #     self.player_list[bot_n].evaluation_river["evaluation"] = evaluation
-                #     self.player_list[bot_n].evaluation_river["rc"] = rc
-                #     self.player_list[bot_n].evaluation_river["score_desc"] = score_desc
-                #     self.player_list[bot_n].evaluation_river["player_action"] = player_action
+            flop_cards_present, turn_card_present, river_card_present = llf.check_cards_shown(file_data)
             
-            # # file_data_new = file_data + player_action
             
-            # if str(player_action) == 'None':
-            #     p_a = 'f'
-            # elif str(player_action) == 'r':
-            #     p_a = 'r'
-            # elif str(player_action) == 'c':
-            #     p_a = 'c'
 
-            # with open(path_to_file_changed2 + filename, 'wt') as f:
-            #     f.write(test_file_data + p_a)
-            
-            # new_file_data = test_file_data + p_a
+            # PREFLOP
+            if (flop_cards_present == False and turn_card_present == False and river_card_present == False):
+                
+                # first move (BTN)
+                if(is_preflop_action_filled == False and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is only preflop filled?                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    
+                elif(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+
+            #POSTFLOP
+            elif (flop_cards_present == True and turn_card_present == False and river_card_present == False):
+                              
+                #first move of flop (SB assuming he hasn't folded)
+                if(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+
+                elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                
+            #TURN
+            elif (flop_cards_present == True and turn_card_present == True and river_card_present == False):
+                print("inside TURN main")
+                print("\n", is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
+                # first move of turn
+                if(is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
+                    print("inside TURN 1")
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+
+                elif(is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
+                    print("inside TURN 2")
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+
+            #RIVER
+            elif (flop_cards_present == True and turn_card_present == True and river_card_present == True):
+
+                # first move of river
+                if(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+
+                elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == True): #is river filled yet?
+                    self.player_list[bot_n].action_sent = False
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+             
+            # We may use the attributes collected here as training data from neural network
+
+        # elif event_type == "botToCasino":
+        #     bot_n = int(bot_number)
+        #     self.player_list[bot_n].action_sent = True
 
 class main_watch_manager():
 

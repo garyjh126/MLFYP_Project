@@ -37,6 +37,8 @@ def casinoToBot_ParsingUpdateUniversal(self, file_data_original_change, plr, pla
     # print("last_move:", pre_flop_last_move)
     pass
 
+
+
 def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no):
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
@@ -247,6 +249,41 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
                 is_river_action_filled = False
         
     return is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled
+
+def check_cards_shown(file_data_change_CTB):
+    flop_cards = []
+    turn_card = ''
+    river_card = ''
+    file_data_change_CTB =  re.split(r'[DPFFFFTTRR]',file_data_change_CTB)
+    flop_cards_present = False
+    turn_cards_present = False
+    river_cards_present = False
+    if len(file_data_change_CTB) > 3:
+        flop_cards.extend([file_data_change_CTB[3], file_data_change_CTB[4], file_data_change_CTB[5]])
+    if len(file_data_change_CTB) > 7:
+        turn_card = (file_data_change_CTB[7])
+    if len(file_data_change_CTB) > 9:
+        river_card = (file_data_change_CTB[9])
+        
+        
+    count_flop_cards = 0
+    for card in flop_cards:
+        
+        if card != None and card != '':
+            count_flop_cards = count_flop_cards + 1
+    
+    if(count_flop_cards == 3):
+        flop_cards_present = True
+    
+    if (turn_card != None and turn_card != ''):
+        turn_cards_present = True
+
+    if (river_card != None and river_card != ''):
+        river_cards_present = True
+
+    return flop_cards_present, turn_cards_present, river_cards_present
+    
+        
 
 def count_r(my_string):
         count_r = 0

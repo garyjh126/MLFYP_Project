@@ -6,7 +6,7 @@ from includes import *
 import heapq
 import main as main
 from collections import deque
-from treys import Evaluator, Deck
+from treys import Card
 
 class PriorityQueue:
     def __init__(self):
@@ -55,7 +55,8 @@ class Player():
                 'action_turn': '',
                 'river': '',
                 'action_river': ''}
-
+    player_list = []
+    level_raises = {0:0, 1:0, 2:0}
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         
         self.hand_num = 0
@@ -75,108 +76,118 @@ class Player():
         self.evaluation_flop = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_turn = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_river = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'amount_owed_raises': 0}
-        
-                
-    def __str__(self):
-        st = self.ID, self.name, self.position, self.stack_size
-        return 'ID: {}, Position: {}, \n\tEvaluation-Preflop: {}, \n\tRound: {}'.format(str(self.ID), str(self.position), str(self.evaluation_preflop), str(self.round))
-
-    def debug_print(self, player_action):
-        if (str(player_action)) != 'None':
-            print(self, "\tplayer_action: ", player_action, "\taction_where: ", player_action.round_game)
-            
-        else:
-            print(self, "\tplayer_action", "f")
-
-        print
-
+        self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
+        self.action_sent = False
+        self.action = None
 
     
+    def hand_evaluate(self, card_holding, name, event):
+        he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
+        evaluation, rc, score_desc, hand, board = he.get_evaluation()
+        self.set_attributes(evaluation, he, rc, score_desc, event)
+        self.populatePlayerPossibleMoves(event)
+        self.calc_raises_i_face()
+        #self.getPerceivedRange(player1, player2) # Only use this if coming from CTB0 (learner)  
+        player_action = self.take_action(he, rc, score_desc, event) 
+        self.set_player_action(event, player_action)
+        self.debug_print(player_action, hand, board)        
+        return he, rc, score_desc, player_action
 
-     # Previewing game_state for raises made previously and counting possible moves can be made as a result. 
+    def __str__(self):
+        st = self.ID, self.name, self.position, self.stack_size
+        # return 'ID: {}, Position: {}, \n\tEvaluation-Preflop (score): {}, \n\tRound: {}'.format(str(self.ID), str(self.position), str(self.evaluation_preflop['evaluation']), str(self.round))
+        return 'ID: {}, \tEvaluation-Preflop (score): {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.evaluation_preflop['evaluation']), str(self.action), self.level_raises)    
+
+    def debug_print(self, player_action, hand, board):
+        if (str(player_action)) != 'None':
+            #print(self, "\tplayer_action: ", player_action, "\taction_where: ", player_action.round_game)
+            print(self, "\taction_where: ", player_action.round_game)
+            print()
+        else:
+            print(self) #, "\tplayer_action", "f")
+            print()
+
+    def set_attributes(self, evaluation, he, rc, score_desc, event):
+        if event == 'Preflop':
+            if self.evaluation_preflop["he"] == '':
+                self.evaluation_preflop["he"] = he
+                self.evaluation_preflop["rc"] = rc
+                self.evaluation_preflop["score_desc"] = score_desc
+                self.evaluation_preflop["evaluation"] = evaluation
+        elif event == 'Flop':
+            if self.evaluation_flop["he"] == '':
+                self.evaluation_flop["he"] = he
+                self.evaluation_flop["rc"] = rc
+                self.evaluation_flop["score_desc"] = score_desc
+                self.evaluation_flop["evaluation"] = evaluation
+        elif event == 'Turn':
+            if self.evaluation_turn["he"] == '':
+                self.evaluation_turn["he"] = he
+                self.evaluation_turn["rc"] = rc
+                self.evaluation_turn["score_desc"] = score_desc
+                self.evaluation_turn["evaluation"] = evaluation
+        elif event == 'River':
+            if self.evaluation_river["he"] == '':
+                self.evaluation_river["he"] = he
+                self.evaluation_river["rc"] = rc
+                self.evaluation_river["score_desc"] = score_desc
+                self.evaluation_river["evaluation"] = evaluation
+
+    # Previewing game_state for raises made previously and counting possible moves can be made as a result. 
     # Also populates player object with possible moves they may make after having seen the moves made so far.
-    # Returns: count of raises made so far in current round, 
-    def populatePlayerPossibleMoves(self, last_seq_move):
-        last_seq_move = self.game_state['action_preflop']
+    # Returns: count of raises made so far in current round  ~
+    def populatePlayerPossibleMoves(self, event):
+        bot_position = self.position  
+        bot_position_num = self.stposition_to_numposition(bot_position)
 
-        
+        last_seq_move = None
+        if event == 'Preflop':    
+            last_seq_move = self.game_state['action_preflop'] 
+        elif event == 'Flop':
+            last_seq_move = self.game_state['action_flop']
+        elif event == 'Turn':
+            last_seq_move = self.game_state['action_turn']
+        elif event == 'River':
+            last_seq_move = self.game_state['action_river']
+
 
         if(llf.count_r(last_seq_move) > 3):
-            print("error: num or raises cannot be =", llf.count_r(last_seq_move), "\t", "bot_position",bot_position, "dealer_position", dealer_position)
+            print("error: num or raises cannot be =", llf.count_r(last_seq_move), "\t", "bot_position",bot_position_num)
         elif(llf.count_r(last_seq_move) == 3):
+            self.round['possible_moves'].clear()
             self.round['possible_moves'].add('c')
             self.round['possible_moves'].add('f')
         else:
+            self.round['possible_moves'].clear()
             self.round['possible_moves'].add('r')
             self.round['possible_moves'].add('c')
             self.round['possible_moves'].add('f')    
 
-       
+    def calc_raises_i_face(self):
+        bot_position_num = self.stposition_to_numposition(self.position)
+        my_lr_value = self.level_raises[bot_position_num]
+        highest_lr_value, highest_lr_bot = highest_in_LR()
+        add_me = highest_lr_value - my_lr_value
+        self.round['raises_i_owe'] = self.round['raises_i_owe'] + add_me
 
+    def set_player_action(self, event, player_action):
+        if event == 'Preflop':
+            if self.evaluation_preflop["player_action"] == '':
+                self.evaluation_preflop["player_action"] = player_action
+        elif event == 'Flop':
+            if self.evaluation_flop["player_action"] == '':
+                self.evaluation_flop["player_action"] = player_action
+        elif event == 'Turn':
+            if self.evaluation_turn["player_action"] == '':
+                self.evaluation_turn["player_action"] = player_action
+        elif event == 'River':
+            if self.evaluation_river["player_action"] == '':
+                self.evaluation_river["player_action"] = player_action
+    
 
     
-    
-    def numRaisesDebt(self, event):
-        dealer_position = self.game_state['dealer_position']
-        last_seq_move = self.game_state['action_preflop'] # just for preflop
-        bot_position = self.position  
-        bot_position_num = self.stposition_to_numposition(bot_position)
-
-        self.populatePlayerPossibleMoves(last_seq_move)
-        count_raises_so_far_everyone = llf.count_r(last_seq_move) 
-        count_raises_by_me = llf.count_r(self.round['moves_i_made_in_this_round_sofar'])
-
-
-        self.round['amount_owed_raises'] = count_raises_so_far_everyone - count_raises_by_me
         
-        # if(event == "Preflop"):
 
-        #     if(bot_position == 'BTN'):
-
-        #     elif(bot_position == 'SB'):
-
-        #     elif(bot_position == 'BB'):
-
-        
-                
-
-    def hand_evaluate_preflop(self, card_holding, name):
-        event = 'Preflop'
-        he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
-        evaluation, rc, score_desc, event = he.get_evaluation()
-        self.numRaisesDebt(event)
-        #self.getPerceivedRange(player1, player2) # Only use this if coming from CTB0 (learner)  
-        player_action = self.take_action(he, evaluation, rc, score_desc, event) 
-        self.debug_print(player_action)        
-        return he, evaluation, rc, score_desc, player_action
-
-
-    
-    def hand_evaluate_flop(self, card_holding, name):
-        event = 'Flop'
-        he = Hand.HandEvaluation(self.card_holding, name, event) #Unique to player instance
-        evaluation, rc, score_desc, event = he.get_evaluation()
-        player_action = self.take_action(he, evaluation, rc, score_desc, event) ## FIX: Call correct actions once strategy has been dettermined for each betting round
-        self.debug_print(player_action)        
-        return he, evaluation, rc, score_desc, player_action
-
-    def hand_evaluate_turn(self, card_holding, name):
-        event = 'Turn'
-        he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
-        evaluation, rc, score_desc, event = he.get_evaluation()
-        player_action = self.take_action(he, evaluation, rc, score_desc, event) ## FIX: Call correct actions once strategy has been dettermined for each betting round
-        self.debug_print(player_action)        
-        return he, evaluation, rc, score_desc, player_action
-
-    def hand_evaluate_river(self, card_holding, name):
-        event = 'River'
-        he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
-        evaluation, rc, score_desc, event = he.get_evaluation()
-        player_action = self.take_action(he, evaluation, rc, score_desc, event) ## FIX: Call correct actions once strategy has been dettermined for each betting round
-        self.debug_print(player_action)        
-        return he, evaluation, rc, score_desc, player_action
-        
     def stposition_to_numposition(self, st_bot_position):
         if st_bot_position == 'BTN':
             return 0
@@ -185,6 +196,8 @@ class Player():
         elif st_bot_position == 'BB':
             return 2
 
+    
+
     def is_possible(self, move):
         move_possible = False
         for item in self.round['possible_moves']:
@@ -192,33 +205,64 @@ class Player():
                 return True
                 break
         return move_possible    
-        
-            
-    def take_action(self, he, evaluation, rc, score_desc, round_game):
 
-        dealer_position = self.game_state['dealer_position']
-        last_seq_move = self.game_state['action_preflop']
-        bot_position = self.position  # DEBUG: self.position has not been assigned
-        bot_position_num = self.stposition_to_numposition(bot_position)
-        q = PriorityQueue()
+    def make_decision(self, round_game, bot_position_num):
+        range_structure = None
+        if round_game == 'Preflop': 
+            range_structure = preflop_range
+        elif round_game == 'Flop':
+            range_structure = flop_range
+        elif round_game == 'Turn' or round_game == 'River':
+            range_structure = turn_river
 
         try:
-            if (evaluation < preflop_range['betting'][self.round['amount_owed_raises']][bot_position_num]) and (self.is_possible('r')): 
+            print("\n\nround_game", round_game)
+            print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            if (self.evaluation_preflop["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+                print("case 1")
                 act = Bet(limit, round_game ,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'r'
                 return act
-            elif evaluation < preflop_range['calling'][self.round['amount_owed_raises']][bot_position_num] and (self.is_possible('c')): 
+            elif self.evaluation_preflop["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
+                print("case 2")
                 act = Call(limit, round_game,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'c'
                 return act
             else: 
+                print("case 3")
                 act = Fold(round_game, self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'f'
                 return act
-        except: 
-            act = Fold(round_game, self)
-            self.round['moves_i_made_in_this_round_sofar'] += 'f'
-            return act  
+        except KeyError:
+            print('I got a KeyError')
+            print([self.round['raises_i_owe']], [bot_position_num])    
+            
+    def take_action(self, he, rc, score_desc, round_game):
+        last_seq_move = ''
+        dealer_position = self.game_state['dealer_position']
+        if round_game == 'Preflop':    
+            last_seq_move = self.game_state['action_preflop'] 
+        elif round_game == 'Flop':
+            last_seq_move = self.game_state['action_flop']
+        elif round_game == 'Turn':
+            last_seq_move = self.game_state['action_turn']
+        elif round_game == 'River':
+            last_seq_move = self.game_state['action_river']
+
+        bot_position = self.position  # DEBUG: self.position has not been assigned
+        bot_position_num = self.stposition_to_numposition(bot_position)
+        q = PriorityQueue()
+
+         
+        self.make_decision(round_game, bot_position_num)
+
+
+
+        # except: 
+        #     act = Fold(round_game, self)
+        #     self.round['moves_i_made_in_this_round_sofar'] += 'f'
+        #     return act  
             
         #if(round_game == 'Preflop'):
         # if(bot_position == 'BTN'):
@@ -348,7 +392,8 @@ class Player():
                 #         act = Call(limit, round_game,self)
                 #         return act
 
-                
+def save_player_list(my_list):
+    Player.player_list = my_list               
             
     
 
@@ -374,6 +419,59 @@ class CardHolding(Player):
         else:
             return self.second_card_rank,self.second_card_suit
 
+def highest_in_LR():
+    highest_lr_bot = 0
+    highest_lr_value = 0
+    
+    for key, value in Player.level_raises.items():
+        if value > highest_lr_value:
+            highest_lr_value = value
+            highest_lr_bot = key
+    return highest_lr_value, highest_lr_bot
+
+def get_active_players(player):
+    player_list = Player.player_list # Note: (each player gets copy of player list)
+    active_players_nums = []
+    for p in player_list:
+        if 'f' not in p.round['moves_i_made_in_this_round_sofar']:
+            active_players_nums.append(player.stposition_to_numposition(p.position))
+    
+    return active_players_nums
+
+def get_next_player_left_in_game(player):
+    active_players_nums = get_active_players(player)
+    for p_num in active_players_nums:
+        if player.stposition_to_numposition(player.position) == p_num:
+            return getNext(active_players_nums, player.stposition_to_numposition(player.position))
+            break
+
+def getNext(my_list, current):
+    for i in range(len(my_list)):
+        if my_list[i] == current:
+            if i == (len(my_list)-1):
+                return my_list[0]
+            else:
+                return my_list[i+1]
+
+
+def send_file(action_string, player, position, directory):
+    btc_file = 'botToCasino'
+    btc_num = Player.stposition_to_numposition(player, position)
+    next_player_num = get_next_player_left_in_game(player) # accounts for players that have folded and loop-around
+
+    # we want to write to next_player_num to make sure he sees the action of player acting before him
+    file_name_ownPlayer = directory + btc_file + str(btc_num)
+    file_name_nextPlayer = directory + btc_file + str(next_player_num)
+    try:
+        with open(file_name_ownPlayer, 'wt') as f:
+            f.write(action_string)
+            f.close()
+        with open(file_name_nextPlayer, 'wt') as f:
+            f.write(action_string)
+            f.close()
+    except:
+        print("Could not write", action_string, "to ", btc_file + str(btc_num), "from", position)
+
 #INTERFACE
 class Action(ABC):
 
@@ -385,8 +483,7 @@ class Action(ABC):
     @abstractmethod
     def determine_table_stats(self): pass
 
-    @abstractmethod
-    def send_file(self): pass
+    
 
     @abstractmethod
     def get_action_of_preceding_player(self): pass
@@ -406,8 +503,17 @@ class Bet(Action):
         self.player = player
         self.count_bets[round_game] = self.count_bets[round_game] + 1
         self.round_game =  round_game
-        self.send_file()
+        send_file('r', self.player, self.player.position, self.communication_files_directory)
+        self.populate_levelRaises()
+        player.round['raises_owed_to_me'] = player.round['raises_owed_to_me'] + 1
+        player.action = self
+        player.round['raises_i_owe'] = 0
        # print("Player: {} bets {}".format(player.ID, amount))
+
+    def populate_levelRaises(self):
+        bot_no = Player.stposition_to_numposition(self.player, self.player.position)
+        highest_value_LR, _ = highest_in_LR()
+        Player.level_raises[bot_no] = highest_value_LR + 1
 
     def __str__(self): 
         return "r"
@@ -415,23 +521,7 @@ class Bet(Action):
     def determine_table_stats(self):
         pass
 
-    def send_file(self):
-        
-        btc_file = ''
-        if self.player.name == "Adam":
-            btc_file = "botToCasino0"
-        elif self.player.name == "Bill":
-            btc_file = "botToCasino1"
-        elif self.player.name == "Chris":
-            btc_file = "botToCasino2"
-        file_name = self.communication_files_directory + btc_file 
-        try:
-            with open(file_name, 'wt') as f:
-                f.write('r')
-                f.close()
-        except:
-            print("Could not write r to ", btc_file, "from", self.player.name)
-
+    
     def populate_regret_table(self):
         pass
 
@@ -446,9 +536,43 @@ class Call(Action):
         self.player = player
         self.count_calls[round_game] = self.count_calls[round_game] + 1
         self.round_game =  round_game
-        self.send_file()
+        send_file('c', self.player, self.player.position, self.communication_files_directory)
+        self.populate_levelRaises()
+        player.action = self
+        player.round['raises_i_owe'] = 0
        # print("Player: {} calls".format(player.ID))
+
+    def populate_levelRaises(self):
+        last_seq_move = ''
+        if self.round_game == 'Preflop':    
+            last_seq_move = Player.game_state['action_preflop'] 
+        elif self.round_game == 'Flop':
+            last_seq_move = Player.game_state['action_flop']
+        elif self.round_game == 'Turn':
+            last_seq_move = Player.game_state['action_turn']
+        elif self.round_game == 'River':
+            last_seq_move = Player.game_state['action_river']
+
+        if self.c_call(last_seq_move):
+            bot_no = Player.stposition_to_numposition(self.player, self.player.position)
+            highest_value_LR, _ = highest_in_LR()
+            Player.level_raises[bot_no] = highest_value_LR
         
+       
+
+    
+    def c_call(self, last_seq_move):
+        c_is_call = False
+        if len(last_seq_move) > 1:
+            if last_seq_move[-1] == 'r' or last_seq_move[-2] == 'r':
+                c_is_call = True
+        elif len(last_seq_move) == 1:
+            if last_seq_move[-1] == 'r':
+                c_is_call = True
+        return c_is_call
+        
+        
+
     def __str__(self): 
         return "c"
 
@@ -460,24 +584,6 @@ class Call(Action):
 
     def determine_table_stats(self):
         pass
-
-    def send_file(self):
-        
-        # btc_file = "/botToCasino0" if self.player.name == "Adam" else "/botToCasino1"
-        btc_file = ''
-        if self.player.name == "Adam":
-            btc_file = "botToCasino0"
-        elif self.player.name == "Bill":
-            btc_file = "botToCasino1"
-        elif self.player.name == "Chris":
-            btc_file = "botToCasino2"
-        file_name = self.communication_files_directory + btc_file 
-        try:
-            with open(file_name, 'wt') as f:
-                f.write('c')
-                f.close()
-        except:
-            print("Could not write r to ", btc_file, "from", self.player.name)
 
     def get_action_of_preceding_player(self):
         pass
@@ -492,23 +598,11 @@ class Fold(Action):
         self.player = player
         self.count_folds[round_game] = self.count_folds[round_game] + 1
         self.round_game =  round_game
-        self.send_file()
+        send_file('f', self.player, self.player.position, self.communication_files_directory)
+        player.action = self
 
     def determine_table_stats(self):
         pass
-
-    def send_file(self):
-        btc_file = ''
-        if self.player.name == "Adam":
-            btc_file = "botToCasino0"
-        elif self.player.name == "Bill":
-            btc_file = "botToCasino1"
-        elif self.player.name == "Chris":
-            btc_file = "botToCasino2"
-        file_name = self.communication_files_directory + btc_file 
-        with open(file_name, 'wt') as f:
-            f.write('f')
-            f.close()
 
     def get_action_of_preceding_player(self):
         pass
@@ -518,3 +612,4 @@ class Fold(Action):
 
     def populate_regret_table(self):
         pass
+
