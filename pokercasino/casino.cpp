@@ -82,6 +82,7 @@ void Casino::showdown(){
 		mCurrentHand += "W" + to_string(v);
 	}
 	mCurrentHand += 'E'; // end of hand
+
 }
 
 
@@ -416,5 +417,15 @@ void Casino::printHandSummary() {
 		cout << eRank[mDeck[2 * nBots + i]] << " ";
 	}
 	cout << endl << "hand history :" << endl;
+
+	for (auto v : mWinners) { // print the hands of all winners
+		string mCurrentH = mCurrentHand + to_string(v);
+		for (auto player : mPlayers){
+			if (player->getSeat() == v){
+				player->tellAction(mCurrentH);
+			}
+		}
+	}
+
 	cout << mCurrentHand << endl;
 }

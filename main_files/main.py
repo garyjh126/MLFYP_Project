@@ -200,14 +200,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     self.player_list[bot_n].action_sent = False
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
                    
-
+            
+            
             
              
             # We may use the attributes collected here as training data from neural network
 
-        # elif event_type == "botToCasino":
-        #     bot_n = int(bot_number)
-        #     self.player_list[bot_n].action_sent = True
+
 
 class main_watch_manager():
 
