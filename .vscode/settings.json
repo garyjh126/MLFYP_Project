@@ -6,7 +6,8 @@
         "list": "cpp",
         "xstring": "cpp",
         "tuple": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "iostream": "cpp"
     },
     "python.linting.pylintEnabled": false,
     "python.linting.pep8Enabled": true,

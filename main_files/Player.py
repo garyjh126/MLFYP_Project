@@ -472,6 +472,10 @@ def send_file(action_string, player, position, directory):
     except:
         print("Could not write", action_string, "to ", btc_file + str(btc_num), "from", position)
 
+    with open(directory + "log", 'a+') as f:
+            st = "\nposition: " + str(player.position) + "\tevaluation_preflop: " + str(player.evaluation_preflop['evaluation']) + "\tevaluation_flop" + str(player.evaluation_flop['evaluation'])
+            f.write(st)
+            f.close()
 #INTERFACE
 class Action(ABC):
 
@@ -503,11 +507,11 @@ class Bet(Action):
         self.player = player
         self.count_bets[round_game] = self.count_bets[round_game] + 1
         self.round_game =  round_game
-        send_file('r', self.player, self.player.position, self.communication_files_directory)
         self.populate_levelRaises()
         player.round['raises_owed_to_me'] = player.round['raises_owed_to_me'] + 1
         player.action = self
         player.round['raises_i_owe'] = 0
+        send_file('r', self.player, self.player.position, self.communication_files_directory)
        # print("Player: {} bets {}".format(player.ID, amount))
 
     def populate_levelRaises(self):
@@ -536,10 +540,11 @@ class Call(Action):
         self.player = player
         self.count_calls[round_game] = self.count_calls[round_game] + 1
         self.round_game =  round_game
-        send_file('c', self.player, self.player.position, self.communication_files_directory)
         self.populate_levelRaises()
         player.action = self
         player.round['raises_i_owe'] = 0
+        send_file('c', self.player, self.player.position, self.communication_files_directory)
+
        # print("Player: {} calls".format(player.ID))
 
     def populate_levelRaises(self):
@@ -598,8 +603,9 @@ class Fold(Action):
         self.player = player
         self.count_folds[round_game] = self.count_folds[round_game] + 1
         self.round_game =  round_game
-        send_file('f', self.player, self.player.position, self.communication_files_directory)
         player.action = self
+        send_file('f', self.player, self.player.position, self.communication_files_directory)
+
 
     def determine_table_stats(self):
         pass
