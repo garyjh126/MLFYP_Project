@@ -7,18 +7,18 @@ import os
 import uuid
 
 import pyinotify
-from treys import *
+from treys import Card as treys_card
 import Hand
 import Player as p
 import low_level_functions as llf
 import subprocess
 import matplotlib
+# import graphical_display
 
 
 path_to_file_changed1 = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 path_to_file_changed2 = '/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 most_recent_file_changed = ''
-new_file_data = '0D0P'        
 
 class Game():
 
@@ -27,11 +27,11 @@ class Game():
     def __init__(self):
         global cards
         cards =  llf.create_cards_for_game()
-        Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot0', cards, None)
-        Player2 = p.Player(1 ,'Bill', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot1', cards, None)
-        Player3 = p.Player(2 ,'Chris', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot2', cards, None)
+        self.Player1 = p.Player(0 ,'Adam', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot0', cards, None)
+        self.Player2 = p.Player(1 ,'Bill', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot1', cards, None)
+        self.Player3 = p.Player(2 ,'Chris', p.CardHolding('-','-','-','-','-'), '', '/give_hand_bot2', cards, None)
         #Player4 = Player(uuid.uuid1() ,'Dennis', CardHolding('-','-','-','-','-'), 'CO', '/give_hand_bot3', cards, None)
-        self.player_list = [Player1, Player2, Player3] #, Player3, Player4]
+        self.player_list = [self.Player1, self.Player2, self.Player3] #, Player3, Player4]
         p.save_player_list(self.player_list)
         #positions_at_table = {0: Player1.position, 1: Player2.position, 2: Player3.position} #, 3: Player4.position} # mutable
         self.parse_data_from_GHB()
@@ -134,9 +134,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 #bot 1 now has his cards    
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            Card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
-            
-            ctb_file_content =  re.split(r'[DPFFFFTTRR]',file_data) # DEBUG: test_file_data
+            treys_card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
+            with open("./test_file_data_change_CTB", 'a+') as f:
+                f.write("\n"+file_data)
+                f.close()
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
             # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
             #  T <turn card> T <turn action> R <river card> R <river action>
@@ -146,7 +148,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
             bot_name = self.player_list[bot_n].name
             
             # we want to check if ONLY the preflop action is filled
-            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
             flop_cards_present, turn_card_present, river_card_present = llf.check_cards_shown(file_data)
             
             
@@ -177,16 +179,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 
             #TURN
             elif (flop_cards_present == True and turn_card_present == True and river_card_present == False):
-                print("inside TURN main")
-                print("\n", is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
                 # first move of turn
                 if(is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
-                    print("inside TURN 1")
                     self.player_list[bot_n].action_sent = False
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
                 elif(is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
-                    print("inside TURN 2")
                     self.player_list[bot_n].action_sent = False
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
@@ -201,6 +199,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == True): #is river filled yet?
                     self.player_list[bot_n].action_sent = False
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River')   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                   
+
+            
              
             # We may use the attributes collected here as training data from neural network
 
@@ -239,9 +240,10 @@ class main_watch_manager():
 
 
 if __name__ == '__main__':
+    treys_card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
     
     game = Game()
-    
+    # graphics = graphical_display.main_draw(game)
 
 
 

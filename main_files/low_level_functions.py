@@ -43,11 +43,11 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
     # T <turn card> T <turn action> R <river card> R <river action>
+    print("len(fdcctb):", len(file_data_change_CTB))
     is_preflop_action_filled = False
     is_flop_action_filled = False
     is_turn_action_filled = False
     is_river_action_filled = False
-    file_data_change_CTB =  re.split(r'[DPFFFFTTRR]',file_data_change_CTB)
 
     button = file_data_change_CTB[1]
     iDealer = False
@@ -173,39 +173,39 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
         if len(file_data_change_CTB) == 11:
             # DEBUGGING PURPOSES: Included all
 
-            #FLOP 
-            if p.Player.game_state['flop1'] == '' and p.Player.game_state['flop2'] == '' and p.Player.game_state['flop3'] == '':
-                if file_data_change_CTB[3] != None and file_data_change_CTB[4] != None and file_data_change_CTB[5] != None:
-                    p.Player.game_state['flop1'] = file_data_change_CTB[3]
-                    p.Player.game_state['flop2'] = file_data_change_CTB[4]
-                    p.Player.game_state['flop3'] = file_data_change_CTB[5]
+            # #FLOP 
+            # if p.Player.game_state['flop1'] == '' and p.Player.game_state['flop2'] == '' and p.Player.game_state['flop3'] == '':
+            #     if file_data_change_CTB[3] != None and file_data_change_CTB[4] != None and file_data_change_CTB[5] != None:
+            #         p.Player.game_state['flop1'] = file_data_change_CTB[3]
+            #         p.Player.game_state['flop2'] = file_data_change_CTB[4]
+            #         p.Player.game_state['flop3'] = file_data_change_CTB[5]
 
-            #FLOP ACTION
-            if p.Player.game_state['action_flop'] == '':
-                if file_data_change_CTB[6] != None:
-                    p.Player.game_state['action_flop'] = file_data_change_CTB[6]
+            # #FLOP ACTION
+            # if p.Player.game_state['action_flop'] == '':
+            #     if file_data_change_CTB[6] != None:
+            #         p.Player.game_state['action_flop'] = file_data_change_CTB[6]
 
             
 
            
-            #TURN 
-            if p.Player.game_state['turn'] == '':
-                if file_data_change_CTB[7] != None:
-                    p.Player.game_state['turn'] = file_data_change_CTB[7]
+            # #TURN 
+            # if p.Player.game_state['turn'] == '':
+            #     if file_data_change_CTB[7] != None:
+            #         p.Player.game_state['turn'] = file_data_change_CTB[7]
 
         
-            #TURN ACTION 
-            if p.Player.game_state['action_turn'] == '':
-                if file_data_change_CTB[8] != None:
-                    p.Player.game_state['action_turn'] = file_data_change_CTB[8]
+            # #TURN ACTION 
+            # if p.Player.game_state['action_turn'] == '':
+            #     if file_data_change_CTB[8] != None:
+            #         p.Player.game_state['action_turn'] = file_data_change_CTB[8]
 
            
 
         
-            #RIVER 
-            if p.Player.game_state['river'] == '':
-                if file_data_change_CTB[9] != None:
-                    p.Player.game_state['river'] = file_data_change_CTB[9]
+            # #RIVER 
+            # if p.Player.game_state['river'] == '':
+            #     if file_data_change_CTB[9] != None:
+            #         p.Player.game_state['river'] = file_data_change_CTB[9]
 
             #RIVER ACTION 
             if p.Player.game_state['action_river'] == '':
@@ -213,6 +213,38 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
                     p.Player.game_state['action_river'] = file_data_change_CTB[10]
                 
            
+        elif len(file_data_change_CTB) > 11:
+            print("len(file_data_change_CTB) ==", len(file_data_change_CTB))
+            for i in range(11, 17):
+                print(i, file_data_change_CTB[i])
+            file_data_change_CTB[11] 
+            # Showdown (Bot1)
+            if p.Player.game_state['p1']['position_showdown'] == '':
+                if file_data_change_CTB[11] != None:
+                    p.Player.game_state['p1']['position_showdown'] = file_data_change_CTB[11]
+
+            if p.Player.game_state['p1']['cards'][0] == '':
+                if file_data_change_CTB[12] != None:
+                    p.Player.game_state['p1']['cards'][0] = file_data_change_CTB[12]
+
+            if p.Player.game_state['p1']['cards'][1] == '':
+                if file_data_change_CTB[13] != None:
+                    p.Player.game_state['p1']['cards'][1] = file_data_change_CTB[13]
+            
+            # Showdown (Bot1)
+            if p.Player.game_state['p2']['position_showdown'] == '':
+                if file_data_change_CTB[14] != None:
+                    p.Player.game_state['p2']['position_showdown'] = file_data_change_CTB[14]
+
+            if p.Player.game_state['p2']['cards'][0] == '':
+                if file_data_change_CTB[15] != None:
+                    p.Player.game_state['p2']['cards'][0] = file_data_change_CTB[15]
+
+            if p.Player.game_state['p2']['cards'][1] == '':
+                if file_data_change_CTB[16] != None:
+                    p.Player.game_state['p2']['cards'][1] = file_data_change_CTB[16]
+
+            
 
 
             # including preflop, flop and turn for DEBUGGING

@@ -54,7 +54,10 @@ class Player():
                 'turn': '',
                 'action_turn': '',
                 'river': '',
-                'action_river': ''}
+                'action_river': '',
+                'p1': {'position_showdown': '', 'cards': ['', ''] } ,
+                'p2': {'position_showdown': '', 'cards': ['', ''] } 
+                }
     player_list = []
     level_raises = {0:0, 1:0, 2:0}
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
@@ -77,7 +80,6 @@ class Player():
         self.evaluation_turn = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_river = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
-        self.action_sent = False
         self.action = None
 
     
@@ -93,10 +95,25 @@ class Player():
         self.debug_print(player_action, hand, board)        
         return he, rc, score_desc, player_action
 
+    def next_game(self):
+        #reset all variables 
+        print("inside next game")
+        for key, value in game_state.items():
+            if key == 'p1' or key == 'p2':
+                game_state[key]['position_showdown'] = ''
+                game_state[key]['cards'][0] = ''
+                game_state[key]['cards'][1] = ''
+            else: 
+                game_state[key] = ''
+
+        for key, _ in level_raises.items():
+            level_raises[key] = ''
+
+
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
         # return 'ID: {}, Position: {}, \n\tEvaluation-Preflop (score): {}, \n\tRound: {}'.format(str(self.ID), str(self.position), str(self.evaluation_preflop['evaluation']), str(self.round))
-        return 'ID: {}, \tEvaluation-Preflop (score): {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.evaluation_preflop['evaluation']), str(self.action), self.level_raises)    
+        return 'ID: {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.action), self.level_raises)    
 
     def debug_print(self, player_action, hand, board):
         if (str(player_action)) != 'None':
@@ -216,21 +233,21 @@ class Player():
             range_structure = turn_river
 
         try:
-            print("\n\nround_game", round_game)
-            print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-            print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            #print("\n\nround_game", round_game)
+            #print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            #print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
             if (self.evaluation_preflop["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
-                print("case 1")
+                #print("case 1")
                 act = Bet(limit, round_game ,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'r'
                 return act
             elif self.evaluation_preflop["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
-                print("case 2")
+                #print("case 2")
                 act = Call(limit, round_game,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'c'
                 return act
             else: 
-                print("case 3")
+                #print("case 3")
                 act = Fold(round_game, self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'f'
                 return act
@@ -478,7 +495,12 @@ class Action(ABC):
     __metaclass_ = ABCMeta
 
     #communication_files_directory='/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles'
-    communication_files_directory = main.path_to_file_changed2
+    communication_files_directory = ''
+
+    try: 
+        communication_files_directory = main.path_to_file_changed2
+    except: 
+        communication_files_directory = '/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 
     @abstractmethod
     def determine_table_stats(self): pass
