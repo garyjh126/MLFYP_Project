@@ -18,7 +18,8 @@ import matplotlib
 path_to_file_changed1 = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 path_to_file_changed2 = '/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
 most_recent_file_changed = ''
-new_file_data = '0D0P'        
+new_file_data = '0D0P'       
+
 
 class Game():
 
@@ -149,21 +150,25 @@ class MyEventHandler(pyinotify.ProcessEvent):
             is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, file_data, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
             flop_cards_present, turn_card_present, river_card_present = llf.check_cards_shown(file_data)
             first_meeting = {0: False, 1: False, 2: False, 3: False}
+            is_new_game = False
             
-
             # PREFLOP
             if (flop_cards_present == False and turn_card_present == False and river_card_present == False):
                 
                 # first move (BTN)
                 if(is_preflop_action_filled == False and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is only preflop filled?                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    
+                    for player in self.player_list:
+                        player.is_new_game = True
                     first_meeting[0] = True
-                    self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting, True)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    self.player_list[bot_n].is_new_game = False
                     
                 elif(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
+
                     first_meeting[0] = False
-                    self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting, False)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    self.player_list[bot_n].is_new_game = False
 
             #POSTFLOP
             elif (flop_cards_present == True and turn_card_present == False and river_card_present == False):
@@ -172,12 +177,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 if(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
                     first_meeting[1] = True
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop', first_meeting, False)    # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
                 elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
                     first_meeting[1] = False
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Flop', first_meeting, False)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
                 
             #TURN
             elif (flop_cards_present == True and turn_card_present == True and river_card_present == False):
@@ -188,13 +193,13 @@ class MyEventHandler(pyinotify.ProcessEvent):
                     #print("inside TURN 1")
                     first_meeting[2] = True
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn', first_meeting, False)  # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
                 elif(is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
                     #print("inside TURN 2")
                     first_meeting[2] = False
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Turn', first_meeting, False)    # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
             #RIVER
             elif (flop_cards_present == True and turn_card_present == True and river_card_present == True):
@@ -203,12 +208,12 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 if(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
                     first_meeting[3] = True
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River', first_meeting, False)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
 
                 elif(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == True): #is river filled yet?
                     first_meeting[3] = False
                     self.player_list[bot_n].action_sent = False
-                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River', first_meeting)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
+                    he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'River', first_meeting, False)    # USE FOR DEBUGGING (files have alreayd been filled with debugger)
              
             # We may use the attributes collected here as training data from neural network
 

@@ -7,7 +7,9 @@
         "xstring": "cpp",
         "tuple": "cpp",
         "string": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "chrono": "cpp"
     },
     "python.linting.pylintEnabled": false,
     "python.linting.pep8Enabled": true,

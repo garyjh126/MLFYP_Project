@@ -73,18 +73,24 @@ class Player():
         self.dealer_status = False
         self.perspective_opposing_player = ['', ''] ## one for each of the opposing players. First is to left of this player. 
         #self.available_options = []
-        self.evaluation_preflop = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_flop = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_turn = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_river = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_preflop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_flop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_turn = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
         self.action_sent = False
         self.action = None
+        self.is_new_game = False
 
     
-    def hand_evaluate(self, card_holding, name, event, first_meeting):
+    def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
+        if first_player:
+            level_raises = {0:0, 1:0, 2:0}
+        if self.is_new_game:
+            self.make_new_game()
+            self.make_new_round()
         if self.is_new_round(first_meeting):
-            self.make_new_round(event)
+            self.make_new_round()
         he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
         evaluation, rc, score_desc, hand, board = he.get_evaluation()
         self.set_attributes(evaluation, he, rc, score_desc, event)
@@ -117,8 +123,16 @@ class Player():
                 x = True
         return x 
         
-    def make_new_round(self, event):
+    def make_new_round(self):
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
+
+    def make_new_game(self):
+        self.action = None
+        self.evaluation_preflop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_flop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_turn = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        
 
     def set_attributes(self, evaluation, he, rc, score_desc, event):
         if event == 'Preflop':
@@ -226,22 +240,30 @@ class Player():
         range_structure = None
         if round_game == 'Preflop': 
             range_structure = preflop_range
+            which_eval = self.evaluation_preflop
         elif round_game == 'Flop':
             range_structure = flop_range
+            which_eval = self.evaluation_flop
         elif round_game == 'Turn' or round_game == 'River':
             range_structure = turn_river
+            if self.evaluation_river == '' and self.evaluation_river != None:
+                which_eval = self.evaluation_turn
+
+            else:
+                which_eval = self.evaluation_river
 
         try:
             # print("\n\nround_game", round_game)
             # print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
             # print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-
-            if (self.evaluation_preflop["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+            # print(type(which_eval["evaluation"]))
+            if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+                
                 #print("case 1")
                 act = Bet(limit, round_game ,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'r'
                 return act
-            elif self.evaluation_preflop["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
+            elif which_eval["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
                 #print("case 2")
                 act = Call(limit, round_game,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'c'
