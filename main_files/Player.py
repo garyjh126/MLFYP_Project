@@ -60,6 +60,7 @@ class Player():
                 }
     player_list = []
     level_raises = {0:0, 1:0, 2:0}
+    all_players_possible_moves = set([])
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         
         self.hand_num = 0
@@ -75,15 +76,23 @@ class Player():
         self.dealer_status = False
         self.perspective_opposing_player = ['', ''] ## one for each of the opposing players. First is to left of this player. 
         #self.available_options = []
-        self.evaluation_preflop = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_flop = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_turn = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
-        self.evaluation_river = {'he': '', 'evaluation': '', 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_preflop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_flop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_turn = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
         self.action = None
+        self.is_new_game = False
 
     
-    def hand_evaluate(self, card_holding, name, event):
+    def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
+        if first_player:
+            level_raises = {0:0, 1:0, 2:0}
+        if self.is_new_game:
+            self.make_new_game()
+            self.make_new_round()
+        if self.is_new_round(first_meeting):
+            self.make_new_round()
         he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
         evaluation, rc, score_desc, hand, board = he.get_evaluation()
         self.set_attributes(evaluation, he, rc, score_desc, event)
@@ -113,7 +122,7 @@ class Player():
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
         # return 'ID: {}, Position: {}, \n\tEvaluation-Preflop (score): {}, \n\tRound: {}'.format(str(self.ID), str(self.position), str(self.evaluation_preflop['evaluation']), str(self.round))
-        return 'ID: {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.action), self.level_raises)    
+        return 'ID: {}, \tEval-Preflop: {}, \tEval-Flop: {}, \tEval-Turn: {}, \tEval-River: {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.evaluation_preflop['evaluation']), str(self.evaluation_flop['evaluation']), str(self.evaluation_turn['evaluation']), str(self.evaluation_river['evaluation']),str(self.action), self.level_raises)    
 
     def debug_print(self, player_action, hand, board):
         if (str(player_action)) != 'None':
@@ -123,6 +132,24 @@ class Player():
         else:
             print(self) #, "\tplayer_action", "f")
             print()
+
+    def is_new_round(self, first_meeting):
+        x = False
+        for key, value in first_meeting.items():
+            if value == True:
+                x = True
+        return x 
+        
+    def make_new_round(self):
+        self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
+
+    def make_new_game(self):
+        self.action = None
+        self.evaluation_preflop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_flop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_turn = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+        
 
     def set_attributes(self, evaluation, he, rc, score_desc, event):
         if event == 'Preflop':
@@ -167,18 +194,21 @@ class Player():
         elif event == 'River':
             last_seq_move = self.game_state['action_river']
 
-
         if(llf.count_r(last_seq_move) > 3):
             print("error: num or raises cannot be =", llf.count_r(last_seq_move), "\t", "bot_position",bot_position_num)
         elif(llf.count_r(last_seq_move) == 3):
+            #print("llf.count_r("+last_seq_move+") == 3")
             self.round['possible_moves'].clear()
             self.round['possible_moves'].add('c')
             self.round['possible_moves'].add('f')
+            
         else:
+            #print("llf.count_r("+last_seq_move+") < 3")
             self.round['possible_moves'].clear()
             self.round['possible_moves'].add('r')
             self.round['possible_moves'].add('c')
             self.round['possible_moves'].add('f')    
+            
 
     def calc_raises_i_face(self):
         bot_position_num = self.stposition_to_numposition(self.position)
@@ -227,21 +257,30 @@ class Player():
         range_structure = None
         if round_game == 'Preflop': 
             range_structure = preflop_range
+            which_eval = self.evaluation_preflop
         elif round_game == 'Flop':
             range_structure = flop_range
+            which_eval = self.evaluation_flop
         elif round_game == 'Turn' or round_game == 'River':
             range_structure = turn_river
+            if self.evaluation_river == '' and self.evaluation_river != None:
+                which_eval = self.evaluation_turn
+
+            else:
+                which_eval = self.evaluation_river
 
         try:
-            #print("\n\nround_game", round_game)
-            #print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-            #print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-            if (self.evaluation_preflop["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+            # print("\n\nround_game", round_game)
+            # print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            # print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+            # print(type(which_eval["evaluation"]))
+            if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+                
                 #print("case 1")
                 act = Bet(limit, round_game ,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'r'
                 return act
-            elif self.evaluation_preflop["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
+            elif which_eval["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
                 #print("case 2")
                 act = Call(limit, round_game,self)
                 self.round['moves_i_made_in_this_round_sofar'] += 'c'
@@ -271,143 +310,9 @@ class Player():
         bot_position_num = self.stposition_to_numposition(bot_position)
         q = PriorityQueue()
 
-         
+        #print('\npossible_moves' , self.round['possible_moves'])
         self.make_decision(round_game, bot_position_num)
 
-
-
-        # except: 
-        #     act = Fold(round_game, self)
-        #     self.round['moves_i_made_in_this_round_sofar'] += 'f'
-        #     return act  
-            
-        #if(round_game == 'Preflop'):
-        # if(bot_position == 'BTN'):
-        #     sb_move = ''
-        #     bb_move = ''
-        #     try: 
-        #         sb_move = last_seq_move[-2]
-        #     except:
-        #         print("Cannot access sb_move with last_seq_move of length: ", len(last_seq_move))
-        #     try: 
-        #         bb_move = last_seq_move[-1]
-        #     except:
-        #         print("Cannot access bb_move with last_seq_move of length: ", len(last_seq_move))
-
-        #     if(bb_move == 'r'):     
-        #         q.push(Item('Raise', bot_position), 1)
-        #         q.push(Item('Call', bot_position), 3) # Design Nueral network to learn these weights
-        #         q.push(Item('Fold', bot_position), 3)
-        #         act = Call(limit, round_game,self)
-        #         return act
-                
-        #         if(sb_move == 'c'):
-        #             q.push(Item('Raise', bot_position), 1)
-        #             q.push(Item('Call', bot_position), 3) # Design Nueral network to learn these weights
-        #             q.push(Item('Fold', bot_position), 3)
-        #             act = Call(limit, round_game,self)
-        #             return act
-
-        #     elif(bb_move == 'c'):
-        #         # q.push(Item('Raise', bot_position), 3)
-        #         # q.push(Item('Call', bot_position), 2)
-        #         # act = Bet(limit, round_game ,self)
-                
-        #         if(sb_move == 'c'):
-        #             q.push(Item('Raise', bot_position), 1)
-        #             q.push(Item('Call', bot_position), 3) # Design Nueral network to learn these weights
-        #             q.push(Item('Fold', bot_position), 3)
-        #             act = Call(limit, round_game,self)
-        #             return act
-                    
-
-        #     if(len(last_seq_move) == 0): # very first move of game
-        #         # limp_success_cfr = q.pop()
-        #         q.push(Item('Raise', bot_position), 3)
-        #         q.push(Item('Call', bot_position), 1) # Design Nueral network to learn these weights
-        #         act = Bet(limit, round_game ,self)
-        #         return act
-
-
-
-        # elif(bot_position == 'SB'):
-
-        #     btn_move = ''
-        #     bb_move = ''
-
-        #     try: 
-        #         btn_move = last_seq_move[-1]
-        #     except:
-        #         print("Cannot access btn_move with last_seq_move of length: ", len(last_seq_move))
-        #     try: 
-        #         bb_move = last_seq_move[-2]
-        #     except:
-        #         print("Cannot access bb_move with last_seq_move of length: ", len(last_seq_move))
-                
-        #     if len(last_seq_move) == 1:
-                
-        #         if(btn_move == 'c'):
-                    
-
-        #             if evaluation < preflop_range['upper'][bot_position_num]['sb']: 
-                        
-        #                 act = Bet(limit, round_game ,self)
-        #                 return act
-        #             else:
-        #                 act = Call(limit, round_game,self)
-        #                 return act
-        #         elif(btn_move == 'r'):
-                    
-        #             if evaluation < preflop_range['upper'][bot_position_num]['sb']: 
-                        
-        #                 act = Bet(limit, round_game ,self)
-        #                 return act
-        #             else:
-        #                 act = Call(limit, round_game,self)
-        #                 return act
-
-        #     elif len(last_seq_move) == 2:  
-        #         pass
-                
-            
-
-        # elif(bot_position == 'BB'):
-            
-            # btn_move = ''
-            # sb_move = ''
-
-            # try: 
-            #     sb_move = last_seq_move[-1]
-            # except:
-            #     print("Cannot access sb_move with last_seq_move of length: ", len(last_seq_move))
-            # try: 
-            #     btn_move = last_seq_move[-2]
-            # except:
-            #     print("Cannot access btn_move with last_seq_move of length: ", len(last_seq_move))
-
-               
-
-            # if len(last_seq_move) == 1:  ## SB is dealer preflop or btn is dealer postflop?? POSTFLOP because first condition is impossible
-                
-                # if(sb_move == 'c'):
-
-                #     if evaluation < preflop_range['upper'][bot_position_num]['sb']: 
-                        
-                #         act = Bet(limit, round_game ,self)
-                #         return act
-                #     else:
-                #         act = Call(limit, round_game,self)
-                #         return act
-
-                # elif(sb_move == 'r'):
-                    
-                #     if evaluation < preflop_range['upper'][bot_position_num]['sb']: 
-                        
-                #         act = Bet(limit, round_game ,self)
-                #         return act
-                #     else:
-                #         act = Call(limit, round_game,self)
-                #         return act
 
 def save_player_list(my_list):
     Player.player_list = my_list               
@@ -489,6 +394,10 @@ def send_file(action_string, player, position, directory):
     except:
         print("Could not write", action_string, "to ", btc_file + str(btc_num), "from", position)
 
+    # with open(directory + "log", 'a+') as f:
+    #         st = "\nposition: " + str(player.position) + "\tevaluation_preflop: " + str(player.evaluation_preflop['evaluation']) + "\tevaluation_flop" + str(player.evaluation_flop['evaluation'])
+    #         f.write(st)
+    #         f.close()
 #INTERFACE
 class Action(ABC):
 
@@ -525,11 +434,11 @@ class Bet(Action):
         self.player = player
         self.count_bets[round_game] = self.count_bets[round_game] + 1
         self.round_game =  round_game
-        send_file('r', self.player, self.player.position, self.communication_files_directory)
         self.populate_levelRaises()
         player.round['raises_owed_to_me'] = player.round['raises_owed_to_me'] + 1
         player.action = self
         player.round['raises_i_owe'] = 0
+        send_file('r', self.player, self.player.position, self.communication_files_directory)
        # print("Player: {} bets {}".format(player.ID, amount))
 
     def populate_levelRaises(self):
@@ -558,10 +467,11 @@ class Call(Action):
         self.player = player
         self.count_calls[round_game] = self.count_calls[round_game] + 1
         self.round_game =  round_game
-        send_file('c', self.player, self.player.position, self.communication_files_directory)
         self.populate_levelRaises()
         player.action = self
         player.round['raises_i_owe'] = 0
+        send_file('c', self.player, self.player.position, self.communication_files_directory)
+
        # print("Player: {} calls".format(player.ID))
 
     def populate_levelRaises(self):
@@ -620,8 +530,9 @@ class Fold(Action):
         self.player = player
         self.count_folds[round_game] = self.count_folds[round_game] + 1
         self.round_game =  round_game
-        send_file('f', self.player, self.player.position, self.communication_files_directory)
         player.action = self
+        send_file('f', self.player, self.player.position, self.communication_files_directory)
+
 
     def determine_table_stats(self):
         pass
