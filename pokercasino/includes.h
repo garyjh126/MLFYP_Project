@@ -19,7 +19,7 @@ using namespace std;
 //Magic numbers:
 const int nBots = 3; // : number of bots
 const int nMaxRaises = 3;
-const int nRounds = 1; // number of rounds to test the bots
+const int nRounds = 3; // number of rounds to test the bots
 const int nLogFrequency = 10; // frequency of result logs
 const std::chrono::milliseconds kDelay(400); // time given to each bot is set in the function attend()
 const array<string, 52> eRank = {

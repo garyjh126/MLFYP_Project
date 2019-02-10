@@ -87,8 +87,10 @@ class Player():
     
     def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
         if first_player:
-            level_raises = {0:0, 1:0, 2:0}
+            Player.level_raises = {0:0, 1:0, 2:0}
+            
         if self.is_new_game:
+            print("\n\n******************************\n\n")
             self.make_new_game()
             self.make_new_round()
         if self.is_new_round(first_meeting):
