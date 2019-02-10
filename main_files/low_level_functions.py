@@ -131,9 +131,8 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
 
         if len(file_data_change_CTB) == 7:
             #FLOP ACTION
-            if p.Player.game_state['action_flop'] == '':
-                if file_data_change_CTB[6] != None:
-                    p.Player.game_state['action_flop'] = file_data_change_CTB[6]
+            if file_data_change_CTB[6] != None:
+                p.Player.game_state['action_flop'] = file_data_change_CTB[6]
 
 
             if file_data_change_CTB[6] != None:
@@ -152,9 +151,8 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
 
         if len(file_data_change_CTB) == 9:
             #TURN ACTION 
-            if p.Player.game_state['action_turn'] == '':
-                if file_data_change_CTB[8] != None:
-                    p.Player.game_state['action_turn'] = file_data_change_CTB[8]
+            if file_data_change_CTB[8] != None:
+                p.Player.game_state['action_turn'] = file_data_change_CTB[8]
 
             if file_data_change_CTB[8] != None:
                 if file_data_change_CTB[8] == '':
@@ -173,44 +171,10 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
         if len(file_data_change_CTB) == 11:
             # DEBUGGING PURPOSES: Included all
 
-            #FLOP 
-            if p.Player.game_state['flop1'] == '' and p.Player.game_state['flop2'] == '' and p.Player.game_state['flop3'] == '':
-                if file_data_change_CTB[3] != None and file_data_change_CTB[4] != None and file_data_change_CTB[5] != None:
-                    p.Player.game_state['flop1'] = file_data_change_CTB[3]
-                    p.Player.game_state['flop2'] = file_data_change_CTB[4]
-                    p.Player.game_state['flop3'] = file_data_change_CTB[5]
-
-            #FLOP ACTION
-            if p.Player.game_state['action_flop'] == '':
-                if file_data_change_CTB[6] != None:
-                    p.Player.game_state['action_flop'] = file_data_change_CTB[6]
-
-            
-
-           
-            #TURN 
-            if p.Player.game_state['turn'] == '':
-                if file_data_change_CTB[7] != None:
-                    p.Player.game_state['turn'] = file_data_change_CTB[7]
-
-        
-            #TURN ACTION 
-            if p.Player.game_state['action_turn'] == '':
-                if file_data_change_CTB[8] != None:
-                    p.Player.game_state['action_turn'] = file_data_change_CTB[8]
-
-           
-
-        
-            #RIVER 
-            if p.Player.game_state['river'] == '':
-                if file_data_change_CTB[9] != None:
-                    p.Player.game_state['river'] = file_data_change_CTB[9]
 
             #RIVER ACTION 
-            if p.Player.game_state['action_river'] == '':
-                if file_data_change_CTB[10] != None:
-                    p.Player.game_state['action_river'] = file_data_change_CTB[10]
+            if file_data_change_CTB[10] != None:
+                p.Player.game_state['action_river'] = file_data_change_CTB[10]
                 
            
 
