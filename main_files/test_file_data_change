@@ -1,0 +1,872 @@
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+    # Preflop
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    # Flop
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    # Turn
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    # River
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+handSummaryEven
+casinoToBot2           * what is this?
+stack0
+stack1
+stack2
+
+
+
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino2
+
+handSummaryOdd
+casinoToBot0
+
+
+
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+casinoToBot2
+botToCasino2
+botToCasino0
+
+botToCasino0
+botToCasino1
+casinoToBot0
+
+botToCasino1
+botToCasino2
+casinoToBot1
+
+botToCasino2
+botToCasino0
+casinoToBot2
+
+botToCasino0
+botToCasino2
+casinoToBot0
+
+casinoToBot2
+botToCasino0
+botToCasino2
+
+casinoToBot0
+botToCasino1
+botToCasino2
+
+casinoToBot2
+botToCasino0
+botToCasino2
+
+casinoToBot0
+casinoToBot0
+botToCasino1
+
+botToCasino2
+casinoToBot2
+botToCasino0
+
+botToCasino1
+casinoToBot0
+botToCasino1
+
+botToCasino2
+casinoToBot2
+botToCasino0
+
+botToCasino1
+casinoToBot0
+botToCasino1
+
+botToCasino2
+casinoToBot2
+botToCasino0
+
+botToCasino1
+casinoToBot0
+botToCasino1
+
+botToCasino2
+casinoToBot2
+botToCasino0
+
+botToCasino2
+handSummaryEven
+casinoToBot0
+
+
+
+
+
+
+**************************************************
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    casinoToBot0
+    botToCasino0
+    botToCasino1
+
+    casinoToBot1
+    botToCasino1
+    botToCasino2
+
+    casinoToBot2
+    botToCasino2
+    botToCasino0
+
+    handSummaryEven
+    casinoToBot0
+    casinoToBot1
+stack0
+stack1
+stack2
+
+
+
+
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot2
+    botToCasino1
+    botToCasino2
+
+    casinoToBot0
+    botToCasino2
+    botToCasino0
+
+    casinoToBot1
+    botToCasino0
+    botToCasino1
+
+handSummaryOdd
+casinoToBot1
+
+**************************************
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+casinoToBot0
+botToCasino0
+
+casinoToBot1
+botToCasino1
+
+casinoToBot2
+botToCasino2
+
+casinoToBot1
+botToCasino1
+
+casinoToBot2
+botToCasino2
+
+casinoToBot0
+botToCasino0
+
+casinoToBot1
+botToCasino1
+
+casinoToBot2
+botToCasino2
+
+casinoToBot0
+botToCasino0
+
+casinoToBot1
+botToCasino1
+
+casinoToBot2
+botToCasino2
+
+casinoToBot1
+botToCasino1
+
+casinoToBot2
+botToCasino2
+
+casinoToBot0
+botToCasino0
+
+handSummaryEven
+casinoToBot2
+stack0
+stack1
+stack2
+
+
+
+
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+
+casinoToBot1
+botToCasino0
+
+casinoToBot2
+botToCasino1
+
+casinoToBot0
+botToCasino2
+
+casinoToBot1
+botToCasino0
+
+casinoToBot2
+
+
+*************************************
+
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+handSummaryEven
+casinoToBot0
+stack0
+stack1
+stack2
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+handSummaryOdd
+casinoToBot0
+
+
+*********************************
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+handSummaryEven
+casinoToBot0
+stack0
+stack1
+stack2
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+handSummaryOdd
+casinoToBot0
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+handSummaryEven
+casinoToBot2
+stack0
+stack1
+stack2
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+handSummaryOdd
+casinoToBot1
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+handSummaryEven
+casinoToBot1
+stack0
+stack1
+stack2
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot1
+botToCasino1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+handSummaryOdd
+casinoToBot0
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+handSummaryEven
+casinoToBot1
+stack0
+stack1
+stack2
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot1
+botToCasino1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+handSummaryOdd
+casinoToBot1
+give_hand_bot0
+give_hand_bot1
+give_hand_bot2
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+casinoToBot2
+botToCasino2
+casinoToBot0
+botToCasino0
+casinoToBot1
+botToCasino1
+handSummaryEven
+casinoToBot0

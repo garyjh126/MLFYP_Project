@@ -60,7 +60,6 @@ class Player():
                 }
     player_list = []
     level_raises = {0:0, 1:0, 2:0}
-    all_players_possible_moves = set([])
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         
         self.hand_num = 0
@@ -271,30 +270,27 @@ class Player():
             else:
                 which_eval = self.evaluation_river
 
-        try:
-            # print("\n\nround_game", round_game)
-            # print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-            # print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
-            # print(type(which_eval["evaluation"]))
-            if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
-                
-                #print("case 1")
-                act = Bet(limit, round_game ,self)
-                self.round['moves_i_made_in_this_round_sofar'] += 'r'
-                return act
-            elif which_eval["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
-                #print("case 2")
-                act = Call(limit, round_game,self)
-                self.round['moves_i_made_in_this_round_sofar'] += 'c'
-                return act
-            else: 
-                #print("case 3")
-                act = Fold(round_game, self)
-                self.round['moves_i_made_in_this_round_sofar'] += 'f'
-                return act
-        except KeyError:
-            print('I got a KeyError')
-            print([self.round['raises_i_owe']], [bot_position_num])    
+        # print("\n\nround_game", round_game)
+        # print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+        # print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+        # print(type(which_eval["evaluation"]))
+        if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
+            
+            #print("case 1")
+            act = Bet(limit, round_game ,self)
+            self.round['moves_i_made_in_this_round_sofar'] += 'r'
+            return act
+        elif which_eval["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][bot_position_num] and (self.is_possible('c')): 
+            #print("case 2")
+            act = Call(limit, round_game,self)
+            self.round['moves_i_made_in_this_round_sofar'] += 'c'
+            return act
+        else: 
+            #print("case 3")
+            act = Fold(round_game, self)
+            self.round['moves_i_made_in_this_round_sofar'] += 'f'
+            return act
+           
             
     def take_action(self, he, rc, score_desc, round_game):
         last_seq_move = ''
@@ -382,17 +378,17 @@ def send_file(action_string, player, position, directory):
     btc_file = 'botToCasino'
     btc_num = Player.stposition_to_numposition(player, position)
     next_player_num = get_next_player_left_in_game(player) # accounts for players that have folded and loop-around
-
+    print(btc_num)
     # we want to write to next_player_num to make sure he sees the action of player acting before him
-    file_name_ownPlayer = directory + btc_file + str(btc_num)
-    file_name_nextPlayer = directory + btc_file + str(next_player_num)
+    file_name_ownPlayer = directory + btc_file + str(player.ID)
+    #file_name_nextPlayer = directory + btc_file + str(next_player_num)
     try:
         with open(file_name_ownPlayer, 'wt') as f:
             f.write(action_string)
             f.close()
-        with open(file_name_nextPlayer, 'wt') as f:
-            f.write(action_string)
-            f.close()
+        # with open(file_name_nextPlayer, 'wt') as f:
+        #     f.write(action_string)
+        #     f.close()
     except:
         print("Could not write", action_string, "to ", btc_file + str(btc_num), "from", position)
 

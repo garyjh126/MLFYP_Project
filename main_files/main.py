@@ -109,6 +109,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
         event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
+
+        with open("./test_file_data_change", 'a+') as f:
+                f.write("\n"+most_recent_file_changed)
+                f.close()
+
         if event_type == "give_hand_bot":
 
             if bot_number == '0':
@@ -137,9 +142,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
             treys_card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
-            with open("./test_file_data_change_CTB", 'a+') as f:
-                f.write("\n"+file_data)
-                f.close()
+            
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
             # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>

@@ -43,7 +43,7 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
     # T <turn card> T <turn action> R <river card> R <river action>
-    print("len(fdcctb):", len(file_data_change_CTB))
+    # print("len(fdcctb):", len(file_data_change_CTB))
     is_preflop_action_filled = False
     is_flop_action_filled = False
     is_turn_action_filled = False
