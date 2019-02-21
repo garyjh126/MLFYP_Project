@@ -1,872 +1,268 @@
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-    # Preflop
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    # Flop
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    # Turn
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    # River
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-handSummaryEven
-casinoToBot2           * what is this?
-stack0
-stack1
-stack2
-
-
-
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino2
-
-handSummaryOdd
-casinoToBot0
-
-
-
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-casinoToBot2
-botToCasino2
-botToCasino0
-
-botToCasino0
-botToCasino1
-casinoToBot0
-
-botToCasino1
-botToCasino2
-casinoToBot1
-
-botToCasino2
-botToCasino0
-casinoToBot2
-
-botToCasino0
-botToCasino2
-casinoToBot0
-
-casinoToBot2
-botToCasino0
-botToCasino2
-
-casinoToBot0
-botToCasino1
-botToCasino2
-
-casinoToBot2
-botToCasino0
-botToCasino2
-
-casinoToBot0
-casinoToBot0
-botToCasino1
-
-botToCasino2
-casinoToBot2
-botToCasino0
-
-botToCasino1
-casinoToBot0
-botToCasino1
-
-botToCasino2
-casinoToBot2
-botToCasino0
-
-botToCasino1
-casinoToBot0
-botToCasino1
-
-botToCasino2
-casinoToBot2
-botToCasino0
-
-botToCasino1
-casinoToBot0
-botToCasino1
-
-botToCasino2
-casinoToBot2
-botToCasino0
-
-botToCasino2
-handSummaryEven
-casinoToBot0
-
-
-
-
-
-
-**************************************************
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    casinoToBot0
-    botToCasino0
-    botToCasino1
-
-    casinoToBot1
-    botToCasino1
-    botToCasino2
-
-    casinoToBot2
-    botToCasino2
-    botToCasino0
-
-    handSummaryEven
-    casinoToBot0
-    casinoToBot1
-stack0
-stack1
-stack2
-
-
-
-
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot2
-    botToCasino1
-    botToCasino2
-
-    casinoToBot0
-    botToCasino2
-    botToCasino0
-
-    casinoToBot1
-    botToCasino0
-    botToCasino1
-
-handSummaryOdd
-casinoToBot1
-
-**************************************
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-casinoToBot0
-botToCasino0
-
-casinoToBot1
-botToCasino1
-
-casinoToBot2
-botToCasino2
-
-casinoToBot1
-botToCasino1
-
-casinoToBot2
-botToCasino2
-
-casinoToBot0
-botToCasino0
-
-casinoToBot1
-botToCasino1
-
-casinoToBot2
-botToCasino2
-
-casinoToBot0
-botToCasino0
-
-casinoToBot1
-botToCasino1
-
-casinoToBot2
-botToCasino2
-
-casinoToBot1
-botToCasino1
-
-casinoToBot2
-botToCasino2
-
-casinoToBot0
-botToCasino0
-
-handSummaryEven
-casinoToBot2
-stack0
-stack1
-stack2
-
-
-
-
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-
-casinoToBot1
-botToCasino0
-
-casinoToBot2
-botToCasino1
-
-casinoToBot0
-botToCasino2
-
-casinoToBot1
-botToCasino0
-
-casinoToBot2
-
-
-*************************************
-
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-handSummaryEven
-casinoToBot0
-stack0
-stack1
-stack2
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-handSummaryOdd
-casinoToBot0
-
-
-*********************************
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-handSummaryEven
-casinoToBot0
-stack0
-stack1
-stack2
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-handSummaryOdd
-casinoToBot0
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-handSummaryEven
-casinoToBot2
-stack0
-stack1
-stack2
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-handSummaryOdd
-casinoToBot1
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-handSummaryEven
-casinoToBot1
-stack0
-stack1
-stack2
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot1
-botToCasino1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-handSummaryOdd
-casinoToBot0
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-handSummaryEven
-casinoToBot1
-stack0
-stack1
-stack2
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot1
-botToCasino1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-handSummaryOdd
-casinoToBot1
-give_hand_bot0
-give_hand_bot1
-give_hand_bot2
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-casinoToBot2
-botToCasino2
-casinoToBot0
-botToCasino0
-casinoToBot1
-botToCasino1
-handSummaryEven
-casinoToBot0
+{'hand_no': '6', 'dealer_position': 0, 'action_preflop': 'crrcrcc', 'flop1': '0', 'flop2': '28', 'flop3': '29', 'action_flop': 'crc', 'turn': '26', 'action_turn': 'rrr', 'river': '34', 'action_river': 'r', 'p1': {'position_showdown': '2', 'cards': ['48', '50']}, 'p2': {'position_showdown': '0', 'cards': ['38', '51']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '7', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '1', 'flop2': '36', 'flop3': '25', 'action_flop': 'rcrrf', 'turn': '33', 'action_turn': 'rrr', 'river': '19', 'action_river': 'rrr', 'p1': {'position_showdown': '2', 'cards': ['27', '8']}, 'p2': {'position_showdown': '1', 'cards': ['7', '2']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '8', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '39', 'flop2': '45', 'flop3': '41', 'action_flop': 'ccrc', 'turn': '3', 'action_turn': 'rrrc', 'river': '17', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['9', '33']}, 'p2': {'position_showdown': '1', 'cards': ['8', '13']}, 'p3': {'position_showdown': '2', 'cards': ['32', '26']}, 'winners': ['0']}
+{'hand_no': '9', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '30', 'flop2': '47', 'flop3': '22', 'action_flop': 'r', 'turn': '11', 'action_turn': 'rrr', 'river': '29', 'action_river': 'rrr', 'p1': {'position_showdown': '2', 'cards': ['45', '44']}, 'p2': {'position_showdown': '0', 'cards': ['17', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '10', 'dealer_position': 1, 'action_preflop': 'rrrcc', 'flop1': '47', 'flop2': '45', 'flop3': '26', 'action_flop': 'rrcrc', 'turn': '32', 'action_turn': 'rrrc', 'river': '29', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['43', '42']}, 'p2': {'position_showdown': '1', 'cards': ['4', '18']}, 'p3': {'position_showdown': '2', 'cards': ['48', '25']}, 'winners': ['0']}
+{'hand_no': '11', 'dealer_position': 2, 'action_preflop': 'rrcrcc', 'flop1': '24', 'flop2': '22', 'flop3': '10', 'action_flop': 'rc', 'turn': '3', 'action_turn': 'rrrc', 'river': '20', 'action_river': 'ccrc', 'p1': {'position_showdown': '2', 'cards': ['8', '44']}, 'p2': {'position_showdown': '0', 'cards': ['27', '13']}, 'p3': {'position_showdown': '1', 'cards': ['4', '31']}, 'winners': ['0']}
+{'hand_no': '12', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '28', 'flop2': '6', 'flop3': '1', 'action_flop': 'cc', 'turn': '17', 'action_turn': 'rrr', 'river': '9', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['43', '10']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '13', 'dealer_position': 1, 'action_preflop': 'rcrrfc', 'flop1': '4', 'flop2': '41', 'flop3': '19', 'action_flop': 'rrr', 'turn': '46', 'action_turn': 'rrr', 'river': '24', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['33', '40']}, 'p2': {'position_showdown': '0', 'cards': ['38', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '14', 'dealer_position': 2, 'action_preflop': 'crrcc', 'flop1': '26', 'flop2': '42', 'flop3': '11', 'action_flop': 'rcrrf', 'turn': '7', 'action_turn': 'rrr', 'river': '51', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['3', '14']}, 'p2': {'position_showdown': '0', 'cards': ['35', '47']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '15', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '32', 'flop2': '14', 'flop3': '40', 'action_flop': 'r', 'turn': '43', 'action_turn': 'rrr', 'river': '35', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['50', '10']}, 'p2': {'position_showdown': '2', 'cards': ['3', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '16', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '37', 'flop2': '30', 'flop3': '12', 'action_flop': 'rrcrc', 'turn': '23', 'action_turn': 'rrrc', 'river': '21', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['19', '15']}, 'p2': {'position_showdown': '0', 'cards': ['2', '41']}, 'p3': {'position_showdown': '1', 'cards': ['11', '13']}, 'winners': ['1']}
+{'hand_no': '17', 'dealer_position': 2, 'action_preflop': 'rfc', 'flop1': '1', 'flop2': '40', 'flop3': '46', 'action_flop': 'cc', 'turn': '23', 'action_turn': 'rrr', 'river': '19', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['42', '25']}, 'p2': {'position_showdown': '1', 'cards': ['0', '26']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '18', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '19', 'flop2': '35', 'flop3': '15', 'action_flop': 'rrr', 'turn': '45', 'action_turn': 'rrr', 'river': '29', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['13', '51']}, 'p2': {'position_showdown': '1', 'cards': ['21', '43']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '18', 'flop2': '41', 'flop3': '27', 'action_flop': 'crc', 'turn': '49', 'action_turn': 'rrrc', 'river': '12', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['31', '44']}, 'p2': {'position_showdown': '2', 'cards': ['2', '37']}, 'p3': {'position_showdown': '0', 'cards': ['19', '4']}, 'winners': ['0']}
+{'hand_no': '1', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '12', 'flop2': '6', 'flop3': '35', 'action_flop': 'rrr', 'turn': '30', 'action_turn': 'rrr', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['22', '47']}, 'p2': {'position_showdown': '0', 'cards': ['38', '36']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '2', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '44', 'flop2': '26', 'flop3': '0', 'action_flop': 'ccrf', 'turn': '25', 'action_turn': 'rrr', 'river': '30', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['22', '42']}, 'p2': {'position_showdown': '1', 'cards': ['19', '7']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '3', 'dealer_position': 0, 'action_preflop': 'ccrcf', 'flop1': '43', 'flop2': '29', 'flop3': '40', 'action_flop': 'cr', 'turn': '39', 'action_turn': 'rrr', 'river': '3', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['25', '9']}, 'p2': {'position_showdown': '2', 'cards': ['23', '15']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '4', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '48', 'flop2': '51', 'flop3': '23', 'action_flop': 'ccrc', 'turn': '43', 'action_turn': 'rrrc', 'river': '46', 'action_river': 'ccrc', 'p1': {'position_showdown': '1', 'cards': ['16', '10']}, 'p2': {'position_showdown': '2', 'cards': ['0', '17']}, 'p3': {'position_showdown': '0', 'cards': ['24', '20']}, 'winners': ['0']}
+{'hand_no': '5', 'dealer_position': 2, 'action_preflop': 'ccrcc', 'flop1': '6', 'flop2': '8', 'flop3': '18', 'action_flop': 'frrr', 'turn': '17', 'action_turn': 'rrr', 'river': '14', 'action_river': 'rr', 'p1': {'position_showdown': '2', 'cards': ['26', '37']}, 'p2': {'position_showdown': '1', 'cards': ['49', '51']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '6', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '11', 'flop2': '4', 'flop3': '33', 'action_flop': 'cc', 'turn': '35', 'action_turn': 'rrrc', 'river': '31', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['21', '51']}, 'p2': {'position_showdown': '2', 'cards': ['16', '30']}, 'p3': {'position_showdown': '0', 'cards': ['46', '22']}, 'winners': ['2']}
+{'hand_no': '7', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '5', 'flop2': '11', 'flop3': '13', 'action_flop': 'cc', 'turn': '40', 'action_turn': 'rrrc', 'river': '22', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['26', '39']}, 'p2': {'position_showdown': '1', 'cards': ['47', '21']}, 'p3': {'position_showdown': '2', 'cards': ['30', '51']}, 'winners': ['1']}
+{'hand_no': '8', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '23', 'flop2': '21', 'flop3': '6', 'action_flop': 'rc', 'turn': '0', 'action_turn': 'rrrc', 'river': '3', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['31', '8']}, 'p2': {'position_showdown': '1', 'cards': ['35', '5']}, 'p3': {'position_showdown': '2', 'cards': ['33', '11']}, 'winners': ['1']}
+{'hand_no': '9', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '30', 'flop2': '3', 'flop3': '10', 'action_flop': 'rcrrf', 'turn': '9', 'action_turn': 'rrr', 'river': '37', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['46', '45']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '10', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '38', 'flop2': '28', 'flop3': '47', 'action_flop': 'ccrf', 'turn': '20', 'action_turn': 'rrr', 'river': '49', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['25', '31']}, 'p2': {'position_showdown': '0', 'cards': ['14', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '11', 'dealer_position': 2, 'action_preflop': 'cfc', 'flop1': '48', 'flop2': '51', 'flop3': '30', 'action_flop': 'cc', 'turn': '20', 'action_turn': 'rrr', 'river': '34', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['27', '1']}, 'p2': {'position_showdown': '1', 'cards': ['21', '0']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '12', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '38', 'flop2': '49', 'flop3': '11', 'action_flop': 'rrcrc', 'turn': '45', 'action_turn': 'rrrc', 'river': '28', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['13', '48']}, 'p2': {'position_showdown': '2', 'cards': ['46', '51']}, 'p3': {'position_showdown': '0', 'cards': ['19', '50']}, 'winners': ['2']}
+{'hand_no': '13', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '43', 'flop2': '36', 'flop3': '33', 'action_flop': '', 'turn': '', 'action_turn': '', 'river': '', 'action_river': '', 'p1': {'position_showdown': '1', 'cards': ['16', '26']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '14', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '49', 'flop2': '9', 'flop3': '27', 'action_flop': 'crrfr', 'turn': '51', 'action_turn': 'rrr', 'river': '30', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['45', '12']}, 'p2': {'position_showdown': '1', 'cards': ['43', '26']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '15', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '45', 'flop2': '28', 'flop3': '47', 'action_flop': 'cc', 'turn': '5', 'action_turn': 'rrrc', 'river': '4', 'action_river': 'fc', 'p1': {'position_showdown': '2', 'cards': ['0', '29']}, 'p2': {'position_showdown': '0', 'cards': ['8', '33']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '16', 'dealer_position': 1, 'action_preflop': 'rfc', 'flop1': '23', 'flop2': '11', 'flop3': '17', 'action_flop': 'cc', 'turn': '1', 'action_turn': 'rrr', 'river': '24', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['36', '28']}, 'p2': {'position_showdown': '1', 'cards': ['29', '14']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '17', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '37', 'flop2': '40', 'flop3': '46', 'action_flop': 'ccrf', 'turn': '13', 'action_turn': 'rrr', 'river': '32', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['23', '20']}, 'p2': {'position_showdown': '1', 'cards': ['33', '39']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '18', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '6', 'flop2': '19', 'flop3': '23', 'action_flop': 'rc', 'turn': '30', 'action_turn': 'rrrc', 'river': '37', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['28', '13']}, 'p2': {'position_showdown': '1', 'cards': ['25', '0']}, 'p3': {'position_showdown': '2', 'cards': ['1', '34']}, 'winners': ['0']}
+{'hand_no': '19', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '13', 'flop2': '30', 'flop3': '12', 'action_flop': 'cr', 'turn': '40', 'action_turn': 'rrr', 'river': '33', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['20', '28']}, 'p2': {'position_showdown': '1', 'cards': ['6', '22']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '20', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '24', 'flop2': '36', 'flop3': '21', 'action_flop': 'cc', 'turn': '25', 'action_turn': 'rrr', 'river': '9', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['46', '22']}, 'p2': {'position_showdown': '1', 'cards': ['29', '7']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '21', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '16', 'flop2': '41', 'flop3': '47', 'action_flop': 'cc', 'turn': '28', 'action_turn': 'rrrc', 'river': '5', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['40', '24']}, 'p2': {'position_showdown': '2', 'cards': ['35', '25']}, 'p3': {'position_showdown': '0', 'cards': ['48', '3']}, 'winners': ['1']}
+{'hand_no': '22', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '47', 'flop2': '1', 'flop3': '38', 'action_flop': 'crc', 'turn': '35', 'action_turn': 'rrrc', 'river': '49', 'action_river': 'fc', 'p1': {'position_showdown': '0', 'cards': ['46', '37']}, 'p2': {'position_showdown': '1', 'cards': ['34', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '23', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '0', 'flop2': '43', 'flop3': '4', 'action_flop': 'ccrc', 'turn': '46', 'action_turn': 'rrrc', 'river': '25', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['21', '44']}, 'p2': {'position_showdown': '1', 'cards': ['49', '8']}, 'p3': {'position_showdown': '2', 'cards': ['1', '2']}, 'winners': ['2']}
+{'hand_no': '24', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '40', 'flop2': '31', 'flop3': '21', 'action_flop': 'ccrc', 'turn': '49', 'action_turn': 'rrrc', 'river': '5', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['15', '17']}, 'p2': {'position_showdown': '2', 'cards': ['28', '18']}, 'p3': {'position_showdown': '0', 'cards': ['14', '4']}, 'winners': ['2']}
+{'hand_no': '25', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '23', 'flop2': '46', 'flop3': '39', 'action_flop': 'rrr', 'turn': '33', 'action_turn': 'rrr', 'river': '14', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['29', '30']}, 'p2': {'position_showdown': '1', 'cards': ['37', '36']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '26', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '42', 'flop2': '14', 'flop3': '8', 'action_flop': 'rcrrf', 'turn': '3', 'action_turn': 'rrr', 'river': '17', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['34', '26']}, 'p2': {'position_showdown': '0', 'cards': ['22', '48']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '27', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '17', 'flop2': '41', 'flop3': '20', 'action_flop': 'cc', 'turn': '19', 'action_turn': 'rrrc', 'river': '38', 'action_river': 'fcr', 'p1': {'position_showdown': '0', 'cards': ['29', '33']}, 'p2': {'position_showdown': '2', 'cards': ['1', '10']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '28', 'dealer_position': 1, 'action_preflop': 'cfrc', 'flop1': '12', 'flop2': '42', 'flop3': '20', 'action_flop': 'cc', 'turn': '26', 'action_turn': 'rrr', 'river': '19', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['17', '35']}, 'p2': {'position_showdown': '0', 'cards': ['45', '41']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '29', 'dealer_position': 2, 'action_preflop': 'crrfc', 'flop1': '41', 'flop2': '23', 'flop3': '18', 'action_flop': 'rrr', 'turn': '24', 'action_turn': 'rrr', 'river': '26', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['14', '42']}, 'p2': {'position_showdown': '0', 'cards': ['31', '29']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '30', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '4', 'flop2': '42', 'flop3': '0', 'action_flop': 'cc', 'turn': '15', 'action_turn': 'rrr', 'river': '25', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['24', '10']}, 'p2': {'position_showdown': '2', 'cards': ['14', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '31', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '32', 'flop2': '3', 'flop3': '12', 'action_flop': 'cc', 'turn': '24', 'action_turn': 'rrr', 'river': '42', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['13', '4']}, 'p2': {'position_showdown': '0', 'cards': ['28', '8']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '32', 'dealer_position': 2, 'action_preflop': 'crrcrcc', 'flop1': '2', 'flop2': '42', 'flop3': '32', 'action_flop': 'fr', 'turn': '48', 'action_turn': 'rrr', 'river': '7', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['51', '5']}, 'p2': {'position_showdown': '1', 'cards': ['18', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '33', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '21', 'flop2': '22', 'flop3': '2', 'action_flop': 'fr', 'turn': '16', 'action_turn': 'rrr', 'river': '15', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['27', '23']}, 'p2': {'position_showdown': '2', 'cards': ['18', '44']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '34', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '33', 'flop2': '44', 'flop3': '23', 'action_flop': 'rc', 'turn': '45', 'action_turn': 'rrrc', 'river': '13', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['21', '43']}, 'p2': {'position_showdown': '0', 'cards': ['25', '1']}, 'p3': {'position_showdown': '1', 'cards': ['49', '2']}, 'winners': ['0']}
+{'hand_no': '35', 'dealer_position': 2, 'action_preflop': 'ccrcc', 'flop1': '43', 'flop2': '37', 'flop3': '6', 'action_flop': 'rrcrc', 'turn': '2', 'action_turn': 'rrrc', 'river': '47', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['48', '50']}, 'p2': {'position_showdown': '2', 'cards': ['32', '41']}, 'p3': {'position_showdown': '0', 'cards': ['44', '14']}, 'winners': ['1']}
+{'hand_no': '36', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '35', 'flop2': '0', 'flop3': '6', 'action_flop': 'cr', 'turn': '30', 'action_turn': 'rrr', 'river': '34', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['20', '2']}, 'p2': {'position_showdown': '2', 'cards': ['39', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '37', 'dealer_position': 1, 'action_preflop': 'crrcrcc', 'flop1': '17', 'flop2': '7', 'flop3': '48', 'action_flop': 'ccrc', 'turn': '0', 'action_turn': 'rrrc', 'river': '16', 'action_river': 'fcr', 'p1': {'position_showdown': '1', 'cards': ['35', '51']}, 'p2': {'position_showdown': '0', 'cards': ['6', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '38', 'dealer_position': 2, 'action_preflop': 'rfc', 'flop1': '2', 'flop2': '31', 'flop3': '0', 'action_flop': 'r', 'turn': '27', 'action_turn': 'rrr', 'river': '12', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['37', '40']}, 'p2': {'position_showdown': '2', 'cards': ['19', '6']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '39', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '28', 'flop2': '8', 'flop3': '30', 'action_flop': 'frrr', 'turn': '11', 'action_turn': 'rrr', 'river': '18', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['44', '40']}, 'p2': {'position_showdown': '2', 'cards': ['4', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '40', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '7', 'flop2': '48', 'flop3': '46', 'action_flop': 'ccrc', 'turn': '41', 'action_turn': 'rrrc', 'river': '12', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['26', '6']}, 'p2': {'position_showdown': '0', 'cards': ['27', '3']}, 'p3': {'position_showdown': '1', 'cards': ['51', '28']}, 'winners': ['1']}
+{'hand_no': '41', 'dealer_position': 2, 'action_preflop': 'rrcrcc', 'flop1': '42', 'flop2': '20', 'flop3': '29', 'action_flop': 'rc', 'turn': '47', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['27', '46']}, 'p2': {'position_showdown': '1', 'cards': ['16', '3']}, 'p3': {'position_showdown': '2', 'cards': ['0', '8']}, 'winners': ['0']}
+{'hand_no': '42', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '45', 'flop2': '43', 'flop3': '34', 'action_flop': 'ccrf', 'turn': '20', 'action_turn': 'rrr', 'river': '21', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['36', '19']}, 'p2': {'position_showdown': '2', 'cards': ['12', '41']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '43', 'dealer_position': 1, 'action_preflop': 'cfc', 'flop1': '41', 'flop2': '0', 'flop3': '44', 'action_flop': 'r', 'turn': '50', 'action_turn': 'rrr', 'river': '47', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['23', '17']}, 'p2': {'position_showdown': '0', 'cards': ['21', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '44', 'dealer_position': 2, 'action_preflop': 'rrfrc', 'flop1': '50', 'flop2': '24', 'flop3': '14', 'action_flop': 'r', 'turn': '21', 'action_turn': 'rrr', 'river': '23', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['20', '31']}, 'p2': {'position_showdown': '0', 'cards': ['45', '44']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '45', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '43', 'flop2': '16', 'flop3': '29', 'action_flop': 'rrr', 'turn': '46', 'action_turn': 'rrr', 'river': '32', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['23', '11']}, 'p2': {'position_showdown': '2', 'cards': ['30', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '46', 'dealer_position': 1, 'action_preflop': 'crrfc', 'flop1': '31', 'flop2': '7', 'flop3': '30', 'action_flop': 'rrr', 'turn': '15', 'action_turn': 'rrr', 'river': '51', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['35', '33']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '47', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '19', 'flop2': '31', 'flop3': '45', 'action_flop': 'ccrc', 'turn': '36', 'action_turn': 'rrrc', 'river': '10', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['51', '6']}, 'p2': {'position_showdown': '1', 'cards': ['4', '35']}, 'p3': {'position_showdown': '2', 'cards': ['11', '43']}, 'winners': ['2']}
+{'hand_no': '48', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '47', 'flop2': '27', 'flop3': '20', 'action_flop': 'rrcrc', 'turn': '24', 'action_turn': 'rrrc', 'river': '2', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['45', '34']}, 'p2': {'position_showdown': '2', 'cards': ['6', '39']}, 'p3': {'position_showdown': '0', 'cards': ['19', '13']}, 'winners': ['1']}
+{'hand_no': '49', 'dealer_position': 1, 'action_preflop': 'cfrc', 'flop1': '26', 'flop2': '44', 'flop3': '10', 'action_flop': 'cr', 'turn': '45', 'action_turn': 'rrr', 'river': '20', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['22', '50']}, 'p2': {'position_showdown': '0', 'cards': ['42', '30']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '50', 'dealer_position': 2, 'action_preflop': 'rfc', 'flop1': '10', 'flop2': '9', 'flop3': '11', 'action_flop': 'rrr', 'turn': '51', 'action_turn': 'rrr', 'river': '31', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['23', '41']}, 'p2': {'position_showdown': '1', 'cards': ['0', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '51', 'dealer_position': 0, 'action_preflop': 'crrfrc', 'flop1': '5', 'flop2': '25', 'flop3': '18', 'action_flop': 'cr', 'turn': '39', 'action_turn': 'rrr', 'river': '32', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['9', '16']}, 'p2': {'position_showdown': '1', 'cards': ['50', '11']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '52', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '30', 'flop2': '10', 'flop3': '15', 'action_flop': 'r', 'turn': '33', 'action_turn': 'rrr', 'river': '43', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['46', '29']}, 'p2': {'position_showdown': '0', 'cards': ['44', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '53', 'dealer_position': 2, 'action_preflop': 'rrcrcc', 'flop1': '51', 'flop2': '10', 'flop3': '37', 'action_flop': 'cc', 'turn': '23', 'action_turn': 'rrrc', 'river': '0', 'action_river': 'ccrc', 'p1': {'position_showdown': '2', 'cards': ['34', '28']}, 'p2': {'position_showdown': '0', 'cards': ['39', '48']}, 'p3': {'position_showdown': '1', 'cards': ['25', '33']}, 'winners': ['0']}
+{'hand_no': '54', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '25', 'flop2': '41', 'flop3': '35', 'action_flop': 'cc', 'turn': '29', 'action_turn': 'rrrc', 'river': '42', 'action_river': 'ccrf', 'p1': {'position_showdown': '0', 'cards': ['43', '50']}, 'p2': {'position_showdown': '2', 'cards': ['24', '33']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '55', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '44', 'flop2': '29', 'flop3': '35', 'action_flop': 'rc', 'turn': '43', 'action_turn': 'rrrc', 'river': '42', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['2', '14']}, 'p2': {'position_showdown': '0', 'cards': ['19', '12']}, 'p3': {'position_showdown': '1', 'cards': ['27', '46']}, 'winners': ['1']}
+{'hand_no': '56', 'dealer_position': 2, 'action_preflop': 'rrfrc', 'flop1': '10', 'flop2': '17', 'flop3': '6', 'action_flop': 'cc', 'turn': '24', 'action_turn': 'rrr', 'river': '30', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['4', '25']}, 'p2': {'position_showdown': '0', 'cards': ['23', '37']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '57', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '32', 'flop2': '10', 'flop3': '42', 'action_flop': 'r', 'turn': '8', 'action_turn': 'rrr', 'river': '4', 'action_river': 'r', 'p1': {'position_showdown': '2', 'cards': ['31', '29']}, 'p2': {'position_showdown': '0', 'cards': ['36', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '58', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '34', 'flop2': '35', 'flop3': '13', 'action_flop': 'rc', 'turn': '4', 'action_turn': 'rrrc', 'river': '49', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['50', '17']}, 'p2': {'position_showdown': '0', 'cards': ['6', '8']}, 'p3': {'position_showdown': '1', 'cards': ['16', '47']}, 'winners': ['2']}
+{'hand_no': '59', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '19', 'flop2': '39', 'flop3': '32', 'action_flop': 'cc', 'turn': '38', 'action_turn': 'rrrc', 'river': '44', 'action_river': 'fcr', 'p1': {'position_showdown': '2', 'cards': ['31', '42']}, 'p2': {'position_showdown': '1', 'cards': ['34', '9']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '60', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '48', 'flop2': '23', 'flop3': '30', 'action_flop': 'fr', 'turn': '18', 'action_turn': 'rrr', 'river': '42', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['44', '9']}, 'p2': {'position_showdown': '2', 'cards': ['20', '4']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '61', 'dealer_position': 1, 'action_preflop': 'cfrc', 'flop1': '14', 'flop2': '6', 'flop3': '11', 'action_flop': 'r', 'turn': '31', 'action_turn': 'rrr', 'river': '33', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['5', '0']}, 'p2': {'position_showdown': '0', 'cards': ['20', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '62', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '3', 'flop2': '2', 'flop3': '19', 'action_flop': 'ccrf', 'turn': '27', 'action_turn': 'rrr', 'river': '18', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['12', '50']}, 'p2': {'position_showdown': '1', 'cards': ['10', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '63', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '19', 'flop2': '0', 'flop3': '5', 'action_flop': 'cr', 'turn': '26', 'action_turn': 'rrr', 'river': '17', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['34', '21']}, 'p2': {'position_showdown': '2', 'cards': ['1', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '64', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '20', 'flop2': '45', 'flop3': '43', 'action_flop': 'rc', 'turn': '36', 'action_turn': 'rrrc', 'river': '2', 'action_river': 'ccrc', 'p1': {'position_showdown': '1', 'cards': ['23', '27']}, 'p2': {'position_showdown': '2', 'cards': ['51', '37']}, 'p3': {'position_showdown': '0', 'cards': ['32', '41']}, 'winners': ['0']}
+{'hand_no': '65', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '13', 'flop2': '41', 'flop3': '7', 'action_flop': 'crc', 'turn': '21', 'action_turn': 'rrrc', 'river': '0', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['17', '37']}, 'p2': {'position_showdown': '1', 'cards': ['12', '25']}, 'p3': {'position_showdown': '2', 'cards': ['18', '42']}, 'winners': ['0']}
+{'hand_no': '66', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '7', 'flop2': '25', 'flop3': '2', 'action_flop': 'rcrrf', 'turn': '24', 'action_turn': 'rrr', 'river': '15', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['47', '10']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '67', 'dealer_position': 1, 'action_preflop': 'rfc', 'flop1': '19', 'flop2': '4', 'flop3': '45', 'action_flop': 'rrr', 'turn': '43', 'action_turn': 'rrr', 'river': '0', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['31', '41']}, 'p2': {'position_showdown': '0', 'cards': ['49', '9']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '68', 'dealer_position': 2, 'action_preflop': 'ccrcc', 'flop1': '30', 'flop2': '6', 'flop3': '28', 'action_flop': 'cc', 'turn': '27', 'action_turn': 'rrrc', 'river': '1', 'action_river': 'ccrc', 'p1': {'position_showdown': '2', 'cards': ['47', '12']}, 'p2': {'position_showdown': '0', 'cards': ['42', '50']}, 'p3': {'position_showdown': '1', 'cards': ['25', '2']}, 'winners': ['1']}
+{'hand_no': '69', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '19', 'flop2': '26', 'flop3': '18', 'action_flop': 'r', 'turn': '37', 'action_turn': 'rrr', 'river': '9', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['21', '38']}, 'p2': {'position_showdown': '2', 'cards': ['29', '28']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '70', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '34', 'flop2': '44', 'flop3': '28', 'action_flop': 'cc', 'turn': '7', 'action_turn': 'rrr', 'river': '15', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['6', '39']}, 'p2': {'position_showdown': '2', 'cards': ['1', '22']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '71', 'dealer_position': 2, 'action_preflop': 'rfc', 'flop1': '4', 'flop2': '5', 'flop3': '8', 'action_flop': 'cr', 'turn': '22', 'action_turn': 'rrr', 'river': '49', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['33', '43']}, 'p2': {'position_showdown': '2', 'cards': ['3', '47']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '72', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '15', 'flop2': '27', 'flop3': '18', 'action_flop': 'rrr', 'turn': '14', 'action_turn': 'rrr', 'river': '6', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['51', '32']}, 'p2': {'position_showdown': '2', 'cards': ['5', '26']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '73', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '19', 'flop2': '14', 'flop3': '6', 'action_flop': 'cc', 'turn': '41', 'action_turn': 'rrrc', 'river': '8', 'action_river': 'ccrc', 'p1': {'position_showdown': '1', 'cards': ['47', '30']}, 'p2': {'position_showdown': '2', 'cards': ['3', '0']}, 'p3': {'position_showdown': '0', 'cards': ['13', '11']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '38', 'flop2': '2', 'flop3': '40', 'action_flop': 'cc', 'turn': '50', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['42', '31']}, 'p2': {'position_showdown': '1', 'cards': ['35', '47']}, 'p3': {'position_showdown': '2', 'cards': ['21', '51']}, 'winners': ['1']}
+{'hand_no': '1', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '16', 'flop2': '41', 'flop3': '42', 'action_flop': 'rc', 'turn': '19', 'action_turn': 'rrrc', 'river': '20', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['27', '46']}, 'p2': {'position_showdown': '0', 'cards': ['51', '13']}, 'p3': {'position_showdown': '1', 'cards': ['49', '25']}, 'winners': ['0', '1']}
+{'hand_no': '2', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '2', 'flop2': '34', 'flop3': '30', 'action_flop': 'rrr', 'turn': '38', 'action_turn': 'rrr', 'river': '9', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['7', '41']}, 'p2': {'position_showdown': '1', 'cards': ['18', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '3', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '34', 'flop2': '44', 'flop3': '0', 'action_flop': 'cr', 'turn': '8', 'action_turn': 'rrr', 'river': '25', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['16', '26']}, 'p2': {'position_showdown': '2', 'cards': ['40', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '4', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '18', 'flop2': '41', 'flop3': '49', 'action_flop': 'frrr', 'turn': '1', 'action_turn': 'rrr', 'river': '31', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['23', '12']}, 'p2': {'position_showdown': '0', 'cards': ['16', '46']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '48', 'flop2': '21', 'flop3': '17', 'action_flop': 'rr', 'turn': '24', 'action_turn': 'rrr', 'river': '2', 'action_river': 'rrr', 'p1': {'position_showdown': '2', 'cards': ['18', '19']}, 'p2': {'position_showdown': '0', 'cards': ['47', '5']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '1', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '39', 'flop2': '47', 'flop3': '17', 'action_flop': 'fc', 'turn': '41', 'action_turn': 'rrr', 'river': '19', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['40', '22']}, 'p2': {'position_showdown': '0', 'cards': ['37', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '2', 'dealer_position': 2, 'action_preflop': 'rrrcc', 'flop1': '44', 'flop2': '16', 'flop3': '22', 'action_flop': 'fcr', 'turn': '27', 'action_turn': 'rrr', 'river': '23', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['28', '30']}, 'p2': {'position_showdown': '1', 'cards': ['2', '6']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '19', 'flop2': '25', 'flop3': '45', 'action_flop': 'rcrrf', 'turn': '22', 'action_turn': 'rrr', 'river': '5', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['30', '43']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '1', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '21', 'flop2': '12', 'flop3': '50', 'action_flop': 'cc', 'turn': '43', 'action_turn': 'rrrc', 'river': '2', 'action_river': 'fc', 'p1': {'position_showdown': '0', 'cards': ['11', '29']}, 'p2': {'position_showdown': '1', 'cards': ['51', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '2', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '43', 'flop2': '40', 'flop3': '20', 'action_flop': 'crc', 'turn': '6', 'action_turn': 'rrrc', 'river': '23', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['41', '19']}, 'p2': {'position_showdown': '1', 'cards': ['47', '26']}, 'p3': {'position_showdown': '2', 'cards': ['50', '5']}, 'winners': ['0']}
+{'hand_no': '3', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '6', 'flop2': '13', 'flop3': '19', 'action_flop': 'rrcrc', 'turn': '42', 'action_turn': 'rrrc', 'river': '3', 'action_river': 'crc', 'p1': {'position_showdown': '2', 'cards': ['51', '37']}, 'p2': {'position_showdown': '0', 'cards': ['46', '26']}, 'p3': {'position_showdown': '1', 'cards': ['49', '28']}, 'winners': ['2']}
+{'hand_no': '4', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '35', 'flop2': '21', 'flop3': '32', 'action_flop': 'cc', 'turn': '5', 'action_turn': 'rrr', 'river': '44', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['23', '19']}, 'p2': {'position_showdown': '2', 'cards': ['12', '18']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '5', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '3', 'flop2': '41', 'flop3': '5', 'action_flop': 'rrcrc', 'turn': '34', 'action_turn': 'rrrc', 'river': '21', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['47', '9']}, 'p2': {'position_showdown': '1', 'cards': ['43', '38']}, 'p3': {'position_showdown': '2', 'cards': ['13', '19']}, 'winners': ['1']}
+{'hand_no': '6', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '8', 'flop2': '22', 'flop3': '32', 'action_flop': 'rrcrc', 'turn': '41', 'action_turn': 'rrrc', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['13', '42']}, 'p2': {'position_showdown': '2', 'cards': ['50', '10']}, 'p3': {'position_showdown': '0', 'cards': ['18', '11']}, 'winners': ['1']}
+{'hand_no': '7', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '14', 'flop2': '21', 'flop3': '25', 'action_flop': 'fr', 'turn': '51', 'action_turn': 'rrr', 'river': '31', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['19', '1']}, 'p2': {'position_showdown': '0', 'cards': ['47', '10']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '8', 'dealer_position': 2, 'action_preflop': 'ccrcc', 'flop1': '14', 'flop2': '40', 'flop3': '10', 'action_flop': 'crc', 'turn': '49', 'action_turn': 'rrrc', 'river': '24', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['16', '46']}, 'p2': {'position_showdown': '2', 'cards': ['18', '21']}, 'p3': {'position_showdown': '0', 'cards': ['19', '37']}, 'winners': ['2']}
+{'hand_no': '9', 'dealer_position': 0, 'action_preflop': 'cfrc', 'flop1': '40', 'flop2': '42', 'flop3': '45', 'action_flop': 'cr', 'turn': '25', 'action_turn': 'rrr', 'river': '30', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['4', '22']}, 'p2': {'position_showdown': '2', 'cards': ['44', '2']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '10', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '44', 'flop2': '10', 'flop3': '31', 'action_flop': 'cc', 'turn': '41', 'action_turn': 'rrrc', 'river': '32', 'action_river': 'fc', 'p1': {'position_showdown': '0', 'cards': ['20', '5']}, 'p2': {'position_showdown': '1', 'cards': ['4', '0']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '11', 'dealer_position': 2, 'action_preflop': 'ccrcc', 'flop1': '34', 'flop2': '9', 'flop3': '49', 'action_flop': 'fcr', 'turn': '0', 'action_turn': 'rrr', 'river': '39', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['18', '26']}, 'p2': {'position_showdown': '1', 'cards': ['13', '21']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '12', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '10', 'flop2': '5', 'flop3': '51', 'action_flop': 'rrcrc', 'turn': '12', 'action_turn': 'rrrc', 'river': '47', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['45', '36']}, 'p2': {'position_showdown': '2', 'cards': ['37', '32']}, 'p3': {'position_showdown': '0', 'cards': ['3', '1']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '16', 'flop2': '31', 'flop3': '13', 'action_flop': 'cc', 'turn': '27', 'action_turn': 'rrrc', 'river': '25', 'action_river': 'fc', 'p1': {'position_showdown': '2', 'cards': ['50', '46']}, 'p2': {'position_showdown': '0', 'cards': ['26', '0']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '48', 'flop2': '39', 'flop3': '25', 'action_flop': 'rc', 'turn': '38', 'action_turn': 'rrrc', 'river': '13', 'action_river': 'crc', 'p1': {'position_showdown': '2', 'cards': ['44', '5']}, 'p2': {'position_showdown': '0', 'cards': ['7', '1']}, 'p3': {'position_showdown': '1', 'cards': ['47', '16']}, 'winners': ['2', '1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '19', 'flop2': '43', 'flop3': '14', 'action_flop': 'cc', 'turn': '34', 'action_turn': 'rrr', 'river': '23', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['20', '18']}, 'p2': {'position_showdown': '2', 'cards': ['39', '27']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '0', 'flop2': '12', 'flop3': '46', 'action_flop': 'rc', 'turn': '41', 'action_turn': 'rrrc', 'river': '8', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['14', '1']}, 'p2': {'position_showdown': '2', 'cards': ['33', '35']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '41', 'flop2': '23', 'flop3': '2', 'action_flop': 'rc', 'turn': '37', 'action_turn': 'rrrc', 'river': '28', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['46', '4']}, 'p2': {'position_showdown': '2', 'cards': ['21', '48']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '42', 'flop2': '46', 'flop3': '27', 'action_flop': 'rcc', 'turn': '9', 'action_turn': 'rrrcc', 'river': '47', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['44', '15']}, 'p2': {'position_showdown': '2', 'cards': ['45', '49']}, 'p3': {'position_showdown': '0', 'cards': ['8', '1']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '50', 'flop2': '33', 'flop3': '6', 'action_flop': 'ccc', 'turn': '41', 'action_turn': 'rrrc', 'river': '46', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['19', '48']}, 'p2': {'position_showdown': '1', 'cards': ['43', '11']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '19', 'flop2': '41', 'flop3': '11', 'action_flop': 'rrrc', 'turn': '2', 'action_turn': 'rrrc', 'river': '24', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['29', '3']}, 'p2': {'position_showdown': '2', 'cards': ['0', '33']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '33', 'flop2': '19', 'flop3': '37', 'action_flop': 'ccrcc', 'turn': '6', 'action_turn': 'rrrcc', 'river': '47', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['14', '50']}, 'p2': {'position_showdown': '2', 'cards': ['1', '42']}, 'p3': {'position_showdown': '0', 'cards': ['18', '41']}, 'winners': ['0']}
+{'hand_no': '1', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '42', 'flop2': '12', 'flop3': '15', 'action_flop': 'rcc', 'turn': '29', 'action_turn': 'rrrcc', 'river': '51', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['13', '26']}, 'p2': {'position_showdown': '0', 'cards': ['46', '14']}, 'p3': {'position_showdown': '1', 'cards': ['38', '21']}, 'winners': ['0']}
+{'hand_no': '2', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '51', 'flop2': '25', 'flop3': '3', 'action_flop': 'rcrcc', 'turn': '26', 'action_turn': 'rrrcc', 'river': '46', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['49', '39']}, 'p2': {'position_showdown': '1', 'cards': ['7', '43']}, 'p3': {'position_showdown': '2', 'cards': ['10', '22']}, 'winners': ['0']}
+{'hand_no': '3', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '1', 'flop2': '42', 'flop3': '38', 'action_flop': 'frc', 'turn': '49', 'action_turn': 'rrrc', 'river': '46', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['50', '37']}, 'p2': {'position_showdown': '2', 'cards': ['19', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '4', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '8', 'flop2': '44', 'flop3': '42', 'action_flop': 'fcrc', 'turn': '33', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['26', '24']}, 'p2': {'position_showdown': '0', 'cards': ['27', '7']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '5', 'dealer_position': 2, 'action_preflop': 'rcrrcc', 'flop1': '49', 'flop2': '8', 'flop3': '1', 'action_flop': 'crrfrc', 'turn': '31', 'action_turn': 'rrrc', 'river': '19', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['40', '41']}, 'p2': {'position_showdown': '2', 'cards': ['51', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '6', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '41', 'flop2': '45', 'flop3': '12', 'action_flop': 'ccc', 'turn': '36', 'action_turn': 'rrrc', 'river': '30', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['51', '0']}, 'p2': {'position_showdown': '2', 'cards': ['10', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '7', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '4', 'flop2': '37', 'flop3': '27', 'action_flop': 'crcc', 'turn': '34', 'action_turn': 'rrrcc', 'river': '38', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['50', '0']}, 'p2': {'position_showdown': '0', 'cards': ['49', '43']}, 'p3': {'position_showdown': '1', 'cards': ['9', '21']}, 'winners': ['0']}
+{'hand_no': '8', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '1', 'flop2': '50', 'flop3': '34', 'action_flop': 'crcc', 'turn': '30', 'action_turn': 'rrrcc', 'river': '3', 'action_river': 'fcr', 'p1': {'position_showdown': '2', 'cards': ['20', '36']}, 'p2': {'position_showdown': '1', 'cards': ['25', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '9', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '1', 'flop2': '46', 'flop3': '44', 'action_flop': 'rcc', 'turn': '42', 'action_turn': 'rrrcc', 'river': '17', 'action_river': 'fc', 'p1': {'position_showdown': '2', 'cards': ['8', '16']}, 'p2': {'position_showdown': '0', 'cards': ['0', '15']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '10', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '6', 'flop2': '15', 'flop3': '19', 'action_flop': 'rrrc', 'turn': '5', 'action_turn': 'rrrc', 'river': '27', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['40', '42']}, 'p2': {'position_showdown': '1', 'cards': ['43', '16']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '11', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '23', 'flop2': '12', 'flop3': '10', 'action_flop': 'ccc', 'turn': '20', 'action_turn': 'rrrcc', 'river': '51', 'action_river': 'ccrc', 'p1': {'position_showdown': '2', 'cards': ['11', '36']}, 'p2': {'position_showdown': '0', 'cards': ['16', '18']}, 'p3': {'position_showdown': '1', 'cards': ['4', '8']}, 'winners': ['0']}
+{'hand_no': '12', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '44', 'flop2': '39', 'flop3': '49', 'action_flop': 'ccc', 'turn': '51', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['45', '41']}, 'p2': {'position_showdown': '2', 'cards': ['29', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '13', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '27', 'flop2': '20', 'flop3': '41', 'action_flop': 'rcc', 'turn': '2', 'action_turn': 'rrrcc', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['25', '30']}, 'p2': {'position_showdown': '0', 'cards': ['26', '1']}, 'p3': {'position_showdown': '1', 'cards': ['3', '24']}, 'winners': ['2']}
+{'hand_no': '14', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '26', 'flop2': '11', 'flop3': '25', 'action_flop': 'ccc', 'turn': '39', 'action_turn': 'rrrcc', 'river': '24', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['43', '3']}, 'p2': {'position_showdown': '2', 'cards': ['23', '0']}, 'p3': {'position_showdown': '0', 'cards': ['42', '49']}, 'winners': ['0']}
+{'hand_no': '15', 'dealer_position': 0, 'action_preflop': 'crrfrc', 'flop1': '10', 'flop2': '49', 'flop3': '35', 'action_flop': 'cr', 'turn': '', 'action_turn': '', 'river': '', 'action_river': '', 'p1': {'position_showdown': '2', 'cards': ['20', '44']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '16', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '38', 'flop2': '41', 'flop3': '46', 'action_flop': 'rrrc', 'turn': '39', 'action_turn': 'rrrc', 'river': '48', 'action_river': '', 'p1': {'position_showdown': '1', 'cards': ['12', '16']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '17', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '51', 'flop2': '12', 'flop3': '30', 'action_flop': 'fcrc', 'turn': '23', 'action_turn': 'rrrc', 'river': '38', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['24', '21']}, 'p2': {'position_showdown': '1', 'cards': ['5', '2']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '18', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '23', 'flop2': '47', 'flop3': '51', 'action_flop': 'rcc', 'turn': '19', 'action_turn': 'rrrcc', 'river': '30', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['29', '13']}, 'p2': {'position_showdown': '2', 'cards': ['10', '18']}, 'p3': {'position_showdown': '0', 'cards': ['5', '12']}, 'winners': ['1']}
+{'hand_no': '19', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '39', 'flop2': '43', 'flop3': '44', 'action_flop': 'ccc', 'turn': '15', 'action_turn': 'rrrcc', 'river': '17', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['49', '25']}, 'p2': {'position_showdown': '0', 'cards': ['28', '6']}, 'p3': {'position_showdown': '1', 'cards': ['14', '22']}, 'winners': ['1']}
+{'hand_no': '20', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '21', 'flop2': '12', 'flop3': '43', 'action_flop': 'ccc', 'turn': '22', 'action_turn': 'rrrcc', 'river': '14', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['29', '7']}, 'p2': {'position_showdown': '1', 'cards': ['38', '50']}, 'p3': {'position_showdown': '2', 'cards': ['28', '37']}, 'winners': ['1']}
+{'hand_no': '21', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '4', 'flop2': '37', 'flop3': '12', 'action_flop': 'crc', 'turn': '33', 'action_turn': 'rrrc', 'river': '10', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['44', '22']}, 'p2': {'position_showdown': '2', 'cards': ['34', '9']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '22', 'dealer_position': 1, 'action_preflop': 'rfrrc', 'flop1': '28', 'flop2': '13', 'flop3': '25', 'action_flop': 'crc', 'turn': '49', 'action_turn': 'rrrc', 'river': '21', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['35', '27']}, 'p2': {'position_showdown': '0', 'cards': ['5', '30']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '23', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '36', 'flop2': '51', 'flop3': '19', 'action_flop': 'ccc', 'turn': '33', 'action_turn': 'rrrc', 'river': '31', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['7', '2']}, 'p2': {'position_showdown': '2', 'cards': ['20', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '24', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '2', 'flop2': '47', 'flop3': '3', 'action_flop': 'ccc', 'turn': '15', 'action_turn': 'rrrc', 'river': '21', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['27', '44']}, 'p2': {'position_showdown': '2', 'cards': ['26', '28']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '25', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '7', 'flop2': '23', 'flop3': '6', 'action_flop': 'rcrrfc', 'turn': '10', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['15', '27']}, 'p2': {'position_showdown': '2', 'cards': ['51', '47']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '26', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '26', 'flop2': '28', 'flop3': '44', 'action_flop': 'ccc', 'turn': '5', 'action_turn': 'rrrcc', 'river': '23', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['45', '7']}, 'p2': {'position_showdown': '1', 'cards': ['20', '4']}, 'p3': {'position_showdown': '2', 'cards': ['3', '12']}, 'winners': ['0']}
+{'hand_no': '27', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '33', 'flop2': '19', 'flop3': '47', 'action_flop': 'rcrrfc', 'turn': '5', 'action_turn': 'rrrc', 'river': '38', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['14', '34']}, 'p2': {'position_showdown': '1', 'cards': ['37', '29']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '28', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '39', 'flop2': '25', 'flop3': '17', 'action_flop': 'rcc', 'turn': '46', 'action_turn': 'rrrcc', 'river': '10', 'action_river': 'rcrc', 'p1': {'position_showdown': '1', 'cards': ['7', '35']}, 'p2': {'position_showdown': '2', 'cards': ['49', '50']}, 'p3': {'position_showdown': '0', 'cards': ['41', '26']}, 'winners': ['2']}
+{'hand_no': '29', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '24', 'flop2': '40', 'flop3': '12', 'action_flop': 'ccc', 'turn': '44', 'action_turn': 'rrrcc', 'river': '5', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['0', '1']}, 'p2': {'position_showdown': '2', 'cards': ['6', '13']}, 'p3': {'position_showdown': '0', 'cards': ['29', '51']}, 'winners': ['1']}
+{'hand_no': '30', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '15', 'flop2': '51', 'flop3': '31', 'action_flop': 'ccc', 'turn': '32', 'action_turn': 'rrrcc', 'river': '48', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['39', '44']}, 'p2': {'position_showdown': '2', 'cards': ['30', '42']}, 'p3': {'position_showdown': '0', 'cards': ['49', '7']}, 'winners': ['0']}
+{'hand_no': '31', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '14', 'flop2': '36', 'flop3': '5', 'action_flop': 'rcc', 'turn': '44', 'action_turn': 'rrrcc', 'river': '8', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['39', '35']}, 'p2': {'position_showdown': '0', 'cards': ['1', '23']}, 'p3': {'position_showdown': '1', 'cards': ['6', '40']}, 'winners': ['2']}
+{'hand_no': '32', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '44', 'flop2': '30', 'flop3': '13', 'action_flop': 'crrfrc', 'turn': '36', 'action_turn': 'rrrc', 'river': '46', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['39', '47']}, 'p2': {'position_showdown': '1', 'cards': ['11', '9']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '33', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '15', 'flop2': '37', 'flop3': '7', 'action_flop': 'crcc', 'turn': '12', 'action_turn': 'rrrcc', 'river': '18', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['26', '3']}, 'p2': {'position_showdown': '1', 'cards': ['48', '21']}, 'p3': {'position_showdown': '2', 'cards': ['38', '27']}, 'winners': ['2']}
+{'hand_no': '34', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '4', 'flop2': '24', 'flop3': '8', 'action_flop': 'crrfc', 'turn': '22', 'action_turn': 'rrrc', 'river': '15', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['27', '19']}, 'p2': {'position_showdown': '0', 'cards': ['14', '23']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '35', 'dealer_position': 2, 'action_preflop': 'cfc', 'flop1': '23', 'flop2': '36', 'flop3': '15', 'action_flop': 'ccc', 'turn': '5', 'action_turn': 'rrrc', 'river': '45', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['9', '51']}, 'p2': {'position_showdown': '2', 'cards': ['34', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '36', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '50', 'flop2': '44', 'flop3': '4', 'action_flop': 'ccc', 'turn': '23', 'action_turn': 'rrrcc', 'river': '45', 'action_river': 'crc', 'p1': {'position_showdown': '2', 'cards': ['32', '0']}, 'p2': {'position_showdown': '0', 'cards': ['5', '41']}, 'p3': {'position_showdown': '1', 'cards': ['25', '20']}, 'winners': ['1']}
+{'hand_no': '37', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '12', 'flop2': '32', 'flop3': '31', 'action_flop': 'frc', 'turn': '49', 'action_turn': 'rrrc', 'river': '25', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['5', '34']}, 'p2': {'position_showdown': '0', 'cards': ['16', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '38', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '34', 'flop2': '25', 'flop3': '10', 'action_flop': 'rc', 'turn': '42', 'action_turn': 'rrrc', 'river': '26', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['14', '2']}, 'p2': {'position_showdown': '1', 'cards': ['12', '35']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '39', 'dealer_position': 0, 'action_preflop': 'rrcrcc', 'flop1': '45', 'flop2': '49', 'flop3': '11', 'action_flop': 'rcc', 'turn': '23', 'action_turn': 'rrrcc', 'river': '22', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['41', '36']}, 'p2': {'position_showdown': '1', 'cards': ['51', '9']}, 'p3': {'position_showdown': '2', 'cards': ['33', '19']}, 'winners': ['1']}
+{'hand_no': '40', 'dealer_position': 1, 'action_preflop': 'rcrrfc', 'flop1': '49', 'flop2': '39', 'flop3': '15', 'action_flop': 'rc', 'turn': '25', 'action_turn': 'rrrc', 'river': '5', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['46', '45']}, 'p2': {'position_showdown': '1', 'cards': ['42', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '41', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '32', 'flop2': '10', 'flop3': '34', 'action_flop': 'rc', 'turn': '27', 'action_turn': 'rrrc', 'river': '50', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['42', '49']}, 'p2': {'position_showdown': '1', 'cards': ['43', '1']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '42', 'dealer_position': 0, 'action_preflop': 'rrrcc', 'flop1': '51', 'flop2': '46', 'flop3': '15', 'action_flop': 'fcc', 'turn': '28', 'action_turn': 'rrrc', 'river': '2', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['22', '26']}, 'p2': {'position_showdown': '2', 'cards': ['47', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '43', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '19', 'flop2': '44', 'flop3': '13', 'action_flop': 'ccc', 'turn': '0', 'action_turn': 'rrrcc', 'river': '12', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['50', '31']}, 'p2': {'position_showdown': '0', 'cards': ['6', '40']}, 'p3': {'position_showdown': '1', 'cards': ['39', '27']}, 'winners': ['2']}
+{'hand_no': '44', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '12', 'flop2': '41', 'flop3': '31', 'action_flop': 'ccrfc', 'turn': '14', 'action_turn': 'rrrc', 'river': '17', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['15', '44']}, 'p2': {'position_showdown': '1', 'cards': ['11', '27']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '45', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '36', 'flop2': '48', 'flop3': '27', 'action_flop': 'rrrc', 'turn': '13', 'action_turn': 'rrrc', 'river': '49', 'action_river': 'r', 'p1': {'position_showdown': '2', 'cards': ['47', '45']}, 'p2': {'position_showdown': '0', 'cards': ['33', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '46', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '24', 'flop2': '36', 'flop3': '16', 'action_flop': 'ccc', 'turn': '43', 'action_turn': 'rrrcc', 'river': '42', 'action_river': 'ccrf', 'p1': {'position_showdown': '1', 'cards': ['48', '0']}, 'p2': {'position_showdown': '0', 'cards': ['38', '28']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '47', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '27', 'flop2': '33', 'flop3': '46', 'action_flop': 'crrfrc', 'turn': '15', 'action_turn': 'rrrc', 'river': '20', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['51', '3']}, 'p2': {'position_showdown': '1', 'cards': ['25', '37']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '48', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '47', 'flop2': '32', 'flop3': '24', 'action_flop': 'rcrrfc', 'turn': '51', 'action_turn': 'rrrc', 'river': '39', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['36', '14']}, 'p2': {'position_showdown': '1', 'cards': ['50', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '49', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '25', 'flop2': '13', 'flop3': '50', 'action_flop': 'ccc', 'turn': '0', 'action_turn': 'rrrcc', 'river': '4', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['18', '15']}, 'p2': {'position_showdown': '1', 'cards': ['14', '22']}, 'p3': {'position_showdown': '2', 'cards': ['41', '51']}, 'winners': ['2']}
+{'hand_no': '50', 'dealer_position': 2, 'action_preflop': 'rrfrc', 'flop1': '39', 'flop2': '27', 'flop3': '23', 'action_flop': 'rrrc', 'turn': '25', 'action_turn': 'rrrc', 'river': '28', 'action_river': '', 'p1': {'position_showdown': '2', 'cards': ['36', '11']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '51', 'dealer_position': 0, 'action_preflop': 'cfrc', 'flop1': '37', 'flop2': '17', 'flop3': '38', 'action_flop': 'rrrc', 'turn': '23', 'action_turn': 'rrrc', 'river': '2', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['47', '11']}, 'p2': {'position_showdown': '2', 'cards': ['28', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '52', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '49', 'flop2': '5', 'flop3': '28', 'action_flop': 'ccrcc', 'turn': '15', 'action_turn': 'rrrcc', 'river': '43', 'action_river': 'ccrf', 'p1': {'position_showdown': '1', 'cards': ['27', '8']}, 'p2': {'position_showdown': '0', 'cards': ['26', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '53', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '42', 'flop2': '29', 'flop3': '7', 'action_flop': 'crrfrc', 'turn': '26', 'action_turn': 'rrrc', 'river': '50', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['38', '10']}, 'p2': {'position_showdown': '2', 'cards': ['49', '28']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '54', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '51', 'flop2': '16', 'flop3': '39', 'action_flop': 'fcc', 'turn': '14', 'action_turn': 'rrrc', 'river': '45', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['35', '46']}, 'p2': {'position_showdown': '2', 'cards': ['10', '19']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '55', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '22', 'flop2': '20', 'flop3': '37', 'action_flop': 'rrfrc', 'turn': '46', 'action_turn': 'rrrc', 'river': '8', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['31', '33']}, 'p2': {'position_showdown': '2', 'cards': ['50', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '56', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '28', 'flop2': '14', 'flop3': '35', 'action_flop': 'ccc', 'turn': '21', 'action_turn': 'rrrc', 'river': '33', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['13', '10']}, 'p2': {'position_showdown': '1', 'cards': ['22', '30']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '57', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '19', 'flop2': '22', 'flop3': '3', 'action_flop': 'ccc', 'turn': '35', 'action_turn': 'rrrc', 'river': '48', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['51', '30']}, 'p2': {'position_showdown': '2', 'cards': ['4', '23']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '58', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '50', 'flop2': '6', 'flop3': '44', 'action_flop': 'ccc', 'turn': '23', 'action_turn': 'rrrcc', 'river': '4', 'action_river': 'fc', 'p1': {'position_showdown': '0', 'cards': ['11', '7']}, 'p2': {'position_showdown': '1', 'cards': ['13', '46']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '59', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '11', 'flop2': '3', 'flop3': '23', 'action_flop': 'ccc', 'turn': '44', 'action_turn': 'rrrcc', 'river': '38', 'action_river': 'ccrc', 'p1': {'position_showdown': '2', 'cards': ['30', '43']}, 'p2': {'position_showdown': '0', 'cards': ['41', '14']}, 'p3': {'position_showdown': '1', 'cards': ['28', '15']}, 'winners': ['2']}
+{'hand_no': '60', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '10', 'flop2': '5', 'flop3': '41', 'action_flop': 'fcrc', 'turn': '7', 'action_turn': 'rrrc', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['33', '2']}, 'p2': {'position_showdown': '2', 'cards': ['30', '3']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '61', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '51', 'flop2': '23', 'flop3': '32', 'action_flop': 'rcc', 'turn': '46', 'action_turn': 'rrrcc', 'river': '28', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['22', '50']}, 'p2': {'position_showdown': '0', 'cards': ['19', '10']}, 'p3': {'position_showdown': '1', 'cards': ['37', '25']}, 'winners': ['1']}
+{'hand_no': '62', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '35', 'flop2': '31', 'flop3': '49', 'action_flop': 'rcc', 'turn': '32', 'action_turn': 'rrrcc', 'river': '43', 'action_river': 'fr', 'p1': {'position_showdown': '1', 'cards': ['42', '51']}, 'p2': {'position_showdown': '2', 'cards': ['7', '18']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '63', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '37', 'flop2': '4', 'flop3': '48', 'action_flop': 'rc', 'turn': '43', 'action_turn': 'rrrc', 'river': '23', 'action_river': 'r', 'p1': {'position_showdown': '2', 'cards': ['49', '38']}, 'p2': {'position_showdown': '0', 'cards': ['34', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '64', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '40', 'flop2': '14', 'flop3': '22', 'action_flop': 'rrrc', 'turn': '4', 'action_turn': 'rrrc', 'river': '3', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['8', '42']}, 'p2': {'position_showdown': '2', 'cards': ['36', '31']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '65', 'dealer_position': 2, 'action_preflop': 'cfc', 'flop1': '12', 'flop2': '42', 'flop3': '31', 'action_flop': 'ccc', 'turn': '45', 'action_turn': 'rrrc', 'river': '26', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['14', '27']}, 'p2': {'position_showdown': '1', 'cards': ['48', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '66', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '31', 'flop2': '19', 'flop3': '20', 'action_flop': 'ccc', 'turn': '16', 'action_turn': 'rrrcc', 'river': '38', 'action_river': 'fc', 'p1': {'position_showdown': '2', 'cards': ['3', '10']}, 'p2': {'position_showdown': '0', 'cards': ['5', '51']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '67', 'dealer_position': 1, 'action_preflop': 'rrfrc', 'flop1': '0', 'flop2': '49', 'flop3': '2', 'action_flop': 'ccc', 'turn': '11', 'action_turn': 'rrrc', 'river': '9', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['6', '35']}, 'p2': {'position_showdown': '2', 'cards': ['48', '32']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '68', 'dealer_position': 2, 'action_preflop': 'crrcrcc', 'flop1': '47', 'flop2': '9', 'flop3': '3', 'action_flop': 'ccc', 'turn': '17', 'action_turn': 'rrrcc', 'river': '38', 'action_river': 'fc', 'p1': {'position_showdown': '1', 'cards': ['2', '21']}, 'p2': {'position_showdown': '2', 'cards': ['1', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '69', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '39', 'flop2': '15', 'flop3': '38', 'action_flop': 'rcc', 'turn': '18', 'action_turn': 'rrrcc', 'river': '31', 'action_river': 'crc', 'p1': {'position_showdown': '2', 'cards': ['42', '5']}, 'p2': {'position_showdown': '0', 'cards': ['13', '30']}, 'p3': {'position_showdown': '1', 'cards': ['35', '1']}, 'winners': ['0']}
+{'hand_no': '70', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '47', 'flop2': '10', 'flop3': '8', 'action_flop': 'crrfrc', 'turn': '3', 'action_turn': 'rrrc', 'river': '38', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['48', '49']}, 'p2': {'position_showdown': '1', 'cards': ['17', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '71', 'dealer_position': 2, 'action_preflop': 'ccrcf', 'flop1': '23', 'flop2': '9', 'flop3': '32', 'action_flop': 'rc', 'turn': '44', 'action_turn': 'rrrc', 'river': '50', 'action_river': 'r', 'p1': {'position_showdown': '1', 'cards': ['13', '14']}, 'p2': {'position_showdown': '2', 'cards': ['45', '38']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '72', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '14', 'flop2': '42', 'flop3': '37', 'action_flop': 'rc', 'turn': '5', 'action_turn': 'rrrc', 'river': '43', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['47', '1']}, 'p2': {'position_showdown': '2', 'cards': ['30', '24']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '73', 'dealer_position': 1, 'action_preflop': 'crrfc', 'flop1': '42', 'flop2': '5', 'flop3': '45', 'action_flop': 'rc', 'turn': '17', 'action_turn': 'rrrc', 'river': '35', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['49', '36']}, 'p2': {'position_showdown': '2', 'cards': ['43', '39']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '74', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '23', 'flop2': '25', 'flop3': '2', 'action_flop': 'rcrcc', 'turn': '19', 'action_turn': 'rrrcc', 'river': '18', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['1', '22']}, 'p2': {'position_showdown': '2', 'cards': ['45', '14']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '75', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '43', 'flop2': '37', 'flop3': '42', 'action_flop': 'ccc', 'turn': '0', 'action_turn': 'rrrc', 'river': '15', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['13', '47']}, 'p2': {'position_showdown': '2', 'cards': ['35', '4']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '76', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '39', 'flop2': '1', 'flop3': '15', 'action_flop': 'ccc', 'turn': '16', 'action_turn': 'rrrcc', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['50', '31']}, 'p2': {'position_showdown': '0', 'cards': ['47', '6']}, 'p3': {'position_showdown': '1', 'cards': ['23', '33']}, 'winners': ['2']}
+{'hand_no': '77', 'dealer_position': 2, 'action_preflop': 'rcrrfc', 'flop1': '4', 'flop2': '43', 'flop3': '14', 'action_flop': 'ccc', 'turn': '27', 'action_turn': 'rrrc', 'river': '41', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['18', '1']}, 'p2': {'position_showdown': '1', 'cards': ['23', '24']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '78', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '1', 'flop2': '48', 'flop3': '32', 'action_flop': 'ccrfc', 'turn': '45', 'action_turn': 'rrrc', 'river': '30', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['46', '34']}, 'p2': {'position_showdown': '2', 'cards': ['9', '6']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '79', 'dealer_position': 1, 'action_preflop': 'cfrc', 'flop1': '39', 'flop2': '4', 'flop3': '26', 'action_flop': 'rrrc', 'turn': '20', 'action_turn': 'rrrc', 'river': '43', 'action_river': 'r', 'p1': {'position_showdown': '0', 'cards': ['44', '47']}, 'p2': {'position_showdown': '1', 'cards': ['31', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '80', 'dealer_position': 2, 'action_preflop': 'rcc', 'flop1': '37', 'flop2': '33', 'flop3': '50', 'action_flop': 'ccrfc', 'turn': '28', 'action_turn': 'rrrc', 'river': '15', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['4', '20']}, 'p2': {'position_showdown': '1', 'cards': ['9', '26']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '81', 'dealer_position': 0, 'action_preflop': 'rrrcc', 'flop1': '27', 'flop2': '9', 'flop3': '28', 'action_flop': 'frc', 'turn': '31', 'action_turn': 'rrrc', 'river': '33', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['42', '10']}, 'p2': {'position_showdown': '2', 'cards': ['34', '39']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '82', 'dealer_position': 1, 'action_preflop': 'crcc', 'flop1': '40', 'flop2': '41', 'flop3': '37', 'action_flop': 'ccc', 'turn': '46', 'action_turn': 'rrrcc', 'river': '33', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['6', '0']}, 'p2': {'position_showdown': '0', 'cards': ['12', '36']}, 'p3': {'position_showdown': '1', 'cards': ['27', '1']}, 'winners': ['0']}
+{'hand_no': '83', 'dealer_position': 2, 'action_preflop': 'crcc', 'flop1': '42', 'flop2': '3', 'flop3': '9', 'action_flop': 'ccrcc', 'turn': '43', 'action_turn': 'rrrcc', 'river': '5', 'action_river': 'crc', 'p1': {'position_showdown': '1', 'cards': ['47', '25']}, 'p2': {'position_showdown': '2', 'cards': ['38', '50']}, 'p3': {'position_showdown': '0', 'cards': ['11', '49']}, 'winners': ['0']}
+{'hand_no': '84', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '9', 'flop2': '30', 'flop3': '39', 'action_flop': 'rrrcc', 'turn': '11', 'action_turn': 'rrrcc', 'river': '10', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['51', '41']}, 'p2': {'position_showdown': '1', 'cards': ['33', '25']}, 'p3': {'position_showdown': '2', 'cards': ['20', '27']}, 'winners': ['0']}
+{'hand_no': '85', 'dealer_position': 1, 'action_preflop': 'rcc', 'flop1': '4', 'flop2': '42', 'flop3': '22', 'action_flop': 'fcc', 'turn': '0', 'action_turn': 'rrrc', 'river': '12', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['33', '39']}, 'p2': {'position_showdown': '0', 'cards': ['7', '5']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '86', 'dealer_position': 2, 'action_preflop': 'rfrrc', 'flop1': '2', 'flop2': '51', 'flop3': '30', 'action_flop': 'crc', 'turn': '38', 'action_turn': 'rrrc', 'river': '29', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['35', '17']}, 'p2': {'position_showdown': '1', 'cards': ['12', '43']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '87', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '26', 'flop2': '28', 'flop3': '5', 'action_flop': 'ccc', 'turn': '18', 'action_turn': 'rrrcc', 'river': '38', 'action_river': 'ccrc', 'p1': {'position_showdown': '0', 'cards': ['30', '9']}, 'p2': {'position_showdown': '1', 'cards': ['14', '22']}, 'p3': {'position_showdown': '2', 'cards': ['35', '15']}, 'winners': ['1']}
+{'hand_no': '88', 'dealer_position': 1, 'action_preflop': 'rfc', 'flop1': '22', 'flop2': '31', 'flop3': '35', 'action_flop': 'crc', 'turn': '2', 'action_turn': 'rrrc', 'river': '47', 'action_river': 'cr', 'p1': {'position_showdown': '1', 'cards': ['16', '15']}, 'p2': {'position_showdown': '0', 'cards': ['9', '11']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '89', 'dealer_position': 2, 'action_preflop': 'rfc', 'flop1': '28', 'flop2': '16', 'flop3': '49', 'action_flop': 'crc', 'turn': '41', 'action_turn': 'rrrc', 'river': '10', 'action_river': 'cr', 'p1': {'position_showdown': '2', 'cards': ['4', '40']}, 'p2': {'position_showdown': '1', 'cards': ['13', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2', '1']}
+{'hand_no': '90', 'dealer_position': 0, 'action_preflop': 'rrrcc', 'flop1': '28', 'flop2': '26', 'flop3': '16', 'action_flop': 'rcc', 'turn': '20', 'action_turn': 'rrrcc', 'river': '24', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['38', '29']}, 'p2': {'position_showdown': '2', 'cards': ['51', '37']}, 'p3': {'position_showdown': '0', 'cards': ['6', '18']}, 'winners': ['1']}
+{'hand_no': '91', 'dealer_position': 1, 'action_preflop': 'ccc', 'flop1': '17', 'flop2': '10', 'flop3': '6', 'action_flop': 'ccrcc', 'turn': '7', 'action_turn': 'rrrcc', 'river': '36', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['48', '23']}, 'p2': {'position_showdown': '0', 'cards': ['29', '0']}, 'p3': {'position_showdown': '1', 'cards': ['35', '19']}, 'winners': ['1']}
+{'hand_no': '92', 'dealer_position': 2, 'action_preflop': 'cfc', 'flop1': '8', 'flop2': '28', 'flop3': '41', 'action_flop': 'ccc', 'turn': '44', 'action_turn': 'rrrc', 'river': '25', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['0', '14']}, 'p2': {'position_showdown': '1', 'cards': ['19', '2']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '93', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '4', 'flop2': '16', 'flop3': '35', 'action_flop': 'ccrcc', 'turn': '36', 'action_turn': 'rrrcc', 'river': '12', 'action_river': 'fc', 'p1': {'position_showdown': '2', 'cards': ['21', '40']}, 'p2': {'position_showdown': '0', 'cards': ['44', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '94', 'dealer_position': 1, 'action_preflop': 'ccrcc', 'flop1': '1', 'flop2': '22', 'flop3': '20', 'action_flop': 'frrc', 'turn': '45', 'action_turn': 'rrrc', 'river': '7', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['5', '23']}, 'p2': {'position_showdown': '0', 'cards': ['4', '18']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '95', 'dealer_position': 2, 'action_preflop': 'crrfc', 'flop1': '22', 'flop2': '30', 'flop3': '41', 'action_flop': 'crc', 'turn': '46', 'action_turn': 'rrrc', 'river': '24', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['16', '51']}, 'p2': {'position_showdown': '0', 'cards': ['49', '23']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '96', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '29', 'flop2': '50', 'flop3': '8', 'action_flop': 'crc', 'turn': '41', 'action_turn': 'rrrc', 'river': '25', 'action_river': '', 'p1': {'position_showdown': '0', 'cards': ['35', '38']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '97', 'dealer_position': 1, 'action_preflop': 'cfc', 'flop1': '2', 'flop2': '37', 'flop3': '49', 'action_flop': 'rc', 'turn': '4', 'action_turn': 'rrrc', 'river': '46', 'action_river': 'cc', 'p1': {'position_showdown': '1', 'cards': ['16', '39']}, 'p2': {'position_showdown': '0', 'cards': ['50', '8']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '98', 'dealer_position': 2, 'action_preflop': 'ccc', 'flop1': '42', 'flop2': '3', 'flop3': '11', 'action_flop': 'ccc', 'turn': '22', 'action_turn': 'rrrcc', 'river': '0', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['43', '2']}, 'p2': {'position_showdown': '1', 'cards': ['31', '34']}, 'p3': {'position_showdown': '2', 'cards': ['5', '8']}, 'winners': ['0']}
+{'hand_no': '99', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '7', 'flop2': '44', 'flop3': '20', 'action_flop': 'frc', 'turn': '29', 'action_turn': 'rrrc', 'river': '27', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['32', '12']}, 'p2': {'position_showdown': '2', 'cards': ['38', '40']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '42', 'flop2': '16', 'flop3': '14', 'action_flop': 'ccc', 'turn': '33', 'action_turn': 'rrrc', 'river': '34', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['19', '46']}, 'p2': {'position_showdown': '2', 'cards': ['1', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '11', 'flop2': '49', 'flop3': '34', 'action_flop': 'rc', 'turn': '38', 'action_turn': 'rrrc', 'river': '9', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['5', '21']}, 'p2': {'position_showdown': '2', 'cards': ['45', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '19', 'flop2': '38', 'flop3': '42', 'action_flop': 'frc', 'turn': '33', 'action_turn': 'rrrc', 'river': '40', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['34', '46']}, 'p2': {'position_showdown': '2', 'cards': ['16', '15']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '19', 'flop2': '20', 'flop3': '31', 'action_flop': 'frrrc', 'turn': '32', 'action_turn': 'rrrc', 'river': '5', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['41', '42']}, 'p2': {'position_showdown': '2', 'cards': ['37', '44']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '8', 'flop2': '32', 'flop3': '47', 'action_flop': 'crc', 'turn': '1', 'action_turn': 'rrrc', 'river': '49', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['10', '44']}, 'p2': {'position_showdown': '2', 'cards': ['42', '22']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '28', 'flop2': '51', 'flop3': '3', 'action_flop': 'rc', 'turn': '37', 'action_turn': 'rrrc', 'river': '34', 'action_river': 'r', 'p1': {'position_showdown': '2', 'cards': ['44', '32']}, 'p2': {'position_showdown': '0', 'cards': ['4', '45']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '0', 'flop2': '5', 'flop3': '42', 'action_flop': 'rc', 'turn': '30', 'action_turn': 'rrrc', 'river': '35', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['22', '14']}, 'p2': {'position_showdown': '2', 'cards': ['27', '51']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrfc', 'flop1': '45', 'flop2': '50', 'flop3': '30', 'action_flop': 'crc', 'turn': '1', 'action_turn': 'rrrc', 'river': '39', 'action_river': 'cc', 'p1': {'position_showdown': '2', 'cards': ['46', '18']}, 'p2': {'position_showdown': '1', 'cards': ['36', '35']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '33', 'flop2': '27', 'flop3': '36', 'action_flop': 'crc', 'turn': '24', 'action_turn': 'rrrc', 'river': '8', 'action_river': 'cc', 'p1': {'position_showdown': '0', 'cards': ['44', '37']}, 'p2': {'position_showdown': '2', 'cards': ['21', '41']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '40', 'flop2': '51', 'flop3': '0', 'action_flop': 'crc', 'turn': '22', 'action_turn': 'crc', 'river': '38', 'action_river': 'cr', 'p1': {'position_showdown': '0', 'cards': ['49', '27']}, 'p2': {'position_showdown': '2', 'cards': ['5', '42']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '22', 'flop2': '29', 'flop3': '49', 'action_flop': 'crc', 'turn': '19', 'action_turn': 'rrrc', 'river': '30', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['24', '8']}, 'p2': {'position_showdown': '0', 'cards': ['15', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '22', 'flop2': '37', 'flop3': '35', 'action_flop': 'frc', 'turn': '20', 'action_turn': 'rrrc', 'river': '27', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['11', '33']}, 'p2': {'position_showdown': '0', 'cards': ['15', '38']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '20', 'flop2': '31', 'flop3': '42', 'action_flop': 'ccc', 'turn': '46', 'action_turn': 'rrrc', 'river': '5', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['6', '8']}, 'p2': {'position_showdown': '2', 'cards': ['17', '7']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0', '2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrcc', 'flop1': '4', 'flop2': '45', 'flop3': '47', 'action_flop': 'rcc', 'turn': '18', 'action_turn': 'rrrcc', 'river': '11', 'action_river': 'rcc', 'p1': {'position_showdown': '1', 'cards': ['9', '22']}, 'p2': {'position_showdown': '2', 'cards': ['41', '8']}, 'p3': {'position_showdown': '0', 'cards': ['25', '17']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '21', 'flop2': '36', 'flop3': '20', 'action_flop': 'f', 'turn': '0', 'action_turn': '39', 'river': '34', 'action_river': '0', 'p1': {'position_showdown': '0', 'cards': ['39', '34']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '17', 'flop2': '45', 'flop3': '12', 'action_flop': 'ccc', 'turn': '9', 'action_turn': 'rrrc', 'river': '11', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['34', '22']}, 'p2': {'position_showdown': '0', 'cards': ['4', '16']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '43', 'flop2': '50', 'flop3': '42', 'action_flop': 'crc', 'turn': '30', 'action_turn': 'rrrc', 'river': '20', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['14', '1']}, 'p2': {'position_showdown': '0', 'cards': ['6', '49']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '24', 'flop2': '12', 'flop3': '21', 'action_flop': 'crc', 'turn': '40', 'action_turn': 'rrrc', 'river': '32', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['27', '15']}, 'p2': {'position_showdown': '2', 'cards': ['22', '8']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '4', 'flop2': '24', 'flop3': '40', 'action_flop': 'fcc', 'turn': '12', 'action_turn': 'rrrc', 'river': '0', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['46', '29']}, 'p2': {'position_showdown': '2', 'cards': ['47', '50']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0', '2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '5', 'flop2': '50', 'flop3': '30', 'action_flop': 'crc', 'turn': '11', 'action_turn': 'rrrc', 'river': '6', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['49', '46']}, 'p2': {'position_showdown': '2', 'cards': ['14', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '51', 'flop2': '23', 'flop3': '13', 'action_flop': 'ccc', 'turn': '49', 'action_turn': 'rrrcc', 'river': '1', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['35', '31']}, 'p2': {'position_showdown': '2', 'cards': ['38', '14']}, 'p3': {'position_showdown': '0', 'cards': ['18', '41']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '30', 'flop2': '28', 'flop3': '3', 'action_flop': 'ccrcc', 'turn': '33', 'action_turn': 'rrrcc', 'river': '5', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['29', '2']}, 'p2': {'position_showdown': '2', 'cards': ['4', '48']}, 'p3': {'position_showdown': '0', 'cards': ['31', '24']}, 'winners': ['1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '20', 'flop2': '25', 'flop3': '1', 'action_flop': 'ccc', 'turn': '49', 'action_turn': 'rrrc', 'river': '10', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['27', '19']}, 'p2': {'position_showdown': '2', 'cards': ['36', '44']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '50', 'flop2': '8', 'flop3': '38', 'action_flop': 'rrrc', 'turn': '43', 'action_turn': 'rrrc', 'river': '0', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['30', '33']}, 'p2': {'position_showdown': '2', 'cards': ['36', '2']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '12', 'flop2': '1', 'flop3': '21', 'action_flop': 'crc', 'turn': '45', 'action_turn': 'rrrc', 'river': '15', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['49', '27']}, 'p2': {'position_showdown': '0', 'cards': ['36', '14']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rrrcc', 'flop1': '44', 'flop2': '18', 'flop3': '10', 'action_flop': 'rrcrcc', 'turn': '28', 'action_turn': 'rrrcc', 'river': '50', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['38', '37']}, 'p2': {'position_showdown': '2', 'cards': ['36', '26']}, 'p3': {'position_showdown': '0', 'cards': ['47', '31']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '0', 'flop2': '5', 'flop3': '45', 'action_flop': 'rcc', 'turn': '7', 'action_turn': 'rrrcc', 'river': '29', 'action_river': 'crcc', 'p1': {'position_showdown': '2', 'cards': ['18', '24']}, 'p2': {'position_showdown': '0', 'cards': ['25', '13']}, 'p3': {'position_showdown': '1', 'cards': ['6', '49']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '45', 'flop2': '34', 'flop3': '16', 'action_flop': 'fcc', 'turn': '17', 'action_turn': 'rrrc', 'river': '24', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['32', '29']}, 'p2': {'position_showdown': '2', 'cards': ['48', '1']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '18', 'flop2': '10', 'flop3': '36', 'action_flop': 'rrrc', 'turn': '45', 'action_turn': 'rrrc', 'river': '4', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['17', '9']}, 'p2': {'position_showdown': '2', 'cards': ['50', '30']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '40', 'flop2': '38', 'flop3': '36', 'action_flop': 'crc', 'turn': '5', 'action_turn': 'rrrc', 'river': '37', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['1', '2']}, 'p2': {'position_showdown': '2', 'cards': ['6', '3']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfrc', 'flop1': '51', 'flop2': '18', 'flop3': '38', 'action_flop': 'crc', 'turn': '45', 'action_turn': 'rrrc', 'river': '0', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['41', '50']}, 'p2': {'position_showdown': '2', 'cards': ['32', '20']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '23', 'flop2': '2', 'flop3': '18', 'action_flop': 'crcc', 'turn': '45', 'action_turn': 'rrrcc', 'river': '29', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['26', '48']}, 'p2': {'position_showdown': '2', 'cards': ['21', '34']}, 'p3': {'position_showdown': '0', 'cards': ['14', '31']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '22', 'flop2': '34', 'flop3': '42', 'action_flop': 'fcc', 'turn': '23', 'action_turn': 'rrrc', 'river': '41', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['48', '8']}, 'p2': {'position_showdown': '2', 'cards': ['46', '5']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '36', 'flop2': '14', 'flop3': '13', 'action_flop': 'ccrcc', 'turn': '22', 'action_turn': 'rrrcc', 'river': '23', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['35', '46']}, 'p2': {'position_showdown': '2', 'cards': ['21', '29']}, 'p3': {'position_showdown': '0', 'cards': ['45', '27']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfrc', 'flop1': '41', 'flop2': '38', 'flop3': '24', 'action_flop': 'crc', 'turn': '32', 'action_turn': 'rrrc', 'river': '44', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['37', '42']}, 'p2': {'position_showdown': '2', 'cards': ['34', '13']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '8', 'flop2': '5', 'flop3': '37', 'action_flop': 'rcc', 'turn': '49', 'action_turn': 'rrrcc', 'river': '41', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['27', '25']}, 'p2': {'position_showdown': '2', 'cards': ['24', '20']}, 'p3': {'position_showdown': '0', 'cards': ['19', '40']}, 'winners': ['1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccrcc', 'flop1': '24', 'flop2': '18', 'flop3': '7', 'action_flop': 'ccc', 'turn': '12', 'action_turn': 'rrrcc', 'river': '45', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['49', '1']}, 'p2': {'position_showdown': '2', 'cards': ['4', '10']}, 'p3': {'position_showdown': '0', 'cards': ['21', '5']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrcc', 'flop1': '14', 'flop2': '12', 'flop3': '44', 'action_flop': 'ccrcc', 'turn': '13', 'action_turn': 'rrrcc', 'river': '50', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['29', '33']}, 'p2': {'position_showdown': '2', 'cards': ['27', '21']}, 'p3': {'position_showdown': '0', 'cards': ['11', '38']}, 'winners': ['1', '2', '0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '27', 'flop2': '38', 'flop3': '44', 'action_flop': 'ccc', 'turn': '9', 'action_turn': 'rrrcc', 'river': '23', 'action_river': 'ccc', 'p1': {'position_showdown': '1', 'cards': ['42', '7']}, 'p2': {'position_showdown': '2', 'cards': ['19', '20']}, 'p3': {'position_showdown': '0', 'cards': ['4', '22']}, 'winners': ['2', '0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'cfc', 'flop1': '51', 'flop2': '7', 'flop3': '39', 'action_flop': 'ccc', 'turn': '10', 'action_turn': 'rrrc', 'river': '29', 'action_river': 'ccc', 'p1': {'position_showdown': '0', 'cards': ['12', '8']}, 'p2': {'position_showdown': '2', 'cards': ['36', '14']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rrfrc', 'flop1': '10', 'flop2': '7', 'flop3': '9', 'action_flop': 'rrrc', 'turn': '43', 'action_turn': 'rrrc', 'river': '16', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['44', '26']}, 'p2': {'position_showdown': '1', 'cards': ['46', '33']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcrrfc', 'flop1': '46', 'flop2': '28', 'flop3': '34', 'action_flop': 'rrrc', 'turn': '20', 'action_turn': 'rrrc', 'river': '12', 'action_river': 'rrrc', 'p1': {'position_showdown': '2', 'cards': ['10', '49']}, 'p2': {'position_showdown': '0', 'cards': ['47', '5']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfrrc', 'flop1': '42', 'flop2': '29', 'flop3': '21', 'action_flop': 'rrrc', 'turn': '33', 'action_turn': 'rrrc', 'river': '25', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['27', '1']}, 'p2': {'position_showdown': '2', 'cards': ['2', '34']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '33', 'flop2': '50', 'flop3': '36', 'action_flop': 'ccrcc', 'turn': '2', 'action_turn': 'rrrcc', 'river': '31', 'action_river': 'ccrcc', 'p1': {'position_showdown': '0', 'cards': ['21', '48']}, 'p2': {'position_showdown': '1', 'cards': ['17', '5']}, 'p3': {'position_showdown': '2', 'cards': ['13', '44']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '29', 'flop2': '41', 'flop3': '49', 'action_flop': 'rcrrfc', 'turn': '38', 'action_turn': 'rrrc', 'river': '30', 'action_river': 'rrc', 'p1': {'position_showdown': '0', 'cards': ['43', '27']}, 'p2': {'position_showdown': '1', 'cards': ['48', '12']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'ccc', 'flop1': '13', 'flop2': '45', 'flop3': '7', 'action_flop': 'fcrc', 'turn': '46', 'action_turn': 'rrrc', 'river': '40', 'action_river': 'rrrc', 'p1': {'position_showdown': '2', 'cards': ['41', '12']}, 'p2': {'position_showdown': '0', 'cards': ['15', '37']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '9', 'flop2': '17', 'flop3': '38', 'action_flop': 'crrfrc', 'turn': '42', 'action_turn': 'rrrc', 'river': '44', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['36', '8']}, 'p2': {'position_showdown': '0', 'cards': ['39', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrfc', 'flop1': '19', 'flop2': '31', 'flop3': '1', 'action_flop': 'f', 'turn': '2', 'action_turn': '32', 'river': '50', 'action_river': '2', 'p1': {'position_showdown': '2', 'cards': ['32', '50']}, 'p2': {'position_showdown': '', 'cards': ['', '']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crcc', 'flop1': '32', 'flop2': '45', 'flop3': '49', 'action_flop': 'ccc', 'turn': '39', 'action_turn': 'rrrcc', 'river': '27', 'action_river': 'rcc', 'p1': {'position_showdown': '1', 'cards': ['42', '7']}, 'p2': {'position_showdown': '2', 'cards': ['5', '31']}, 'p3': {'position_showdown': '0', 'cards': ['13', '17']}, 'winners': ['1']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rcc', 'flop1': '29', 'flop2': '12', 'flop3': '23', 'action_flop': 'frc', 'turn': '20', 'action_turn': 'rrrc', 'river': '10', 'action_river': 'rc', 'p1': {'position_showdown': '2', 'cards': ['30', '32']}, 'p2': {'position_showdown': '0', 'cards': ['47', '39']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['2']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'crrcc', 'flop1': '29', 'flop2': '14', 'flop3': '25', 'action_flop': 'fcrc', 'turn': '33', 'action_turn': 'rrrc', 'river': '48', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['37', '30']}, 'p2': {'position_showdown': '2', 'cards': ['45', '23']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}
+{'hand_no': '0', 'dealer_position': 0, 'action_preflop': 'rfc', 'flop1': '43', 'flop2': '3', 'flop3': '13', 'action_flop': 'ccc', 'turn': '48', 'action_turn': 'rrrc', 'river': '15', 'action_river': 'crc', 'p1': {'position_showdown': '0', 'cards': ['5', '6']}, 'p2': {'position_showdown': '2', 'cards': ['9', '25']}, 'p3': {'position_showdown': '', 'cards': ['', '']}, 'winners': ['0']}

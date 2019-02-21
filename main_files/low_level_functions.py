@@ -37,9 +37,78 @@ def casinoToBot_ParsingUpdateUniversal(self, file_data_original_change, plr, pla
     # print("last_move:", pre_flop_last_move)
     pass
 
+def count_showd(file_data):
+    count_showdown = 0
+    for letter in file_data:
+        if letter == 'S':
+            count_showdown = count_showdown + 1
+
+    return count_showdown
+
+def count_winr(file_data):
+    count_winners = 0
+    for letter in file_data:
+        if letter == 'W':
+            count_winners = count_winners + 1
+
+    return count_winners
+
+def getWinnersShowdown(ctb_file_content, file_data):
+
+    count_showdown = count_showd(file_data)
+    count_winners = count_winr(file_data)
+    showdown = []
+    winners = []
+
+    
+    for win in range(count_winners):
+        winners.append(ctb_file_content[len(ctb_file_content) - (win + 2) ])
 
 
-def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no):
+    for show in range(0, count_showdown*3, 3):
+        a = []
+        for block in range(3):
+            b = (ctb_file_content[len(ctb_file_content) - (len(winners) + show + block + 2)])
+            a.append(b)
+        a = list(reversed(a))
+        showdown.append(a)
+
+    winners = list(reversed(winners))
+    showdown = list(reversed(showdown))
+
+    return winners, showdown
+
+
+def hand_summary(balance, file_data):
+
+    file_data_change_CTB =  re.split(r'[DPFFFFTTRRSABWWE]',file_data)
+    p.Player.game_state['winners'] = []
+
+    with open("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/main_files/" + "files_change", 'a+') as f:
+        
+        st = file_data + "\n" + "\thand.no: " + file_data_change_CTB[0] + "\tcount_showd(file_data)" + str(count_showd(file_data)) + "\t" + '(count_winr(file_data)' + str(count_winr(file_data)) 
+        f.write(st)
+        f.close()
+
+    if count_showd(file_data) > 0 and count_winr(file_data) > 0:
+        
+        winners_arr, showdown_arr = getWinnersShowdown(file_data_change_CTB, file_data)
+                
+        for i in range(1, len(showdown_arr) + 1):
+            p.Player.game_state['p'+str(i)]['position_showdown'] = showdown_arr[i-1][0]
+            p.Player.game_state['p'+str(i)]['cards'][0] = showdown_arr[i-1][1] 
+            p.Player.game_state['p'+str(i)]['cards'][1] = showdown_arr[i-1][2] 
+
+        for winner in winners_arr:
+           
+            p.Player.game_state['winners'].append(winner)
+    
+        with open("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/main_files/" + "test_file_data_change", 'a+') as f:
+            st = str(p.Player.game_state) + "\n"
+            f.write(st)
+            f.close()
+
+def casinoToBot_ParsingRead(self, file_data_change_CTB, player_list, bot_no, file_data, is_get_last_action):
     # <hand number> D <dealer button position> P <action by all players in order from first to 
     # act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
     # T <turn card> T <turn action> R <river card> R <river action>
@@ -51,35 +120,30 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
 
     button = file_data_change_CTB[1]
     iDealer = False
-    self.player_list[int(bot_no)].position = ''
-    number_of_players = 3 
 
-    if button == bot_no:
-        iDealer = True
-        self.player_list[int(bot_no)].position = 'BTN'
-        self.player_list[(int(bot_no)+1) % number_of_players].position = 'SB'
-        self.player_list[(int(bot_no)+2) % number_of_players].position = 'BB'
+    if not is_get_last_action:
+        self.player_list[int(bot_no)].position = ''
+        number_of_players = 3 
+        if button == bot_no:
+            iDealer = True
+            self.player_list[int(bot_no)].position = 'BTN'
+            self.player_list[(int(bot_no)+1) % number_of_players].position = 'SB'
+            self.player_list[(int(bot_no)+2) % number_of_players].position = 'BB'
 
-    if button == str((int(bot_no) + 1) % number_of_players):
-        iDealer = False
-        self.player_list[int(bot_no)].position = 'BB'
-        self.player_list[(int(bot_no)+1) % number_of_players].position = 'BTN'
-        self.player_list[(int(bot_no)+2) % number_of_players].position = 'SB'
+        if button == str((int(bot_no) + 1) % number_of_players):
+            iDealer = False
+            self.player_list[int(bot_no)].position = 'BB'
+            self.player_list[(int(bot_no)+1) % number_of_players].position = 'BTN'
+            self.player_list[(int(bot_no)+2) % number_of_players].position = 'SB'
 
-    if button == str((int(bot_no) + 2) % number_of_players):
-        iDealer = False
-        self.player_list[int(bot_no)].position = 'SB'
-        self.player_list[(int(bot_no)+1) % number_of_players].position = 'BB'
-        self.player_list[(int(bot_no)+2) % number_of_players].position = 'BTN'
+        if button == str((int(bot_no) + 2) % number_of_players):
+            iDealer = False
+            self.player_list[int(bot_no)].position = 'SB'
+            self.player_list[(int(bot_no)+1) % number_of_players].position = 'BB'
+            self.player_list[(int(bot_no)+2) % number_of_players].position = 'BTN'
 
-    
     # need to do same for other rotations of table other than the standard fixation
-
-    
-
-
     #print("{}.. Hand Number: {}, Game_status: {}".format(plr, file_data_change_CTB[0], file_data_change_CTB))
-    
     # Here we must update the local static game_state variable to the status read from CasinoToBot
     blank = True
     if file_data_change_CTB[0] != None and file_data_change_CTB[0] != '':
@@ -87,20 +151,19 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
     
     if blank == False:
         #HAND NO
-        if p.Player.game_state['hand_no'] == '':
-            if file_data_change_CTB[0] != None:
-                p.Player.game_state['hand_no'] = file_data_change_CTB[0]
+        
+        if file_data_change_CTB[0] != None:
+            p.Player.game_state['hand_no'] = file_data_change_CTB[0]
 
         
         #DEALER POSITION
-        if p.Player.game_state['dealer_position'] == '':
-            if file_data_change_CTB[1] != None:
-                for i in range(len(player_list)):
-                    if str(file_data_change_CTB[1]) == str(i):
-                        player_list[i].dealer_status = True
-                        p.Player.game_state['dealer_position'] = i
-                    else: 
-                        player_list[i].dealer_status = False
+        if file_data_change_CTB[1] != None:
+            for i in range(len(player_list)):
+                if str(file_data_change_CTB[1]) == str(i):
+                    player_list[i].dealer_status = True
+                    p.Player.game_state['dealer_position'] = i
+                else: 
+                    player_list[i].dealer_status = False
 
 
         if file_data_change_CTB[2] != None:
@@ -112,6 +175,7 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
             is_preflop_action_filled = False
 
 
+
         if len(file_data_change_CTB) >= 3:
             #PREFLOP ACTION
             ## FIX: GET RID OF FIRST IF STATEMENT
@@ -119,17 +183,15 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
                 
             if file_data_change_CTB[2] != None:
                 p.Player.game_state['action_preflop'] = file_data_change_CTB[2]
-            
+       
 
-        if len(file_data_change_CTB) == 6:
-            #FLOP 
-            if p.Player.game_state['flop1'] == '' and p.Player.game_state['flop2'] == '' and p.Player.game_state['flop3'] == '':
-                if file_data_change_CTB[3] != None and file_data_change_CTB[4] != None and file_data_change_CTB[5] != None:
-                    p.Player.game_state['flop1'] = file_data_change_CTB[3]
-                    p.Player.game_state['flop2'] = file_data_change_CTB[4]
-                    p.Player.game_state['flop3'] = file_data_change_CTB[5]
+        if len(file_data_change_CTB) >= 7:
 
-        if len(file_data_change_CTB) == 7:
+            if file_data_change_CTB[3] != None and file_data_change_CTB[4] != None and file_data_change_CTB[5] != None:
+                p.Player.game_state['flop1'] = file_data_change_CTB[3]
+                p.Player.game_state['flop2'] = file_data_change_CTB[4]
+                p.Player.game_state['flop3'] = file_data_change_CTB[5]
+
             #FLOP ACTION
             if file_data_change_CTB[6] != None:
                 p.Player.game_state['action_flop'] = file_data_change_CTB[6]
@@ -143,13 +205,12 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
             else: 
                 is_flop_action_filled = False
 
-        if len(file_data_change_CTB) == 8:
-            #TURN 
-            if p.Player.game_state['turn'] == '':
-                if file_data_change_CTB[7] != None:
-                    p.Player.game_state['turn'] = file_data_change_CTB[7]
 
-        if len(file_data_change_CTB) == 9:
+        if len(file_data_change_CTB) >= 9:
+            #TURN 
+            if file_data_change_CTB[7] != None:
+                p.Player.game_state['turn'] = file_data_change_CTB[7]
+
             #TURN ACTION 
             if file_data_change_CTB[8] != None:
                 p.Player.game_state['action_turn'] = file_data_change_CTB[8]
@@ -162,14 +223,12 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
             else: 
                 is_turn_action_filled = False
 
-        if len(file_data_change_CTB) == 10:
-            #RIVER 
-            if p.Player.game_state['river'] == '':
-                if file_data_change_CTB[9] != None:
-                    p.Player.game_state['river'] = file_data_change_CTB[9]
+            
+        if len(file_data_change_CTB) >= 11:
 
-        if len(file_data_change_CTB) == 11:
-            # DEBUGGING PURPOSES: Included all
+            #RIVER 
+            if file_data_change_CTB[9] != None:
+                p.Player.game_state['river'] = file_data_change_CTB[9]
 
 
             #RIVER ACTION 
@@ -211,7 +270,19 @@ def casinoToBot_ParsingRead(self, file_data_change_CTB, plr, player_list, bot_no
             else: 
                 is_river_action_filled = False
         
+
     return is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled
+
+def get_last_action(file_data, a, b, c, d):
+    file_data_change_CTB =  re.split(r'[DPFFFFTTRRSABWWE]',file_data)
+    if(a and b and c and d):
+        p.Player.game_state['action_river'] = file_data_change_CTB[10]
+    elif(a and b and c and not d):
+        p.Player.game_state['action_turn'] = file_data_change_CTB[8]
+    elif(a and b and not c and not d):
+        p.Player.game_state['action_flop'] = file_data_change_CTB[6]
+    elif(a and not b and not c and not d):
+        p.Player.game_state['action_preflop'] = file_data_change_CTB[2]
 
 def check_cards_shown(file_data_change_CTB):
     flop_cards = []

@@ -100,6 +100,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
         #print("IN_CLOSE_WRITE event:", event.pathname)
+
         
         global file_changed
         arr = re.split(r'[/]',event.pathname)
@@ -110,9 +111,11 @@ class MyEventHandler(pyinotify.ProcessEvent):
         filename = str(event_type+bot_number)
         file_data = get_status_from_file(str(filename))
 
-        with open("./test_file_data_change", 'a+') as f:
-                f.write("\n"+most_recent_file_changed)
-                f.close()
+
+        with open("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/main_files/" + "files_change", 'a+') as f:
+            st = str(filename) + "\n" 
+            f.write(st)
+            f.close()
 
         if event_type == "give_hand_bot":
 
@@ -140,10 +143,21 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
                 #bot 1 now has his cards    
 
+        elif event_type == "handSummaryEven":
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
+            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
+            llf.hand_summary("even", file_data)
+
+        elif event_type == "handSummaryOdd":
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
+            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
+            llf.hand_summary("odd", file_data)
+
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            treys_card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
-            
-            ctb_file_content =  re.split(r'[DPFFFFTTRRSABSABWWE]',file_data) # DEBUG: test_file_data
+
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
             # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
             #  T <turn card> T <turn action> R <river card> R <river action>
@@ -153,28 +167,31 @@ class MyEventHandler(pyinotify.ProcessEvent):
             bot_name = self.player_list[bot_n].name
             
             # we want to check if ONLY the preflop action is filled
-            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list[bot_n], self.player_list, bot_number) # DEBUG: test_file_data #check cards
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, False) # DEBUG: test_file_data #check cards
             flop_cards_present, turn_card_present, river_card_present = llf.check_cards_shown(file_data)
             first_meeting = {0: False, 1: False, 2: False, 3: False}
             is_new_game = False
+
+            
             
             # PREFLOP
             if (flop_cards_present == False and turn_card_present == False and river_card_present == False):
                 
                 # first move (BTN)
                 if(is_preflop_action_filled == False and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is only preflop filled?                he, evaluation, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate_preflop(bot_cards, bot_name)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                    
+                    p.Player.is_new_game_u = True
                     for player in self.player_list:
-                        player.is_new_game = True
+                        player.is_new_game_pp = True
                     first_meeting[0] = True
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting, True)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                    self.player_list[bot_n].is_new_game = False
+                    p.Player.is_new_game_u = False
+                    self.player_list[bot_n].is_new_game_pp = False
                     
                 elif(is_preflop_action_filled == True and is_flop_action_filled == False and is_turn_action_filled ==False and is_river_action_filled == False): # is flop filled yet?
 
                     first_meeting[0] = False
                     he, rc, score_desc, player_action = self.player_list[bot_n].hand_evaluate(bot_cards, bot_name, 'Preflop', first_meeting, False)   # USE FOR DEBUGGING (files have alreayd been filled with debugger)
-                    self.player_list[bot_n].is_new_game = False
+                    self.player_list[bot_n].is_new_game_pp = False
 
             #POSTFLOP
             elif (flop_cards_present == True and turn_card_present == False and river_card_present == False):
@@ -230,38 +247,27 @@ class main_watch_manager():
     def __init__(self, player_list ,communication_files_directory=path_to_file_changed2):
         self.communication_files_directory = communication_files_directory
         self.player_list = player_list
-
         # call bash for ./lasvegas
-               
         # watch manager
         wm = pyinotify.WatchManager()
         wm.add_watch(self.communication_files_directory, pyinotify.ALL_EVENTS, rec=True)
-
         # event handler
         kwargs = {"player_list": self.player_list}
         eh = MyEventHandler(**kwargs)
-
         # automate process of using bash
         # wd = os.getcwd()
         # #os.chdir("/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino")
         # os.chdir("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/pokercasino")
         # subprocess.Popen("./lasvegas")
         # os.chdir(wd)
-
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
-
         notifier.loop()
 
-
-
 if __name__ == '__main__':
-    treys_card.print_pretty_cards([268446761, 134236965, 33589533] + [67115551, 16787479])
     
     game = Game()
     # graphics = graphical_display.main_draw(game)
-
-
 
 
 

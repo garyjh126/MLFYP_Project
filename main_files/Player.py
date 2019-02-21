@@ -7,6 +7,7 @@ import heapq
 import main as main
 from collections import deque
 from treys import Card
+import statistics
 
 class PriorityQueue:
     def __init__(self):
@@ -56,10 +57,13 @@ class Player():
                 'river': '',
                 'action_river': '',
                 'p1': {'position_showdown': '', 'cards': ['', ''] } ,
-                'p2': {'position_showdown': '', 'cards': ['', ''] } 
+                'p2': {'position_showdown': '', 'cards': ['', ''] }, 
+                'p3': {'position_showdown': '', 'cards': ['', ''] }, 
+                'winners': []
                 }
     player_list = []
     level_raises = {0:0, 1:0, 2:0}
+    is_new_game_u = False
     def __init__(self, ID, name, card_holding, position, GHB_file, cards,mwm,stack_size = 50):
         
         self.hand_num = 0
@@ -81,49 +85,71 @@ class Player():
         self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
         self.action = None
-        self.is_new_game = False
+        self.is_new_game_pp = False
+        self.he = None
 
     
     def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
+        print("is_new_game_pp: ", self.is_new_game_pp)
         if first_player:
             Player.level_raises = {0:0, 1:0, 2:0}
-            
-        if self.is_new_game:
-            print("\n\n******************************\n\n")
-            self.make_new_game()
+        
+        if self.is_new_game_pp:
+            self.make_new_game_per_player()
             self.make_new_round()
+            self.he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
+        if self.is_new_game_u:
+            print("\n\n**************New Game****************\n\n") 
+            self.make_new_game()
         if self.is_new_round(first_meeting):
             self.make_new_round()
-        he = Hand.HandEvaluation(card_holding, name, event) #Unique to player instance
-        evaluation, rc, score_desc, hand, board = he.get_evaluation()
-        self.set_attributes(evaluation, he, rc, score_desc, event)
+        
+        evaluation, rc, score_desc, hand, board = None, None, None, None, None
+        if(event == 'Preflop'):
+            evaluation, rc, score_desc, hand, board = self.do_mean_evaluation(event)
+        else: 
+            evaluation, rc, score_desc, hand, board = self.he.get_evaluation(event)
+        self.set_attributes(evaluation, self.he, rc, score_desc, event)
         self.populatePlayerPossibleMoves(event)
         self.calc_raises_i_face()
         #self.getPerceivedRange(player1, player2) # Only use this if coming from CTB0 (learner)  
-        player_action = self.take_action(he, rc, score_desc, event) 
+        player_action = self.take_action(self.he, rc, score_desc, event) 
         self.set_player_action(event, player_action)
-        self.debug_print(player_action, hand, board)        
-        return he, rc, score_desc, player_action
+        self.debug_print(player_action, hand, board)     
+        return self.he, rc, score_desc, player_action
 
-    def next_game(self):
-        #reset all variables 
-        print("inside next game")
-        for key, value in game_state.items():
-            if key == 'p1' or key == 'p2':
-                game_state[key]['position_showdown'] = ''
-                game_state[key]['cards'][0] = ''
-                game_state[key]['cards'][1] = ''
-            else: 
-                game_state[key] = ''
+    def do_mean_evaluation(self, event):
+        list_evaluations = []
+        list_col = []
+        sum_total = 0
+        for i in range(21):
+            a,b,c,d,e = self.he.get_evaluation(event)
+            tup = a,b,c,d,e
+            list_evaluations.append(tup)
+        for he in list_evaluations:
+            sum_total = sum_total + he[0]
+        mean = sum_total/len(list_evaluations)
+        which_he = self.closest_to_mean(mean, list_evaluations)['which_he']
+        print(which_he)
+        return which_he
+         
+    def closest_to_mean(self, mean, list_evaluations):
+        sdfm = {'which_he': None, 'smallest_distance_from_mean':None}
+        sdfm['smallest_distance_from_mean'] = 7462
+        for he in list_evaluations:
+            ev = he[0]
+            this_distance = abs(ev - mean)
+            if(this_distance < sdfm['smallest_distance_from_mean']):
+                sdfm['smallest_distance_from_mean'] = this_distance
+                sdfm['which_he'] = he
+        return sdfm
 
-        for key, _ in level_raises.items():
-            level_raises[key] = ''
-
+            
 
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
         # return 'ID: {}, Position: {}, \n\tEvaluation-Preflop (score): {}, \n\tRound: {}'.format(str(self.ID), str(self.position), str(self.evaluation_preflop['evaluation']), str(self.round))
-        return 'ID: {}, \tEval-Preflop: {}, \tEval-Flop: {}, \tEval-Turn: {}, \tEval-River: {}, \tAction: {}, \n\tLevelRaises: {}'.format(str(self.ID), str(self.evaluation_preflop['evaluation']), str(self.evaluation_flop['evaluation']), str(self.evaluation_turn['evaluation']), str(self.evaluation_river['evaluation']),str(self.action), self.level_raises)    
+        return 'ID: {}, \tEval-Preflop: {}, \tEval-Flop: {}, \tEval-Turn: {}, \tEval-River: {}, \tAction: {}'.format(str(self.ID), str(self.evaluation_preflop['evaluation']), str(self.evaluation_flop['evaluation']), str(self.evaluation_turn['evaluation']), str(self.evaluation_river['evaluation']),str(self.action) )    
 
     def debug_print(self, player_action, hand, board):
         if (str(player_action)) != 'None':
@@ -132,6 +158,12 @@ class Player():
             print()
         else:
             print(self) #, "\tplayer_action", "f")
+            print(len(self.he.official_board))
+            if len(self.he.official_board) > 0:
+                
+                print("\tMy_Cards: {} \n\tBoard: {}".format(Card.print_pretty_cards([self.he.card_a, self.he.card_b]), Card.print_pretty_cards([card for card in self.he.official_board])))
+            else:
+                print("\tMy_Cards: {}".format(Card.print_pretty_cards([self.he.card_a, self.he.card_b])))
             print()
 
     def is_new_round(self, first_meeting):
@@ -144,13 +176,23 @@ class Player():
     def make_new_round(self):
         self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
 
-    def make_new_game(self):
+    def make_new_game_per_player(self):
         self.action = None
         self.evaluation_preflop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_flop = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_turn = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
         self.evaluation_river = {'he': '', 'evaluation': 0, 'rc': '', 'score_desc': '', 'player_action': ''}
+
+    def make_new_game(self):
         
+        for i in range(1, 4):
+            self.game_state['p'+str(i)]['position_showdown'] = ''
+            self.game_state['p'+str(i)]['cards'][0] = ''
+            self.game_state['p'+str(i)]['cards'][1] = ''
+        
+        for att in self.game_state:
+            if att != 'p1' and att != 'p2' and att != 'p3':
+                self.game_state[att] = ''
 
     def set_attributes(self, evaluation, he, rc, score_desc, event):
         if event == 'Preflop':
@@ -271,7 +313,7 @@ class Player():
                 which_eval = self.evaluation_river
 
         # print("\n\nround_game", round_game)
-        # print("\n\tbet: ", range_structure['betting'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
+        # print("\traises_i_owe:", self.round['raises_i_owe'])
         # print("\n\tcall: ", range_structure['calling'][self.round['raises_i_owe']][bot_position_num], "\traises_i_owe:", self.round['raises_i_owe'])
         # print(type(which_eval["evaluation"]))
         if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][bot_position_num]) and (self.is_possible('r')): 
@@ -378,24 +420,26 @@ def send_file(action_string, player, position, directory):
     btc_file = 'botToCasino'
     btc_num = Player.stposition_to_numposition(player, position)
     next_player_num = get_next_player_left_in_game(player) # accounts for players that have folded and loop-around
-    print(btc_num)
     # we want to write to next_player_num to make sure he sees the action of player acting before him
     file_name_ownPlayer = directory + btc_file + str(player.ID)
-    #file_name_nextPlayer = directory + btc_file + str(next_player_num)
+    #file_name_nextPlayer = directory + btc_file + str(next_player_num)  
+
+    # Using player.ID as above instead of player.position at table solved problem which allowed us to now use
+    # 3 or more rounds without any issues: 
+    #   commit 8a70ebab6587f0e0aa2287d26833e5c2326c4d16 (HEAD -> master)
+    #   Author: Gary Harney <garyjh126@gmail.com>
+    #   Date:   Tue Feb 12 13:41:26 2019 +0000
+
+    #       Bug fixed: nRounds > 3
+
+
     try:
         with open(file_name_ownPlayer, 'wt') as f:
             f.write(action_string)
             f.close()
-        # with open(file_name_nextPlayer, 'wt') as f:
-        #     f.write(action_string)
-        #     f.close()
     except:
         print("Could not write", action_string, "to ", btc_file + str(btc_num), "from", position)
 
-    # with open(directory + "log", 'a+') as f:
-    #         st = "\nposition: " + str(player.position) + "\tevaluation_preflop: " + str(player.evaluation_preflop['evaluation']) + "\tevaluation_flop" + str(player.evaluation_flop['evaluation'])
-    #         f.write(st)
-    #         f.close()
 #INTERFACE
 class Action(ABC):
 
@@ -411,8 +455,6 @@ class Action(ABC):
 
     @abstractmethod
     def determine_table_stats(self): pass
-
-    
 
     @abstractmethod
     def get_action_of_preceding_player(self): pass
@@ -475,7 +517,7 @@ class Call(Action):
     def populate_levelRaises(self):
         last_seq_move = ''
         if self.round_game == 'Preflop':    
-            last_seq_move = Player.game_state['action_preflop'] 
+            last_seq_move = Player.game_state['action_preflop']
         elif self.round_game == 'Flop':
             last_seq_move = Player.game_state['action_flop']
         elif self.round_game == 'Turn':
@@ -487,9 +529,7 @@ class Call(Action):
             bot_no = Player.stposition_to_numposition(self.player, self.player.position)
             highest_value_LR, _ = highest_in_LR()
             Player.level_raises[bot_no] = highest_value_LR
-        
-       
-
+            
     
     def c_call(self, last_seq_move):
         c_is_call = False
