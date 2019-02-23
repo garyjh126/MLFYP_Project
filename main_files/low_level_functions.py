@@ -2,6 +2,7 @@ import re
 import Player as p
 import numpy as np
 
+
 def create_cards_for_game():
     suits = ['h','c','s','d']
     li = []
@@ -107,6 +108,8 @@ def hand_summary(balance, file_data):
             st = str(p.Player.game_state) + "\n"
             f.write(st)
             f.close()
+
+    
 
 def casinoToBot_ParsingRead(self, file_data_change_CTB, player_list, bot_no, file_data, is_get_last_action):
     # <hand number> D <dealer button position> P <action by all players in order from first to 

@@ -89,8 +89,10 @@ class HandEvaluation():
         evaluation = None
         self.hand = self.parse_cards()
         self.board = ''
+        
         if event == "Preflop":
             self.board = self.setup_board(None, 'True', self.hand)
+            
         elif event == 'Flop':
             self.flop_cards = self.parse_flop_cards()
             if(self.flop_cards != 'Blank'):
@@ -114,8 +116,7 @@ class HandEvaluation():
         except KeyError:
             print("KeyError:", self.hand, self.board)
 
-        if event == 'Preflop':
-            evaluation = evaluator.evaluate(self.hand, self.board)
+        
         rc = self.rank_class(evaluator, evaluation)
         score_desc = evaluator.class_to_string(rc)
         return evaluation, rc, score_desc, self.hand, self.board

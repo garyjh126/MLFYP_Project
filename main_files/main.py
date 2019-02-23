@@ -143,17 +143,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
                 #bot 1 now has his cards    
 
-        elif event_type == "handSummaryEven":
-            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
-            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
-            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
-            llf.hand_summary("even", file_data)
-
-        elif event_type == "handSummaryOdd":
-            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
-            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
-            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
-            llf.hand_summary("odd", file_data)
+        
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
 
@@ -240,6 +230,25 @@ class MyEventHandler(pyinotify.ProcessEvent):
              
             # We may use the attributes collected here as training data from neural network
 
+        elif event_type == "handSummaryEven":
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
+            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
+            llf.hand_summary("even", file_data)
+
+        elif event_type == "handSummaryOdd":
+            ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
+            is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
+            llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
+            llf.hand_summary("odd", file_data)
+
+    
+        def treys_analysis(self):
+            hands = []
+            for player in self.player_list:
+                hands.append(player.cards) 
+
+            print(hands)
 
 
 class main_watch_manager():

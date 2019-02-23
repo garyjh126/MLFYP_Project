@@ -118,11 +118,12 @@ class Player():
         self.debug_print(player_action, hand, board)     
         return self.he, rc, score_desc, player_action
 
+
     def do_mean_evaluation(self, event):
         list_evaluations = []
         list_col = []
         sum_total = 0
-        for i in range(21):
+        for i in range(9):
             a,b,c,d,e = self.he.get_evaluation(event)
             tup = a,b,c,d,e
             list_evaluations.append(tup)
@@ -130,7 +131,6 @@ class Player():
             sum_total = sum_total + he[0]
         mean = sum_total/len(list_evaluations)
         which_he = self.closest_to_mean(mean, list_evaluations)['which_he']
-        print(which_he)
         return which_he
          
     def closest_to_mean(self, mean, list_evaluations):
@@ -143,8 +143,6 @@ class Player():
                 sdfm['smallest_distance_from_mean'] = this_distance
                 sdfm['which_he'] = he
         return sdfm
-
-            
 
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
