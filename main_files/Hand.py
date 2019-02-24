@@ -86,7 +86,6 @@ class HandEvaluation():
         rc = None
         score_desc = None
         evaluator = Evaluator()
-        evaluation = None
         self.hand = self.parse_cards()
         self.board = ''
         
@@ -109,17 +108,42 @@ class HandEvaluation():
                 self.board = self.setup_board(board, 'False', self.hand)
 
         try: 
-            evaluation = evaluator.evaluate(self.hand, self.board)
+            evaluation = None
+            if event == 'Preflop':
+                evaluation = self.do_mean_evaluation(self.hand, self.board, evaluator)
+            else:
+                evaluation = evaluator.evaluate(self.hand, self.board)
             rc = self.rank_class(evaluator, evaluation)
             score_desc = evaluator.class_to_string(rc)
             
         except KeyError:
             print("KeyError:", self.hand, self.board)
-
-        
         rc = self.rank_class(evaluator, evaluation)
         score_desc = evaluator.class_to_string(rc)
         return evaluation, rc, score_desc, self.hand, self.board
+
+    def do_mean_evaluation(self, hand, board, evaluator):
+        
+        total_sum_evals = 0
+        list_evaluations = []
+        n = 10
+        for i in range(n):
+            evaluation = evaluator.evaluate(hand, board)
+            list_evaluations.append(evaluation)
+            total_sum_evals = total_sum_evals + evaluation
+        mean = total_sum_evals/n
+        which_eval = self.closest_to_mean(mean, list_evaluations)
+        return which_eval
+         
+    def closest_to_mean(self, mean, list_evaluations):
+        sdfm = {'eval': None, 'smallest_distance_from_mean':None}
+        sdfm['smallest_distance_from_mean'] = 7462
+        for evaluation in list_evaluations:
+            this_distance = abs(evaluation - mean)
+            if(this_distance < sdfm['smallest_distance_from_mean']):
+                sdfm['smallest_distance_from_mean'] = this_distance
+                sdfm['eval'] = evaluation
+        return sdfm['eval']
 
     def board_join(self, a, b):
 

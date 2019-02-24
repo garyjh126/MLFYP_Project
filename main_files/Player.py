@@ -90,10 +90,8 @@ class Player():
 
     
     def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
-        print("is_new_game_pp: ", self.is_new_game_pp)
         if first_player:
             Player.level_raises = {0:0, 1:0, 2:0}
-        
         if self.is_new_game_pp:
             self.make_new_game_per_player()
             self.make_new_round()
@@ -104,11 +102,7 @@ class Player():
         if self.is_new_round(first_meeting):
             self.make_new_round()
         
-        evaluation, rc, score_desc, hand, board = None, None, None, None, None
-        if(event == 'Preflop'):
-            evaluation, rc, score_desc, hand, board = self.do_mean_evaluation(event)
-        else: 
-            evaluation, rc, score_desc, hand, board = self.he.get_evaluation(event)
+        evaluation, rc, score_desc, hand, board = self.he.get_evaluation(event)
         self.set_attributes(evaluation, self.he, rc, score_desc, event)
         self.populatePlayerPossibleMoves(event)
         self.calc_raises_i_face()
@@ -117,32 +111,6 @@ class Player():
         self.set_player_action(event, player_action)
         self.debug_print(player_action, hand, board)     
         return self.he, rc, score_desc, player_action
-
-
-    def do_mean_evaluation(self, event):
-        list_evaluations = []
-        list_col = []
-        sum_total = 0
-        for i in range(9):
-            a,b,c,d,e = self.he.get_evaluation(event)
-            tup = a,b,c,d,e
-            list_evaluations.append(tup)
-        for he in list_evaluations:
-            sum_total = sum_total + he[0]
-        mean = sum_total/len(list_evaluations)
-        which_he = self.closest_to_mean(mean, list_evaluations)['which_he']
-        return which_he
-         
-    def closest_to_mean(self, mean, list_evaluations):
-        sdfm = {'which_he': None, 'smallest_distance_from_mean':None}
-        sdfm['smallest_distance_from_mean'] = 7462
-        for he in list_evaluations:
-            ev = he[0]
-            this_distance = abs(ev - mean)
-            if(this_distance < sdfm['smallest_distance_from_mean']):
-                sdfm['smallest_distance_from_mean'] = this_distance
-                sdfm['which_he'] = he
-        return sdfm
 
     def __str__(self):
         st = self.ID, self.name, self.position, self.stack_size
