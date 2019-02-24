@@ -107,14 +107,9 @@ class HandEvaluation():
             if(self.river_card != 'Blank'):
                 self.board = self.setup_board(board, 'False', self.hand)
 
+        
         try: 
-            evaluation = None
-            if event == 'Preflop':
-                evaluation = self.do_mean_evaluation(self.hand, self.board, evaluator)
-            else:
-                evaluation = evaluator.evaluate(self.hand, self.board)
-            rc = self.rank_class(evaluator, evaluation)
-            score_desc = evaluator.class_to_string(rc)
+            evaluation = evaluator.evaluate(self.hand, self.board)
             
         except KeyError:
             print("KeyError:", self.hand, self.board)
