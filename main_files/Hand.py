@@ -126,7 +126,7 @@ class HandEvaluation():
         
         total_sum_evals = 0
         list_evaluations = []
-        n = 10
+        n = 2
         for i in range(n):
             evaluation = evaluator.evaluate(hand, board)
             list_evaluations.append(evaluation)

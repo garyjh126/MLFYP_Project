@@ -113,7 +113,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
 
         with open("/home/gary/Desktop/MLFYP_Project/MLFYP_Project/main_files/" + "files_change", 'a+') as f:
-            st = str(filename) + "\n" 
+            st = str(filename) + file_data + "\n"
             f.write(st)
             f.close()
 
@@ -146,7 +146,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
         
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-
+            print(file_data)
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
             # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
@@ -216,7 +216,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
             #RIVER
             elif (flop_cards_present == True and turn_card_present == True and river_card_present == True):
-
+                
                 # first move of river
                 if(is_preflop_action_filled == True and is_flop_action_filled == True and is_turn_action_filled ==True and is_river_action_filled == False): #is river filled yet?
                     first_meeting[3] = True
