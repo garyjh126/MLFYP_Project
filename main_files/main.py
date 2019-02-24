@@ -146,7 +146,6 @@ class MyEventHandler(pyinotify.ProcessEvent):
         
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
-            print(file_data)
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
             # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
@@ -231,12 +230,14 @@ class MyEventHandler(pyinotify.ProcessEvent):
             # We may use the attributes collected here as training data from neural network
 
         elif event_type == "handSummaryEven":
+            print("HandSummary", file_data)
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
             llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
             llf.hand_summary("even", file_data)
 
         elif event_type == "handSummaryOdd":
+            print("HandSummary", file_data)
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, True) # DEBUG: test_file_data #check cards
             llf.get_last_action(file_data, is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)

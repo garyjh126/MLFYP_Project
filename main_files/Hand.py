@@ -109,10 +109,17 @@ class HandEvaluation():
 
         
         try: 
-            evaluation = evaluator.evaluate(self.hand, self.board)
+            evaluation = None
+            if event == 'Preflop':
+                evaluation = self.do_mean_evaluation(self.hand, self.board, evaluator)
+            else:
+                evaluation = evaluator.evaluate(self.hand, self.board)
+            rc = self.rank_class(evaluator, evaluation)
+            score_desc = evaluator.class_to_string(rc)
             
         except KeyError:
             print("KeyError:", self.hand, self.board)
+
         rc = self.rank_class(evaluator, evaluation)
         score_desc = evaluator.class_to_string(rc)
         return evaluation, rc, score_desc, self.hand, self.board
@@ -121,7 +128,7 @@ class HandEvaluation():
         
         total_sum_evals = 0
         list_evaluations = []
-        n = 2
+        n = 9
         for i in range(n):
             evaluation = evaluator.evaluate(hand, board)
             list_evaluations.append(evaluation)
