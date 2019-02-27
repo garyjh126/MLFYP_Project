@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import os
 import uuid
-
 import pyinotify
 from treys import Card as treys_card
 import Hand

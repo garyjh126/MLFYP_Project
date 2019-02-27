@@ -26,7 +26,6 @@ class HandEvaluation():
         a, b = self.card_holding.get_card(0) , self.card_holding.get_card(1)
         a_rank, a_suit = a
         b_rank, b_suit = b
-        
         a_card = Card.new(str(a_rank) + str(a_suit))
         b_card = Card.new(str(b_rank) + str(b_suit))
     
@@ -89,10 +88,7 @@ class HandEvaluation():
         self.hand = self.parse_cards()
         self.board = ''
         
-        if event == "Preflop":
-            self.board = self.setup_board(None, 'True', self.hand)
-            
-        elif event == 'Flop':
+        if event == 'Flop':
             self.flop_cards = self.parse_flop_cards()
             if(self.flop_cards != 'Blank'):
                 self.board = self.setup_board(self.flop_cards, 'False', self.hand)  
@@ -111,7 +107,7 @@ class HandEvaluation():
         try: 
             evaluation = None
             if event == 'Preflop':
-                evaluation = self.do_mean_evaluation(self.hand, self.board, evaluator)
+                evaluation = self.do_mean_evaluation(self.hand, evaluator)
             else:
                 evaluation = evaluator.evaluate(self.hand, self.board)
             rc = self.rank_class(evaluator, evaluation)
@@ -120,17 +116,17 @@ class HandEvaluation():
         except KeyError:
             print("KeyError:", self.hand, self.board)
 
-        rc = self.rank_class(evaluator, evaluation)
-        score_desc = evaluator.class_to_string(rc)
+        
         return evaluation, rc, score_desc, self.hand, self.board
 
-    def do_mean_evaluation(self, hand, board, evaluator):
+    def do_mean_evaluation(self, hand, evaluator):
         
         total_sum_evals = 0
         list_evaluations = []
-        n = 9
+        n = 100
         for i in range(n):
-            evaluation = evaluator.evaluate(hand, board)
+            self.board = self.setup_board(None, 'True', self.hand)
+            evaluation = evaluator.evaluate(hand, self.board)
             list_evaluations.append(evaluation)
             total_sum_evals = total_sum_evals + evaluation
         mean = total_sum_evals/n
