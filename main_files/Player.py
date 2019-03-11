@@ -45,6 +45,7 @@ class Item:
 
 
 class Player():
+
     game_state = {'hand_no': '',
                 'dealer_position': '',
                 'action_preflop': '',
@@ -87,8 +88,8 @@ class Player():
         self.action = None
         self.is_new_game_pp = False
         self.he = None
+        
 
-    
     def hand_evaluate(self, card_holding, name, event, first_meeting, first_player):
         if first_player:
             Player.level_raises = {0:0, 1:0, 2:0}

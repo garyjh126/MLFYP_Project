@@ -1,5 +1,6 @@
 from treys import Card
 
+
 class action_table:
   CHECK = 0
   CALL = 1
@@ -63,10 +64,17 @@ def hand_to_str(hand):
   return output
 
 
-def safe_actions(community_infos, n_seats):
+def safe_actions(community_infos, which_action, n_seats):
   current_player = community_infos[-1]
   to_call = community_infos[-2]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
   if to_call > 0:
-    actions[current_player] = [action_table.CALL, action_table.NA]
-  return actions
+    if which_action is None:
+      actions[current_player] = [action_table.CALL, action_table.NA]
+    else:
+      actions[current_player] = [which_action[0], which_action[1]]
+  return actions		
+	
+	
+
+

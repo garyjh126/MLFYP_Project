@@ -6,13 +6,17 @@ import pandas as pd
 import os
 import uuid
 import pyinotify
-from treys import Card as treys_card
+# from treys import Card as treys_card
 import Hand
 import Player as p
 import low_level_functions as llf
 import subprocess
 import matplotlib
-# import graphical_display
+from gym import Env, error, spaces, utils
+from gym.utils import seeding
+from treys import Card, Deck, Evaluator
+import gym 
+
 
 
 path_to_file_changed1 = '/usr/local/home/u180455/Desktop/Project/MLFYP_Project/MLFYP_Project/pokercasino/botfiles/'
@@ -67,40 +71,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
         self.player_list = kargs["player_list"]
         self.game_count = 0
 
-    # def process_IN_ACCESS(self, event):
-    #     print("ACCESS event:", event.pathname)
-
-    # def process_IN_ATTRIB(self, event):
-    #     print("ATTRIB event:", event.pathname)
-
-    # def process_IN_CLOSE_NOWRITE(self, event):
-    #     print("CLOSE_NOWRITE event:", event.pathname)
-
-    # def process_IN_MODIFY(self, event):
-    #     print("MODIFY event:", event.pathname)
-
-    # def process_IN_OPEN(self, event):
-    #     #print(event.pathname)
-    #     global file_changed
-    #     arr = re.split(r'[/]',event.pathname)
-    #     most_recent_file_changed = (arr[len(arr)-1])
-    #     last_letter = most_recent_file_changed[len(most_recent_file_changed)-1]
-    #     bot_number = last_letter if (last_letter =='0' or last_letter == '1' or last_letter =='2') else ''
-    #     event_type = most_recent_file_changed if bot_number == '' else most_recent_file_changed[0:len(most_recent_file_changed)-1]
-    #     filename = str(event_type+bot_number)
-    #     file_data = ""
-        
-    #     if event_type == "botToCasino":
-    #         pass #print("IN_OPEN event:", event.pathname)
-            
-            
-
-
     def process_IN_CLOSE_WRITE(self, event):
         ### declaring a bot_number and event_type 
         #print("IN_CLOSE_WRITE event:", event.pathname)
-
-        
         global file_changed
         arr = re.split(r'[/]',event.pathname)
         most_recent_file_changed = (arr[len(arr)-1]) # last string in file path
@@ -120,48 +93,27 @@ class MyEventHandler(pyinotify.ProcessEvent):
 
             if bot_number == '0':
                 self.player_list[0].card_holding = llf.GHB_Parsing(self.player_list[0], file_data) #check cards
-                #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
-                #he, evaluation, rc, score_desc, _ = self.player_list[0].hand_evaluate_preflop(self.player_list[0].card_holding, self.player_list[0].name)
-                # bot 0 now has his cards
 
             elif bot_number == '1':
                 self.player_list[1].card_holding = llf.GHB_Parsing(self.player_list[1], file_data) #check cards
-                #print(self.player_list[0].card_holding)
-
-                #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
-                #he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
-
-                #bot 1 now has his cards
             
             elif bot_number == '2':
                 self.player_list[2].card_holding = llf.GHB_Parsing(self.player_list[2], file_data) #check cards
-                #print(self.player_list[0].card_holding)
-
-                #PROBLEM: Cannot evaluate preflop without players position which is retrieved in casinoToBot file overwrite
-                #he, evaluation, rc, score_desc, _ = self.player_list[1].hand_evaluate_preflop(self.player_list[1].card_holding, self.player_list[1].name)
-
-                #bot 1 now has his cards    
+                  
 
         
 
         elif event_type == "casinoToBot":   # only on (second) iteration, is the casinoToBOT file written with the actions ie 'rrc'
             ctb_file_content =  re.split(r'[DPFFFFTTRRSABWWE]',file_data) # DEBUG: test_file_data
             dealer_no = ctb_file_content[1]
-            # casinoToBot is written: hand number> D <dealer button position> P <action by all players in order from first to act, e.g. fccrf...> F <flop card 1> F <flop 2> F <flop 3> F <flop action starting with first player to act>
-            #  T <turn card> T <turn action> R <river card> R <river action>
-            
             bot_n = int(bot_number)
             bot_cards = self.player_list[bot_n].card_holding
             bot_name = self.player_list[bot_n].name
-            
-            # we want to check if ONLY the preflop action is filled
             is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled = llf.casinoToBot_ParsingRead(self, ctb_file_content, self.player_list, bot_number, file_data, False) # DEBUG: test_file_data #check cards
             flop_cards_present, turn_card_present, river_card_present = llf.check_cards_shown(file_data)
             first_meeting = {0: False, 1: False, 2: False, 3: False}
             is_new_game = False
 
-            
-            
             # PREFLOP
             if (flop_cards_present == False and turn_card_present == False and river_card_present == False):
                 
@@ -197,9 +149,7 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 
             #TURN
             elif (flop_cards_present == True and turn_card_present == True and river_card_present == False):
-                #print("inside TURN main")
-                #print("\n", is_preflop_action_filled, is_flop_action_filled, is_turn_action_filled, is_river_action_filled)
-                # first move of turn
+               
                 if(is_turn_action_filled ==False and is_river_action_filled == False): # is turn filled yet?
                     #print("inside TURN 1")
                     first_meeting[2] = True
@@ -272,6 +222,8 @@ class main_watch_manager():
         # notifier
         notifier = pyinotify.Notifier(wm, eh)
         notifier.loop()
+
+
 
 if __name__ == '__main__':
     

@@ -1,0 +1,225 @@
+from treys import Card, Evaluator
+from itertools import combinations 
+
+class HandEvaluation():
+
+    def __init__(self, cards, playerID, event, evaluation = None):
+        self.evaluator = Evaluator()
+        self.hand = cards
+        self.deck_of_cards = self.create_cards_for_game() # Remaining cards after dealt two hole cards to this player
+        self._combinations = self.make_combinations() # all possible card permuations (1326) used to describe opponents range
+        self.official_board = []
+        self.card_a, self.card_b = cards
+        self.summary = None
+        self.evaluation = None
+        self.rc = None
+        self.score_desc = None
+        self.hand_strength = None
+        self.event = event
+        self.playerID = playerID  # player name
+        self.flop_cards, self.turn_card, self.river_card = None, None, None
+        self.board = None # Fictional board
+        
+
+    def make_combinations(self):
+        _combinations = list(combinations(self.deck_of_cards, 2))
+        for combo in _combinations:
+            combo = self.parse_cards(combo[0], combo[1])
+        return _combinations 
+
+    def parse_cards(self, a, b):
+        a_rank, a_suit = a
+        b_rank, b_suit = b
+        a_card = Card.new(str(a_rank) + str(a_suit))
+        b_card = Card.new(str(b_rank) + str(b_suit))
+        return [a_card, b_card]
+
+    
+
+    def from_num_to_cardstring(self, my_card):
+        deck_size = 52
+        suits = ['h','c','s','d']
+        card_a_suit = ''
+        card_a_rank = ''
+        a,b = ('', '')
+        for card in self.deck_of_cards: ## all cards in game
+            if(str(self.deck_of_cards.index(card)) == my_card):
+                if(len(card) == 2):
+                    a,b = card
+                    break
+        card_a_rank = a
+        card_a_suit = b
+        return str(a+b)
+
+    def set_community_cards(self, board, _round):
+
+        i = 0
+        while i < (len(board)):
+            
+            if(board[i] == -1):
+                del board[i]
+            else:
+                i = i+1
+
+        if not(all([card is -1 for card in board])):
+            self.board = board 
+
+    def parse_turn_river_cards(self, event):
+        a = None
+        if event == 'Turn':
+            a = self.community_cards[3]
+        elif event == 'River':
+            a = self.community_cards[4]
+        card1 = self.from_num_to_cardstring(a)
+        return (card1)
+
+
+    def take(self, num_take):
+        import random
+        cards_return_user = []
+        for num in range(num_take):
+            c = random.choice(self.deck_of_cards)
+            while c in cards_return_user:
+                c = random.choice(self.deck_of_cards)
+            cards_return_user.append(c)
+        return cards_return_user
+
+    def random_board(self, hand, with_full_deck):
+        deck = self.deck_of_cards
+        b = self.take(3)
+        while(self.is_duplicates(b, hand)):
+            b = self.take(3)
+        b = [Card.new(b[0]), Card.new(b[1]), Card.new(b[2])]
+        return b
+
+    def setup_random_board(self, hand = None):
+        b = []
+        if self.board is None: #PREFLOP
+            b = self.random_board(hand, with_full_deck = False)
+        return b 
+
+    def shares_duplicate(self, a, b, board):
+        check_cards = self.hand + board
+        for card in check_cards:
+            if a in check_cards or b in check_cards:
+                return True
+            else:
+                return False 
+
+    def is_duplicates(self, board, hand):
+        duplicate = False
+        for card_b in board:
+            for card_h in hand:
+                if card_b == card_h:
+                    duplicate = True
+
+        return duplicate
+    
+    def handStrength(self):
+        ahead, tied, behind = 0, 0, 0
+        a, b, random_board, ourRank = None, None, None, None
+        our_cards = [self.hand[0], self.hand[1]]
+        if self.event is "Preflop":
+            random_board = self.random_board(our_cards, with_full_deck = True)
+            ourRank = self.evaluator.evaluate(random_board, our_cards)
+            chosen_board = random_board
+        else:
+            ourRank = self.evaluator.evaluate(self.board, our_cards)
+            chosen_board = self.board
+        # Consider all two card combinations of remaining cards
+        for potential_opp_cards in (self._combinations):
+            a, b = Card.new(potential_opp_cards[0]), Card.new(potential_opp_cards[1])
+            if self.shares_duplicate(a,b, board = chosen_board):
+                continue
+            oppRank = self.evaluator.evaluate(chosen_board, [a,b])
+            if(ourRank < oppRank): # Note: With treys evaluation, lower number means better hand
+                ahead = ahead + 1 
+            elif ourRank == oppRank:
+                tied = tied + 1
+            else:
+                behind = behind + 1
+        hand_strength = (ahead+tied/2) / (ahead+tied+behind)
+        return hand_strength
+
+    def evaluate(self, event):
+        
+        
+        
+        if event == 'Preflop':
+            self.evaluation = self.do_mean_evaluation()
+        else:
+            self.evaluation = self.evaluator.evaluate(self.board, self.hand)
+        self.rc = self.rank_class(self.evaluation)
+        self.score_desc = self.evaluator.class_to_string(self.rc)
+        self.hand_strength = self.handStrength()
+
+        
+
+        self.summary = self.hand_strength, self.evaluation, self.rc, self.score_desc, self.hand, self.board
+        return self.summary
+
+    def do_mean_evaluation(self):
+        
+        total_sum_evals = 0
+        list_evaluations = []
+        n = 1
+        for i in range(n):
+            fictional_board = self.setup_random_board(self.hand) # fictional board used to evaluate 5-card set in treys evaluation function
+            evaluation = self.evaluator.evaluate(fictional_board, self.hand)
+            list_evaluations.append(evaluation)
+            total_sum_evals = total_sum_evals + evaluation
+            del fictional_board, evaluation
+        mean = total_sum_evals/n
+        which_eval = self.closest_to_mean(mean, list_evaluations)
+        return which_eval
+         
+    def closest_to_mean(self, mean, list_evaluations):
+        sdfm = {'eval': None, 'smallest_distance_from_mean':None}
+        sdfm['smallest_distance_from_mean'] = 7462
+        for evaluation in list_evaluations:
+            this_distance = abs(evaluation - mean)
+            if(this_distance < sdfm['smallest_distance_from_mean']):
+                sdfm['smallest_distance_from_mean'] = this_distance
+                sdfm['eval'] = evaluation
+        return sdfm['eval']
+
+    def board_join(self, a, b):
+
+        l1 = []
+        l2 = []
+        for elem_a in a:
+            l1.append(elem_a)
+        l2.append(b)
+        l3 = l1 + l2
+        return tuple(l3)
+
+    def rank_class(self, evaluation):
+        rc = self.evaluator.get_rank_class(evaluation)
+        return rc
+
+    def get_evaluation(self, event):
+        return self.summary
+
+    def create_cards_for_game(self):
+        suits = ['h','c','s','d']
+        li = []
+        
+        for rank in range(13):
+            for suit in suits:
+                if(rank == 8):
+                    card_r = 'T'
+                elif(rank == 9):
+                    card_r = 'J'
+                elif(rank == 10):
+                    card_r = 'Q'
+                elif(rank == 11):
+                    card_r = 'K'
+                elif(rank == 12):
+                    card_r = 'A'
+                else:
+                    card_r = str(rank+2)
+                card_str = card_r+suit
+                if card_str != self.hand[0] and card_str != self.hand[1]:
+                    li.append(card_str)
+        
+        return li
