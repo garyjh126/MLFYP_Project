@@ -29,7 +29,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._deck = Deck()
 		self._evaluator = Evaluator()
 		self.last_seq_move = [] 
-		
+
 		self.community = []
 		self._round = 0
 		self._button = 0
@@ -428,8 +428,11 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def _reset_game(self):
 		
 		playing = 0
+
+		for player_ind in range(len(self._player_dict)):
+			self._player_dict[player_ind].he = None
 		for player in self._seats:
-			player.he == None
+			
 			if not player.emptyplayer and not player.sitting_out:
 				player.reset_hand()
 				playing += 1

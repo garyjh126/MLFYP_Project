@@ -96,15 +96,14 @@ class HandEvaluation():
         b = []
         if self.board is None: #PREFLOP
             b = self.random_board(hand, with_full_deck = False)
+        
         return b 
 
-    def shares_duplicate(self, a, b, board):
-        check_cards = self.hand + board
-        for card in check_cards:
-            if a in check_cards or b in check_cards:
-                return True
-            else:
-                return False 
+    def shares_duplicate(self, cardA, cardB, check_this):
+        if cardA in check_this or cardB in check_this:
+            return True
+        else:
+            return False 
 
     def is_duplicates(self, board, hand):
         duplicate = False
@@ -115,26 +114,21 @@ class HandEvaluation():
 
         return duplicate
     
-    def handStrength(self):
+    def handStrength(self, event):
         ahead, tied, behind = 0, 0, 0
-        a, b, random_board, ourRank = None, None, None, None
-        our_cards = [self.hand[0], self.hand[1]]
-        if self.event is "Preflop":
-            random_board = self.random_board(our_cards, with_full_deck = True)
-            ourRank = self.evaluator.evaluate(random_board, our_cards)
-            chosen_board = random_board
-        else:
-            ourRank = self.evaluator.evaluate(self.board, our_cards)
-            chosen_board = self.board
+        a, b, random_board, ourRank, oppRank = None, None, None, None, None
+
         # Consider all two card combinations of remaining cards
         for potential_opp_cards in (self._combinations):
             a, b = Card.new(potential_opp_cards[0]), Card.new(potential_opp_cards[1])
-            if self.shares_duplicate(a,b, board = chosen_board):
+            if self.shares_duplicate(a, b, self.hand):
                 continue
-            oppRank = self.evaluator.evaluate(chosen_board, [a,b])
-            if(ourRank < oppRank): # Note: With treys evaluation, lower number means better hand
+            oppRank = self.do_mean_evaluation([a,b], event, n=10)
+            if(oppRank is None):
+                continue
+            if(self.evaluation < oppRank): # Note: With treys evaluation, lower number means better hand
                 ahead = ahead + 1 
-            elif ourRank == oppRank:
+            elif self.evaluation == oppRank:
                 tied = tied + 1
             else:
                 behind = behind + 1
@@ -142,33 +136,34 @@ class HandEvaluation():
         return hand_strength
 
     def evaluate(self, event):
-        
-        
-        
         if event == 'Preflop':
-            self.evaluation = self.do_mean_evaluation()
+            self.evaluation = self.do_mean_evaluation(self.hand, event, n=100)
         else:
             self.evaluation = self.evaluator.evaluate(self.board, self.hand)
         self.rc = self.rank_class(self.evaluation)
         self.score_desc = self.evaluator.class_to_string(self.rc)
-        self.hand_strength = self.handStrength()
-
-        
-
+        #self.hand_strength = self.handStrength(event)
+        self.hand_strength = None
         self.summary = self.hand_strength, self.evaluation, self.rc, self.score_desc, self.hand, self.board
         return self.summary
 
-    def do_mean_evaluation(self):
-        
+    def do_mean_evaluation(self, hand, event, n):
+        fictional_board = None
+        evaluation = None
         total_sum_evals = 0
         list_evaluations = []
-        n = 1
         for i in range(n):
-            fictional_board = self.setup_random_board(self.hand) # fictional board used to evaluate 5-card set in treys evaluation function
-            evaluation = self.evaluator.evaluate(fictional_board, self.hand)
+            if event is "Preflop":
+                fictional_board = self.setup_random_board(hand) # fictional board used to evaluate 5-card set in treys evaluation function. hand is passed in to avoid duplicates in creating board
+                while self.shares_duplicate(hand[0],hand[1], fictional_board):
+                    fictional_board = self.setup_random_board(hand)
+                evaluation = self.evaluator.evaluate(fictional_board, hand)
+                del fictional_board
+            else:
+                evaluation = self.evaluator.evaluate(self.board, hand)
             list_evaluations.append(evaluation)
             total_sum_evals = total_sum_evals + evaluation
-            del fictional_board, evaluation
+            del evaluation
         mean = total_sum_evals/n
         which_eval = self.closest_to_mean(mean, list_evaluations)
         return which_eval

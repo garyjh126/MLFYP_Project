@@ -165,11 +165,12 @@ def generate_episode(env, n_seats):
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
 env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
-env.add_player(1, stack=2000) # add another player to seat 1 with 2000 "chips"
-
+env.add_player(1, stack=2000) # tight
+env.add_player(2, stack=2000) # aggressive
 
 full_rotation = len(env._player_dict)
 print(full_rotation)
 for i in range(full_rotation*100):
+	print("********{}*********".format(i))
 	generate_episode(env, env.n_seats)
 
