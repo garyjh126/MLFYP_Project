@@ -123,7 +123,18 @@ class HandEvaluation():
             a, b = Card.new(potential_opp_cards[0]), Card.new(potential_opp_cards[1])
             if self.shares_duplicate(a, b, self.hand):
                 continue
-            oppRank = self.do_mean_evaluation([a,b], event, n=10)
+            if event is "Preflop":
+                oppRank = self.do_mean_evaluation([a,b], event, n=10)
+            else:
+                need_skip = False
+                while need_skip is False:
+                    if (self.shares_duplicate(a, b, self.board)):
+                        need_skip = True
+                    break
+                if need_skip:
+                    continue
+                oppRank = self.evaluator.evaluate(self.board, [a,b])
+                    
             if(oppRank is None):
                 continue
             if(self.evaluation < oppRank): # Note: With treys evaluation, lower number means better hand
@@ -140,10 +151,9 @@ class HandEvaluation():
             self.evaluation = self.do_mean_evaluation(self.hand, event, n=100)
         else:
             self.evaluation = self.evaluator.evaluate(self.board, self.hand)
+            self.hand_strength = self.handStrength(event) # UPDATE 12/03: Only using handStrength for post-flop for the moment
         self.rc = self.rank_class(self.evaluation)
         self.score_desc = self.evaluator.class_to_string(self.rc)
-        #self.hand_strength = self.handStrength(event)
-        self.hand_strength = None
         self.summary = self.hand_strength, self.evaluation, self.rc, self.score_desc, self.hand, self.board
         return self.summary
 

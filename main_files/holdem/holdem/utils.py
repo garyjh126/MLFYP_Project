@@ -69,10 +69,27 @@ def safe_actions(community_infos, which_action, n_seats):
   to_call = community_infos[-2]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
   if to_call > 0:
+    # CALL/RAISE (Rule excludes opening up with paying of the blinds)
     if which_action is None:
       actions[current_player] = [action_table.CALL, action_table.NA]
     else:
-      actions[current_player] = [which_action[0], which_action[1]]
+      if type(which_action) is list: # Call
+        actions[current_player] = [which_action[0][0], which_action[0][1]]
+      else:
+        actions[current_player] = [which_action[0], which_action[1]]
+  else:
+    ## This is where a player may take initiative and BET (Rule excludes opening up with paying of the blinds)
+    ## They may also CHECK
+    if which_action is None:
+      actions[current_player] = [action_table.CHECK, action_table.NA]
+    else:
+      if type(which_action) is list: # Check
+        actions[current_player] = [which_action[1][0], which_action[1][1]]
+      else:
+        if [which_action[0], which_action[1]] == [3, 0]: # Prevent against folding when to_call = 0
+          actions[current_player] = [action_table.CHECK, action_table.NA]
+        else:
+          actions[current_player] = [which_action[0], which_action[1]]
   return actions		
 	
 	

@@ -45,20 +45,49 @@ class Player(object):
         break
     return move_possible 
 
-  def which_action(self, _round, range_structure):
-    action = ''
-    if range_structure == preflop_range:
-      which_eval = self.evaluation_preflop
-    elif range_structure == flop_range:
-      which_eval = self.evaluation_flop
-    elif range_structure == turn_river:
-      which_eval = self.evaluation_turn
-      # include river
+  def count_r(self, my_string):
+    count_r = 0
+    for letter in my_string:
+      if letter == 'R' or letter == 'r':
+        count_r = count_r + 1
 
-    if (which_eval["evaluation"] < range_structure['betting'][self.round['raises_i_owe']][self.position]):
-      action = (2, 25)
-    elif (which_eval["evaluation"] < range_structure['calling'][self.round['raises_i_owe']][self.position]):
-      action = (1, 0) # or 0
+    return count_r
+
+  def populatePlayerPossibleMoves(self, env):
+    possible_moves = []
+    if(self.count_r(env.last_seq_move) == 3):
+      self.round['possible_moves'].clear()
+      self.round['possible_moves'].add('c')
+      self.round['possible_moves'].add('f')
+      
+    else:
+      self.round['possible_moves'].clear()
+      self.round['possible_moves'].add('r')
+      self.round['possible_moves'].add('c')
+      self.round['possible_moves'].add('f')
+
+  def choose_action(self, _round, range_structure, env):
+    if self.round['raises_i_owe'] > 2:
+      print("watch")
+    betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
+    calling_threshold = range_structure['calling'][self.round['raises_i_owe']][self.position]
+    action = None
+    
+    if range_structure == preflop_range:
+      eval_cards = self.evaluation_preflop["evaluation"]
+      
+    else:
+      eval_cards = self.he.hand_strength
+
+    decide_boundaries = self.compare_eval_threshold(eval_cards, [betting_threshold, calling_threshold])
+
+    
+
+    if (decide_boundaries == betting_threshold) and self.is_possible('r'):
+      total_bet = env._tocall + env._bigblind - self.currentbet
+      action = (2, total_bet)
+    elif (decide_boundaries == calling_threshold or decide_boundaries == betting_threshold) and self.is_possible('c'):
+      action = [(1, 0), (0,0)] # or 0
     else:
       action = (3, 0)
 
@@ -67,6 +96,23 @@ class Player(object):
   def set_seat(self, value):
     self._seat = value
 
+  
+  def compare_eval_threshold(self, a, list_ev):
+    ans = -1
+    for b in list_ev:
+      st = (a>b)-(a<b)
+      if(type(a) is float and a <= 1.0): # HandStrength (Post-Flop)
+        if st >= 1:
+          return b
+        else:
+          continue
+      else:                               # Standard Evaluation (Pre-Flop)
+        if st >= 1:
+          continue
+        else:
+          return b
+
+    return -1
 
   def reset_hand(self):
     self._hand = []
@@ -105,11 +151,11 @@ class Player(object):
     bigblind = table_state.get('bigblind')
     tocall = min(table_state.get('tocall', 0), self.stack)
     minraise = table_state.get('minraise', 0)
-
+    minraise = 25
     
-
+    
     [action_idx, raise_amount] = action
-    raise_amount = int(raise_amount)
+    raise_amount = int(raise_amount) 
     action_idx = int(action_idx)
 
     if tocall == 0:
@@ -131,7 +177,7 @@ class Player(object):
         if raise_amount < minraise:
           raise error.Error('raise must be greater than minraise {}'.format(minraise))
         if raise_amount > self.stack:
-          raise error.Error('raise must be less than maxraise {}'.format(self.stack))
+          raise_amount = self.stack
         move_tuple = ('raise', raise_amount)
       elif action_idx == Player.CALL:
         move_tuple = ('call', tocall)
