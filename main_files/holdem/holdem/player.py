@@ -70,8 +70,6 @@ class Player(object):
 
   def choose_action(self, _round, range_structure, env):
     self.debug_raises.update({_round:env.level_raises})
-    if self.round['raises_i_owe'] > 2:
-      print("watch")
     betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
     calling_threshold = range_structure['calling'][self.round['raises_i_owe']][self.position]
     action = None

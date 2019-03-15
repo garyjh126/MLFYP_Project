@@ -6,7 +6,7 @@ from treys import Card, Deck, Evaluator
 
 from .player import Player
 from .utils import hand_to_str, format_action
-
+from collections import OrderedDict
 
 
 class TexasHoldemEnv(Env, utils.EzPickle):
@@ -108,10 +108,24 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		_, seed = seeding.np_random(seed)
 		return [seed]
 
-	def assign_positions(self): 
+
+	# Important Note: Positions are only assigned at end of game. Be aware in 
+	# case of reporting stats on position type
+	def assign_positions(self):
 		no_active_players = self.filled_seats
-		for player in self._seats:
-			player.position = (player.position + (no_active_players-1)) % no_active_players if player in self._player_dict.values() else None
+		if(self.filled_seats == 3):
+			for player in self._seats:
+				player.position = (player.position + (no_active_players-1)) % no_active_players if player in self._player_dict.values() else None
+
+		elif(self.filled_seats == 2):
+			# We want to only use positions 0 and 2, which are encodings of BTN and BB respectively
+			for player in self._seats:
+				if player.position == 0:
+					player.position = 2
+				elif player.position == 2:
+					player.position = 0
+
+
 
 	def add_player(self, seat_id, stack=2000):
 		"""Add a player to the environment seat with the given stack (chipcount)"""
@@ -145,6 +159,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		try:
 			idx = self._seats.index(self._player_dict[player_id])
 			self._seats[idx] = Player(0, stack=0, emptyplayer=True)
+			self._seats[idx].position = None # Very important for when transitioning from 3 to 2 players.
 			del self._player_dict[player_id]
 			self.emptyseats += 1
 			self.filled_seats-=1
@@ -188,7 +203,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		
 		for card, no_occurence in cards_count.items():
 			if no_occurence > 1:
-				print("watch")
 				return False
 			else:
 				return True
@@ -220,7 +234,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				return self._get_current_step_returns(False)
 
 			move = self._current_player.player_move(self._output_state(self._current_player), actions[self._current_player.player_id])
-			if self.am_i_only_player_wmoney() and self.level_raises[self._current_player.get_seat()] > self.highest_in_LR()[0]:
+			if self.am_i_only_player_wmoney() and self.level_raises[self._current_player.get_seat()] >= self.highest_in_LR()[0]:
 				move = ("check", 0) # Protects against player making bets without any other stacked/active players
 			self._last_actions = move
 			if move[0] == 'call':
@@ -299,10 +313,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			terminal = True
 			self._resolve_round(players)
 
-		
-
-		print(terminal)
-		
 		return self._get_current_step_returns(terminal)
 
 	def am_i_only_player_wmoney(self):
@@ -328,8 +338,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			if account["is_active"] is True and account["has_money"] is True:
 				count+=1
 
-		if count is 1:
-			print(account_active_money)
 		return count
 
 
@@ -337,20 +345,22 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def render(self, mode='human', close=False, initial=False):
 		if(initial is True):
 			print("\n")
-		print('total pot: {}'.format(self._totalpot))
+				
 		if self._last_actions is not None and initial is False:
 			pid = self._last_player.player_id
-			print('last action by player {}:'.format(pid))
+			#print('last action by player {}:'.format(pid))
 			print(format_action(self._last_player, self._last_actions))
-			print("\n\n")
 
+		print("\n\n")
+		print('Total Pot: {}'.format(self._totalpot))
+		
 		(player_states, community_states) = self._get_current_state()
 		(player_infos, player_hands) = zip(*player_states)
 		(community_infos, community_cards) = community_states
 
-		print('community:')
+		print('Board:')
 		print('-' + hand_to_str(community_cards))
-		print('players:')
+		print('Players:')
 		# for player in self._player_dict:
 		# 	assert player.round['raises_i_owe']
 		for idx, hand in enumerate(player_hands):
@@ -449,7 +459,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 						action_type = "call"
 						self.level_raises[player.get_seat()] = highest_lr_value
 
-				elif special_betting_type["bet_type"] == "check":	# BB checking preflop
+				elif special_betting_type["bet_type"] == "check" and self._round is 0:	# BB checking preflop
 					if player.position == 2:
 						self.level_raises[player.get_seat()] = 1
 					
@@ -467,17 +477,26 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._lastraise = max(self._lastraise, relative_bet  - self._lastraise)
 
 	def _first_to_act(self, players, my_event="Postflop"):
-		if self._round == 0 and len(players) == 2:
-			return self._next(sorted(
-				players + [self._seats[self._button]], key=lambda x:x.get_seat()),
-				self._seats[self._button])
-
+		# if self._round == 0 and len(players) == 2:
+		# 	return self._next(sorted(
+		# 		players + [self._seats[self._button]], key=lambda x:x.get_seat()),
+		# 		self._seats[self._button])
+		
 		first_to_act = None
-		if my_event is "Preflop":
-			first_to_act = self.assign_next_to_act(players, [0,1,2])
 
-		elif my_event is "Postflop" or my_event is "post_blinds" or my_event is "sidepot":
-			first_to_act = self.assign_next_to_act(players, [1,2,0])
+		if self.filled_seats == 2:
+			if my_event is "Preflop" or my_event is "post_blinds":
+				first_to_act = self.assign_next_to_act(players, [0,2])
+
+			elif my_event is "Postflop" or my_event is "sidepot":
+				first_to_act = self.assign_next_to_act(players, [2,0])
+
+		elif self.filled_seats == 3:
+			if my_event is "Preflop":
+				first_to_act = self.assign_next_to_act(players, [0,1,2])
+
+			elif my_event is "Postflop" or my_event is "post_blinds" or my_event is "sidepot":
+				first_to_act = self.assign_next_to_act(players, [1,2,0])
 
 		# else: 
 		# 	my_return = [player for player in players if player.get_seat() > self._button][0]
@@ -493,9 +512,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _next(self, players, current_player):
 		i = 1
-		for seat_no in range(len(self._seats)):
-			if seat_no is not 3 and self._seats[seat_no].stack < 25:
-				print("watch")
 		current_player_seat = players.index(current_player)
 		
 		while(players[(current_player_seat+i) % len(players)].stack <= 0):
@@ -624,15 +640,15 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				
 				player_stacks.update({key: player.stack})
 			
-			if len(player_stacks) < 3:
-				for i in range(3):
-					if i not in player_stacks:
-						player_stacks.update({i:0})
+			# if len(player_stacks) < 3:
+			# 	for i in range(3):
+			# 		if i not in player_stacks:
+			# 			player_stacks.update({i:0})
 			if specific_player is None:
-				return list(player_stacks.values())
-				assert list(player_stacks.values()) is not None
+				return (player_stacks)
+				assert (player_stacks.values()) is not None
 			else:
-				return list(player_dict[specific_player].values())
+				return (player_dict[specific_player].values())
 				 
 		
 		

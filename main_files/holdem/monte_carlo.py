@@ -157,14 +157,16 @@ def generate_episode(env, n_seats):
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
 env.add_player(0, stack=200) # add a player to seat 0 with 2000 "chips"
-# env.add_player(1, stack=200) # tight
+env.add_player(1, stack=200) # tight
 env.add_player(2, stack=200) # aggressive
 
-amount_of_rotations = 5
+amount_of_rotations = 100
 full_rotation = len(env._player_dict)
 no_of_rotations = full_rotation*amount_of_rotations
 episode_list = []
-stacks_over_time = {0: [env._player_dict[0].stack], 1: [0], 2: [env._player_dict[2].stack] } # Player: stack
+stacks_over_time = {}
+for index, player in env._player_dict.items():
+	stacks_over_time.update({player.get_seat(): [player.stack]})
 print(stacks_over_time[0])
 
 for i in range(no_of_rotations):
@@ -175,16 +177,24 @@ for i in range(no_of_rotations):
 		if player.stack <= 0:
 			env.remove_player(player.get_seat())
 	stack_list = env.report_game(requested_attributes = ["stack"])
-	
-	for s in range(len(stacks_over_time)):
-		arr = stacks_over_time[s] + [stack_list[s]]
-		stacks_over_time.update({s: arr})
+	count_existing_players = 0
+
+	for stack_record_index, stack_record in env._player_dict.items():
+		arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
+		stacks_over_time.update({stack_record_index: arr})
+		if(stack_list[stack_record_index] != 0):
+			count_existing_players += 1
 	episode_list.append(episode)
 
+	if(count_existing_players == 1):
+		break
+	
 
-plt.plot(stacks_over_time[0])
+for player_idx, stack in stacks_over_time.items():
+	plt.plot(stack, label = "Player {}".format(player_idx))
 plt.ylabel('Stack Size')
 plt.xlabel('Episode')
+plt.legend()
 plt.show()
 
 def mc_prediction_poker(total_episodes):
