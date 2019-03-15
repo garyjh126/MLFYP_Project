@@ -35,6 +35,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._evaluator = Evaluator()
 		self.last_seq_move = [] 
 		self.filled_seats = 0
+		
 
 		self.community = []
 		self._round = 0
@@ -118,12 +119,34 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				player.position = (player.position + (no_active_players-1)) % no_active_players if player in self._player_dict.values() else None
 
 		elif(self.filled_seats == 2):
+			new_positions = []
 			# We want to only use positions 0 and 2, which are encodings of BTN and BB respectively
-			for player in self._seats:
-				if player.position == 0:
-					player.position = 2
-				elif player.position == 2:
-					player.position = 0
+
+			# Sort for positions 0 and 2 first
+			for player in self._player_dict.values():
+				if not(player.emptyplayer):
+					if player.position == 2:
+						player.position == 0
+						new_positions.append(player.position)
+					elif player.position == 0:
+						potential_next = 2
+						new_positions.append(player.position)
+				
+			
+			# Special case of former position 1 depends on new positions allocated above
+			for player in self._player_dict.values():
+				if player.position == 1:
+					if len(new_positions) == 1:
+						if new_positions[0] == 0:
+							player.position = 2
+						elif new_positions[0] == 2:
+							player.position = 0
+					
+						
+
+
+			
+				
 
 
 
@@ -156,9 +179,11 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def remove_player(self, seat_id):
 		"""Remove a player from the environment seat."""
 		player_id = seat_id
+		
 		try:
 			idx = self._seats.index(self._player_dict[player_id])
 			self._seats[idx] = Player(0, stack=0, emptyplayer=True)
+			
 			self._seats[idx].position = None # Very important for when transitioning from 3 to 2 players.
 			del self._player_dict[player_id]
 			self.emptyseats += 1
@@ -508,6 +533,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		for pos in precedence_positions:
 			for player in players:
 				if player.position == pos and not(player.emptyplayer) and player.playing_hand and player.stack > 0:
+					assert player is not None
 					return player
 
 	def _next(self, players, current_player):

@@ -150,15 +150,15 @@ def generate_episode(env, n_seats):
 
 			
 
-	env.assign_positions()
+
 	return episode
 	
 
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
-env.add_player(0, stack=200) # add a player to seat 0 with 2000 "chips"
-env.add_player(1, stack=200) # tight
-env.add_player(2, stack=200) # aggressive
+env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
+env.add_player(1, stack=2000) # tight
+env.add_player(2, stack=2000) # aggressive
 
 amount_of_rotations = 100
 full_rotation = len(env._player_dict)
@@ -176,6 +176,7 @@ for i in range(no_of_rotations):
 	for player in list_players.values():
 		if player.stack <= 0:
 			env.remove_player(player.get_seat())
+			env.assign_positions()
 	stack_list = env.report_game(requested_attributes = ["stack"])
 	count_existing_players = 0
 
@@ -191,7 +192,11 @@ for i in range(no_of_rotations):
 	
 
 for player_idx, stack in stacks_over_time.items():
-	plt.plot(stack, label = "Player {}".format(player_idx))
+	if player_idx == 0:
+		plt.plot(stack, label = "Player {} - Learner".format(player_idx))
+	else:	
+		plt.plot(stack, label = "Player {}".format(player_idx))
+
 plt.ylabel('Stack Size')
 plt.xlabel('Episode')
 plt.legend()

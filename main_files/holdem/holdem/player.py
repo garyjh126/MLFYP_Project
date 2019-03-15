@@ -166,7 +166,6 @@ class Player(object):
           raise error.Error('raise must be greater than minraise {}'.format(minraise))
         if raise_amount > self.stack:
           raise_amount = self.stack
-          raise error.Error('raise must be less than maxraise {}'.format(self.stack))
         move_tuple = ('raise', raise_amount)
       elif action_idx == Player.CHECK:
         move_tuple = ('check', 0)
