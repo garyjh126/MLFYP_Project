@@ -10,6 +10,7 @@ class Player(object):
   RAISE = 2
   FOLD = 3
 
+
   def __init__(self, player_id, stack=2000, emptyplayer=False):
     self.player_id = player_id
     self.hand = []
@@ -32,8 +33,9 @@ class Player(object):
     self.he = None
     self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
     self.possible_moves = []
-    self.position = None
-    
+    self.position = player_id # safe to do because positions are same as id's when sarting game which is the only time when Player object is called
+    self.debug_raises = {}
+
   def get_seat(self):
     return self._seat
 
@@ -67,6 +69,7 @@ class Player(object):
       self.round['possible_moves'].add('f')
 
   def choose_action(self, _round, range_structure, env):
+    self.debug_raises.update({_round:env.level_raises})
     if self.round['raises_i_owe'] > 2:
       print("watch")
     betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
@@ -164,6 +167,7 @@ class Player(object):
         if raise_amount < minraise:
           raise error.Error('raise must be greater than minraise {}'.format(minraise))
         if raise_amount > self.stack:
+          raise_amount = self.stack
           raise error.Error('raise must be less than maxraise {}'.format(self.stack))
         move_tuple = ('raise', raise_amount)
       elif action_idx == Player.CHECK:

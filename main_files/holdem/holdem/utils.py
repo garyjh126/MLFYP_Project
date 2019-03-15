@@ -19,23 +19,23 @@ def format_action(player, action):
   except ImportError:
     pass
   [aid, raise_amt] = action
-  if aid == action_table.CHECK:
-    text = '_ check'
+  if aid == 'check':
+    text = '_ CHECK'
     if color:
       text = colored(text, 'white')
     return text
-  if aid == action_table.CALL:
-    text = '- call, current bet: {}'.format(player.currentbet)
+  if aid == 'call':
+    text = '- CALL, call amount: {}'.format(player.currentbet)
     if color:
       text = colored(text, 'yellow')
     return text
-  if aid == action_table.RAISE:
-    text = '^ raise, current bet: {}'.format(raise_amt)
+  if aid == 'raise':
+    text = '^ RAISE, bet amount: {}'.format(raise_amt)
     if color:
       text = colored(text, 'green')
     return text
-  if aid == action_table.FOLD:
-    text = 'x fold'
+  if aid == 'fold':
+    text = 'fold'
     if color:
       text = colored(text, 'red')
     return text

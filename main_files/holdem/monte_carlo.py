@@ -122,33 +122,35 @@ def generate_episode(env, n_seats):
 	(player_infos, player_hands) = zip(*player_states)
 	current_state = ((player_infos, player_hands), (community_infos, community_cards))
 
-  # display the table, cards and all
-	env.render(mode='human')
-	
+	env.render(mode='human', initial=True)
 	terminal = False
 	while not terminal:
-		
-		# play safe actions, check when noone else has raised, call when raised.
-		#actions = holdem.safe_actions(community_infos, n_seats=n_seats)
+
 		_round = which_round(community_cards)
-		# if _round is not 'Preflop':
-		# 	env._resolve_postflop()
-		# 	current_player = env._current_player.position
-		# else:
-		# 	current_player = community_infos[-1]
 		current_player = community_infos[-1]
 		if env._player_dict[current_player].he == None:
 			card1, card2 = player_hands[current_player]
 			he = HandHoldem.HandEvaluation([card1, card2], current_player, _round) #Unique to player instance
 			env._player_dict[current_player].he = he
-		
+			
+		a = (env._current_player.currentbet)
 		actions = get_action_policy(player_infos, player_hands, community_infos, community_cards, env, _round, n_seats)
 		(player_states, (community_infos, community_cards)), rews, terminal, info = env.step(actions)
 		episode.append((current_state, actions, rews))
 
 		env.render(mode='human')
-	
-	env.assign_positions(initial = False)
+
+
+		# BUG: When one person folds, game assings current player as _next() but somehow ends up
+		# assigning it as it itself over and over again. Need to address how to terminate this loop:
+		# Also, if every player is still playing the game but does not have enough in stack, need to 
+		# play to showdown. (Use _resolve function to deal next rounds)
+		# Problem with freezing may also be due to lack of awareness by players still in game that
+		# others have folded/broke. Incoroprate this somehow.
+
+			
+
+	env.assign_positions()
 	return episode
 	
 
@@ -166,8 +168,11 @@ stacks_over_time = {0: [env._player_dict[0].stack], 1: [env._player_dict[1].stac
 print(stacks_over_time[0])
 
 for i in range(no_of_rotations):
-	print("********{}*********".format(i))
+	print("\n\n********{}*********".format(i))
 	episode = generate_episode(env, env.n_seats) 
+	for player in env._player_dict.values():
+		if player.stack <= 0:
+			env.remove_player(player.get_seat())
 	stack_list = env.report_game(requested_attributes = ["stack"])
 	
 	for s in range(len(stacks_over_time)):
