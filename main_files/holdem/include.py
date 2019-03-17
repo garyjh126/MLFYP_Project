@@ -8,6 +8,56 @@
 ## Author: Gary Harney
 
 # format... {action: {raises_i_face: {bot_position: { 
+hand_strength_preflop = {"betting": 
+                        {
+                            0: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.25,   # Dealer
+                                    1 : 0.55,   # SB
+                                    2 : 0.45    # BB
+                                }
+                            ,
+                            1: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.32,   # Dealer
+                                    1 : 0.60,   # SB
+                                    2 : 0.50    # BB
+                                }
+                            ,
+                            2: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.55,
+                                    1 : 0.70,
+                                    2 : 0.66
+                                }
+                            
+                            # cannot face more than 2 raises
+                        },
+                    "calling": # more like to open range wider for calling having already seen all players just checking/calling before
+                        {
+                            0: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.23,   # Dealer
+                                    1 : 0.48,   # SB
+                                    2 : 0.40    # BB
+                                }
+                            ,
+                            1: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.30,   # Dealer
+                                    1 : 0.55,   # SB
+                                    2 : 0.47    # BB
+                                }
+                            ,
+                            2: #facing_raises_debt (in this round)
+                                {
+                                    0: 0.50,
+                                    1 : 0.65,
+                                    2 : 0.50
+                                }
+                        }
+                    }
+
 hand_strength_flop = {"betting": 
                         {
                             0: #facing_raises_debt (in this round)

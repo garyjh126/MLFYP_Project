@@ -10,8 +10,9 @@ class Player(object):
   RAISE = 2
   FOLD = 3
 
-
+  total_plrs = 0
   def __init__(self, player_id, stack=2000, emptyplayer=False):
+    
     self.player_id = player_id
     self.hand = []
     self.stack = stack
@@ -35,6 +36,9 @@ class Player(object):
     self.possible_moves = []
     self.position = player_id # safe to do because positions are same as id's when sarting game which is the only time when Player object is called
     self.debug_raises = {}
+    self.round_reward = None
+    self.regret = {}
+   
 
   def get_seat(self):
     return self._seat
@@ -54,6 +58,9 @@ class Player(object):
         count_r = count_r + 1
 
     return count_r
+
+  def set_handrank(self, value):
+    self.handrank = value
 
   def populatePlayerPossibleMoves(self, env):
     possible_moves = []

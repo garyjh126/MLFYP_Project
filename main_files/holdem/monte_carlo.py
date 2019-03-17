@@ -1,4 +1,3 @@
-import HandHoldem
 import gym
 import holdem
 import numpy as np
@@ -28,7 +27,7 @@ def which_round(community_cards):
 def fill_range_structure(_round, player):
 	range_structure = None
 	if _round == 'Preflop': 
-		range_structure = preflop_range
+		range_structure = hand_strength_preflop
 	elif _round == 'Flop':
 		range_structure = hand_strength_flop
 	elif _round == 'Turn':
@@ -102,12 +101,17 @@ def get_action_policy(player_infos, player_hands, community_infos, community_car
 	card1, card2 = player_hands[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
-	if(current_player == 0): # learner move 
-		player_actions = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats)
-	else: # bot move 
+	if _round is not "Preflop": # preflop already evaluated
 		player_object.he.evaluate(_round)
-		range_structure = fill_range_structure(_round, player_object)
-		assign_evals_player(player_object, _round, env)
+	range_structure = fill_range_structure(_round, player_object)
+	assign_evals_player(player_object, _round, env)
+
+	if(current_player == 0): # learner move 
+		which_action = player_object.choose_action(_round, range_structure, env) # Doesn't use
+		player_actions = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats)
+		
+	else: # bot move 
+		
 		which_action = player_object.choose_action(_round, range_structure, env) 
 		player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats)
 	
@@ -128,79 +132,15 @@ def generate_episode(env, n_seats):
 
 		_round = which_round(community_cards)
 		current_player = community_infos[-1]
-		if env._player_dict[current_player].he == None:
-			card1, card2 = player_hands[current_player]
-			he = HandHoldem.HandEvaluation([card1, card2], current_player, _round) #Unique to player instance
-			env._player_dict[current_player].he = he
-			
 		a = (env._current_player.currentbet)
 		actions = get_action_policy(player_infos, player_hands, community_infos, community_cards, env, _round, n_seats)
-		(player_states, (community_infos, community_cards)), rews, terminal, info = env.step(actions)
-		episode.append((current_state, actions, rews))
+		(player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(actions)
+		episode.append((current_state, action, rewards))
 
 		env.render(mode='human')
 
-
-		# BUG: When one person folds, game assings current player as _next() but somehow ends up
-		# assigning it as it itself over and over again. Need to address how to terminate this loop:
-		# Also, if every player is still playing the game but does not have enough in stack, need to 
-		# play to showdown. (Use _resolve function to deal next rounds)
-		# Problem with freezing may also be due to lack of awareness by players still in game that
-		# others have folded/broke. Incoroprate this somehow.
-
-			
-
-
 	return episode
 	
-
-
-env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
-env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
-env.add_player(1, stack=2000) # tight
-env.add_player(2, stack=2000) # aggressive
-
-amount_of_rotations = 100
-full_rotation = len(env._player_dict)
-no_of_rotations = full_rotation*amount_of_rotations
-episode_list = []
-stacks_over_time = {}
-for index, player in env._player_dict.items():
-	stacks_over_time.update({player.get_seat(): [player.stack]})
-print(stacks_over_time[0])
-
-for i in range(no_of_rotations):
-	print("\n\n********{}*********".format(i))
-	episode = generate_episode(env, env.n_seats) 
-	list_players = env._player_dict.copy()
-	for player in list_players.values():
-		if player.stack <= 0:
-			env.remove_player(player.get_seat())
-			env.assign_positions()
-	stack_list = env.report_game(requested_attributes = ["stack"])
-	count_existing_players = 0
-
-	for stack_record_index, stack_record in env._player_dict.items():
-		arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
-		stacks_over_time.update({stack_record_index: arr})
-		if(stack_list[stack_record_index] != 0):
-			count_existing_players += 1
-	episode_list.append(episode)
-
-	if(count_existing_players == 1):
-		break
-	
-
-for player_idx, stack in stacks_over_time.items():
-	if player_idx == 0:
-		plt.plot(stack, label = "Player {} - Learner".format(player_idx))
-	else:	
-		plt.plot(stack, label = "Player {}".format(player_idx))
-
-plt.ylabel('Stack Size')
-plt.xlabel('Episode')
-plt.legend()
-plt.show()
 
 def mc_prediction_poker(total_episodes):
    
@@ -236,4 +176,49 @@ def mc_prediction_poker(total_episodes):
     return V
 
 
-# v = mc_prediction_poker(100)
+
+def simulate_episodes_with_graphs(no_of_episodes=100):
+	episode_list = []
+	stacks_over_time = {}
+	for index, player in env._player_dict.items():
+		stacks_over_time.update({player.get_seat(): [player.stack]})
+	for i in range(no_of_episodes):
+		print("\n\n********{}*********".format(i))
+		episode = generate_episode(env, env.n_seats) 
+		list_players = env._player_dict.copy()
+		for player in list_players.values():
+			if player.stack <= 0:
+				env.remove_player(player.get_seat())
+				env.assign_positions()
+		stack_list = env.report_game(requested_attributes = ["stack"])
+		count_existing_players = 0
+
+		for stack_record_index, stack_record in env._player_dict.items():
+			arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
+			stacks_over_time.update({stack_record_index: arr})
+			if(stack_list[stack_record_index] != 0):
+				count_existing_players += 1
+		episode_list.append(episode)
+
+		if(count_existing_players == 1):
+			break
+		
+
+	for player_idx, stack in stacks_over_time.items():
+		if player_idx == 0:
+			plt.plot(stack, label = "Player {} - Learner".format(player_idx))
+		else:	
+			plt.plot(stack, label = "Player {}".format(player_idx))
+
+	plt.ylabel('Stack Size')
+	plt.xlabel('Episode')
+	plt.legend()
+	plt.show()
+
+
+
+env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
+env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
+env.add_player(1, stack=2000) # tight
+# env.add_player(2, stack=2000) # aggressive
+v = mc_prediction_poker(100)

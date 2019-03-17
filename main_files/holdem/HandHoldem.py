@@ -1,15 +1,16 @@
 from treys import Card, Evaluator
 from itertools import combinations 
+from holdem.player import Player
+from pypokerengine.utils.card_utils import gen_cards, estimate_hole_card_win_rate
 
-class HandEvaluation():
+class HandEvaluation(Player):
 
     def __init__(self, cards, playerID, event, evaluation = None):
         self.evaluator = Evaluator()
         self.hand = cards
-        self.deck_of_cards = self.create_cards_for_game() # Remaining cards after dealt two hole cards to this player
-        self._combinations = self.make_combinations() # all possible card permuations (1326) used to describe opponents range
+        self.create_cards_for_game() # Remaining cards after dealt two hole cards to this player. 15/02: This is updated after he in instantiated
+        self.make_combinations() # all possible card permuations (1326) used to describe opponents range
         self.official_board = []
-        self.card_a, self.card_b = cards
         self.summary = None
         self.evaluation = None
         self.rc = None
@@ -19,13 +20,12 @@ class HandEvaluation():
         self.playerID = playerID  # player name
         self.flop_cards, self.turn_card, self.river_card = None, None, None
         self.board = None # Fictional board
-        
+        # self.ew_score = None
 
     def make_combinations(self):
-        _combinations = list(combinations(self.deck_of_cards, 2))
-        for combo in _combinations:
-            combo = self.parse_cards(combo[0], combo[1])
-        return _combinations 
+        self._combinations = list(combinations(self.deck_of_cards, 2))
+        # for combo in _combinations:
+        #     combo = self.parse_cards(combo[0], combo[1])
 
     def parse_cards(self, a, b):
         a_rank, a_suit = a
@@ -114,12 +114,14 @@ class HandEvaluation():
 
         return duplicate
     
+
+    ## TODO: May need to modify handstrength to use 1036 * 2 in the case of having 2 opponents
     def handStrength(self, event):
         ahead, tied, behind = 0, 0, 0
         a, b, random_board, ourRank, oppRank = None, None, None, None, None
-
+        count_none_debug = 0
         # Consider all two card combinations of remaining cards
-        for potential_opp_cards in (self._combinations):
+        for potential_opp_cards in (self._combinations*(Player.total_plrs-1)):
             a, b = Card.new(potential_opp_cards[0]), Card.new(potential_opp_cards[1])
             if self.shares_duplicate(a, b, self.hand):
                 continue
@@ -137,7 +139,8 @@ class HandEvaluation():
                     
             if(oppRank is None):
                 continue
-            if(self.evaluation < oppRank): # Note: With treys evaluation, lower number means better hand
+                count_none_debug+=1
+            elif(self.evaluation < oppRank): # Note: With treys evaluation, lower number means better hand
                 ahead = ahead + 1 
             elif self.evaluation == oppRank:
                 tied = tied + 1
@@ -146,16 +149,47 @@ class HandEvaluation():
         hand_strength = (ahead+tied/2) / (ahead+tied+behind)
         return hand_strength
 
+    def set_evaluation(self, value):
+        self.evaluation = value
+
     def evaluate(self, event):
         if event == 'Preflop':
-            self.evaluation = self.do_mean_evaluation(self.hand, event, n=100)
+            self.set_evaluation(self.do_mean_evaluation(self.hand, event, n=100))
+            self.hand_strength = self.handStrength(event) 
+            # self.estimate_winrate()
+
         else:
-            self.evaluation = self.evaluator.evaluate(self.board, self.hand)
+            #self.set_evaluation(self.evaluator.evaluate(self.board, self.hand))
             self.hand_strength = self.handStrength(event) # UPDATE 12/03: Only using handStrength for post-flop for the moment
+            # self.ew_score = self.estimate_winrate()
         self.rc = self.rank_class(self.evaluation)
         self.score_desc = self.evaluator.class_to_string(self.rc)
         self.summary = self.hand_strength, self.evaluation, self.rc, self.score_desc, self.hand, self.board
         return self.summary
+
+    def estimate_winrate(self):
+        nb_simulation = 100
+        nb_player = 3
+        hole_cards=[]
+        board = []
+        hole_cards = gen_cards(self.ew_parse(self.hand, is_num=True))
+        if self.board is not None:
+            board = gen_cards(self.ew_parse(self.board, is_num=True))
+            return estimate_hole_card_win_rate(nb_simulation=1000, nb_player=3, hole_card=hole_cards, community_card=board)
+
+    
+        
+    
+    def ew_parse(self, card_list, is_num=True):
+        list_trey_to_st = []
+        if(is_num):
+            for card in card_list:
+                list_trey_to_st.append(Card.int_to_str(card))
+        list_st_to_ppe = []
+        for card_st in list_trey_to_st:
+            list_st_to_ppe.append(card_st[1].upper()+card_st[0])
+
+        return list_st_to_ppe
 
     def do_mean_evaluation(self, hand, event, n):
         fictional_board = None
@@ -202,6 +236,9 @@ class HandEvaluation():
         rc = self.evaluator.get_rank_class(evaluation)
         return rc
 
+    def set_hand(self, hand):
+        self.hand = hand
+
     def get_evaluation(self, event):
         return self.summary
 
@@ -227,4 +264,4 @@ class HandEvaluation():
                 if card_str != self.hand[0] and card_str != self.hand[1]:
                     li.append(card_str)
         
-        return li
+        self.deck_of_cards = li

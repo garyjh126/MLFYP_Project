@@ -1,12 +1,13 @@
 
 from gym import Env, error, spaces, utils
 from gym.utils import seeding
-
+import HandHoldem
 from treys import Card, Deck, Evaluator
 
 from .player import Player
 from .utils import hand_to_str, format_action
 from collections import OrderedDict
+from statistics import mean
 
 
 class TexasHoldemEnv(Env, utils.EzPickle):
@@ -15,10 +16,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 						[600,1200], [800,1600], [1000,2000]]
 	
 	current_player_notifier = ""
-	deal_players=0
-	flop_times_called_debug = 0
-	turn_times_called_debug = 0
-	river_times_called_debug = 0
+	weighting_coefficient_regret_fold = 10
+	weighting_coefficient_round_resolve = 100
 	def __init__(self, n_seats, max_limit=100000, debug=False):
 		n_suits = 4                     # s,h,d,c
 		n_ranks = 13                    # 2,3,4,5,6,7,8,9,T,J,Q,K,A
@@ -155,6 +154,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		player_id = seat_id
 		if player_id not in self._player_dict:
 			new_player = Player(player_id, stack=stack, emptyplayer=False)
+			Player.total_plrs+=1
 			if self._seats[player_id].emptyplayer:
 				self._seats[player_id] = new_player
 				new_player.set_seat(player_id)
@@ -163,6 +163,11 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			self._player_dict[player_id] = new_player
 			self.emptyseats -= 1
 			self.filled_seats +=1
+
+
+			
+			
+			
 
 	def move_player_to_empty_seat(self, player):
 		# priority queue placing active players at front of table
@@ -188,6 +193,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			del self._player_dict[player_id]
 			self.emptyseats += 1
 			self.filled_seats-=1
+			HandHoldem.HandEvaluation.total_players-=1
+
 			#self.reassign_players_seats()
 		except ValueError:
 			pass
@@ -209,8 +216,19 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			self._tocall = self._bigblind
 			self._round = 0
 			self._deal_next_round()
+			self.organise_evaluations()
+			
 			self._folded_players = []
 		return self._get_current_reset_returns()
+
+
+	def organise_evaluations(self):
+		for idx, player in self._player_dict.items():
+			if player is not None:
+				player.he = HandHoldem.HandEvaluation(player.hand, idx, "Preflop") #Unique to player instance
+				player.he.evaluate(event='Preflop')
+				player.set_handrank(player.he.evaluation)
+		
 
 	def assume_unique_cards(self, players):
 		cards_count = {}
@@ -247,7 +265,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 		self._last_player = self._current_player
 		# self._last_actions = actions
-		
 		
 
 
@@ -338,7 +355,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			terminal = True
 			self._resolve_round(players)
 
-		return self._get_current_step_returns(terminal)
+		return self._get_current_step_returns(terminal, action=move)
 
 	def am_i_only_player_wmoney(self):
 		count_other_broke = 0
@@ -395,6 +412,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			print('{}{}stack: {} {}'.format(idx, hand_to_str(hand), self._seats[idx].stack, self.current_player_notifier))
 			self.current_player_notifier = ""
 	def _resolve(self, players):
+		if self._current_player.he is not None:
+			self.compute_reward_end_round()
 		self._current_player = self._first_to_act(players)
 		self._resolve_sidepots(players + self._folded_players)
 		self._new_round()
@@ -549,28 +568,25 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		return players[(current_player_seat+i) % len(players)]
 
 	def _deal(self):
-		self.deal_players+=1
 		for player in self._seats:
 			if player.playing_hand and player.stack > 0:
 				player.hand = self._deck.draw(2)
 				
+				
 
 	def _flop(self):
-		self.flop_times_called_debug+=1
 		self._discard.append(self._deck.draw(1)) #burn
 		this_flop = self._deck.draw(3)
 		self.flop_cards = this_flop
 		self.community = this_flop
 
 	def _turn(self):
-		self.turn_times_called_debug+=1
 		self._discard.append(self._deck.draw(1)) #burn
 		self.turn_card = self._deck.draw(1)
 		self.community.append(self.turn_card)
 		# .append(self.community)
 
 	def _river(self):
-		self.river_times_called_debug+=1
 		self._discard.append(self._deck.draw(1)) #burn
 		self.river_card = self._deck.draw(1)
 		self.community.append(self.river_card)
@@ -688,9 +704,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		
 		playing = 0
 
-		for i, val in self._player_dict.items():
-			if val is not None:
-				val.he = None
+		
 		for player in self._seats:
 			if not player.emptyplayer and not player.sitting_out:
 				player.reset_hand()
@@ -758,8 +772,70 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def _get_current_reset_returns(self):
 		return self._get_current_state()
 
-	def _get_current_step_returns(self, terminal):
-		obs = self._get_current_state()
-		# TODO, make this something else?
-		rew = [player.stack for player in self._seats]
-		return obs, rew, terminal, [] # TODO, return some info?
+	def _get_current_step_returns(self, terminal, action=None):
+		observations = self._get_current_state()
+		stacks = [player.stack for player in self._seats]
+		diff_stacks = stacks[self._current_player.get_seat()] - stacks[self._last_player.get_seat()] if self._current_player is not self._last_player else None
+		
+		if(action is None):
+			return observations, rewards, terminal, [] # TODO, return some info?
+
+		else: 	 # Focus on this. At end of step, when player has already decided his action. 
+			
+			if diff_stacks is 0: 
+				rewards = self._current_player.round_reward
+			if action is ('fold', 0) or action is ('check', 0) or action[0] is 'call' or action[0] is 'raise':
+				rewards = self.compute_regret_given_action(action)
+			
+			return observations, action, rewards, terminal, [] # TODO, return some info?
+
+	def compute_reward_end_round(self):
+		respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
+		respective_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._current_player.get_seat() and x!=None]
+		self._current_player.round_reward = (respective_evaluations[self._current_player.get_seat()] - mean([other_player_eval for other_player_eval in respective_opposing_players])) / self.weighting_coefficient_round_resolve
+
+	def compute_regret_given_action(self, my_action):
+		respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
+		respective_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._current_player.get_seat() and x!=None]
+		# self.compare_evaluations_players()
+
+		# Now player has his regret filled in to his own player instance
+
+		my_expected_value = self.expected_value()
+
+
+
+	def compare_evaluations_players(self, my_action):
+		if my_action is ('fold', 0):
+			_, raiser_bot = self.highest_in_LR()
+			raiser_evaluation = raiser_bot.he.evaluation
+			regret = (respective_evaluations[self._current_player.get_seat()] - raiser_evaluation) / self.weighting_coefficient_regret_fold
+			self._current_player.regret.update({'fold': regret})
+		
+
+	def expected_value(self):
+		# Expected value is a mathematical concept used to judge whether calling a raise in a game of poker will be profitable.  
+		# When an opponent raises a pot in poker, such as on the flop or river, your decision whether to call or fold is more or less 
+		# completely dependant on expected value.  This is the calculation of whether the probability of winning a pot will make a call 
+		# profitable in the long-term.
+
+		# EV = (Size of Pot x Probability of Winning) – Cost of Entering it.
+
+		# ev = self._totalpot * 
+
+		# import requests
+		# import urllib
+		# import bs4
+		# import pandas
+		# import numpy as np
+
+		# url = "http://www.bigdataexaminer.com/"
+		# req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
+		# con = urllib.request.urlopen( req ).read()
+		# print(bs4.BeautifulSoup(con).prettify())
+
+		
+
+		# top value is 7462  (treys)
+	
+		pass
