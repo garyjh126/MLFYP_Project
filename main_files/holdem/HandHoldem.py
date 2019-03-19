@@ -1,9 +1,11 @@
-from treys import Card, Evaluator
+from treys import Card, Evaluator, Deck
 from itertools import combinations 
 from holdem.player import Player
 from pypokerengine.utils.card_utils import gen_cards, estimate_hole_card_win_rate
 
 class HandEvaluation(Player):
+    preflop_opprank_control = 5
+    preflop_evaluation_mean_control = 100
 
     def __init__(self, cards, playerID, event, evaluation = None):
         self.evaluator = Evaluator()
@@ -126,7 +128,7 @@ class HandEvaluation(Player):
             if self.shares_duplicate(a, b, self.hand):
                 continue
             if event is "Preflop":
-                oppRank = self.do_mean_evaluation([a,b], event, n=10)
+                oppRank = self.do_mean_evaluation([a,b], event, n=self.preflop_opprank_control)
             else:
                 need_skip = False
                 while need_skip is False:
@@ -149,17 +151,24 @@ class HandEvaluation(Player):
         hand_strength = (ahead+tied/2) / (ahead+tied+behind)
         return hand_strength
 
+    
+        
+
+
+
     def set_evaluation(self, value):
         self.evaluation = value
 
     def evaluate(self, event):
         if event == 'Preflop':
-            self.set_evaluation(self.do_mean_evaluation(self.hand, event, n=100))
-            self.hand_strength = self.handStrength(event) 
+            self.set_evaluation(self.do_mean_evaluation(self.hand, event, n=self.preflop_evaluation_mean_control))
+            # self.hand_strength = self.handStrength(event) 
             # self.estimate_winrate()
+            # self.detect_draws()
 
         else:
-            #self.set_evaluation(self.evaluator.evaluate(self.board, self.hand))
+            # self.detect_draws()
+            self.set_evaluation(self.evaluator.evaluate(self.board, self.hand))
             self.hand_strength = self.handStrength(event) # UPDATE 12/03: Only using handStrength for post-flop for the moment
             # self.ew_score = self.estimate_winrate()
         self.rc = self.rank_class(self.evaluation)

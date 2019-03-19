@@ -17,6 +17,9 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	
 	current_player_notifier = ""
 	weighting_coefficient_regret_fold = 10
+	weighting_coefficient_regret_check = 10
+	weighting_coefficient_regret_call = 10
+	weighting_coefficient_regret_raise = 10
 	weighting_coefficient_round_resolve = 100
 	def __init__(self, n_seats, max_limit=100000, debug=False):
 		n_suits = 4                     # s,h,d,c
@@ -34,7 +37,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._evaluator = Evaluator()
 		self.last_seq_move = [] 
 		self.filled_seats = 0
-		
+		self.signal_end_round = False
 
 		self.community = []
 		self._round = 0
@@ -355,7 +358,9 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			terminal = True
 			self._resolve_round(players)
 
+
 		return self._get_current_step_returns(terminal, action=move)
+		
 
 	def am_i_only_player_wmoney(self):
 		count_other_broke = 0
@@ -412,8 +417,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			print('{}{}stack: {} {}'.format(idx, hand_to_str(hand), self._seats[idx].stack, self.current_player_notifier))
 			self.current_player_notifier = ""
 	def _resolve(self, players):
-		if self._current_player.he is not None:
-			self.compute_reward_end_round()
+		
+		self.signal_end_round = True
 		self._current_player = self._first_to_act(players)
 		self._resolve_sidepots(players + self._folded_players)
 		self._new_round()
@@ -773,45 +778,86 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		return self._get_current_state()
 
 	def _get_current_step_returns(self, terminal, action=None):
+
 		observations = self._get_current_state()
 		stacks = [player.stack for player in self._seats]
-		diff_stacks = stacks[self._current_player.get_seat()] - stacks[self._last_player.get_seat()] if self._current_player is not self._last_player else None
 		
 		if(action is None):
 			return observations, rewards, terminal, [] # TODO, return some info?
 
 		else: 	 # Focus on this. At end of step, when player has already decided his action. 
+			respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
+			evaluations_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._last_player.get_seat() and x!=None]
 			
-			if diff_stacks is 0: 
-				rewards = self._current_player.round_reward
-			if action is ('fold', 0) or action is ('check', 0) or action[0] is 'call' or action[0] is 'raise':
-				rewards = self.compute_regret_given_action(action)
+			if(self.signal_end_round == True):
+				# self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players)
+				reward = self.compute_reward()
+				# round_reward = self._current_player.round_reward
+				self.signal_end_round == False
+
+			elif(action == ('fold', 0) and self._last_player.get_seat() != 0):
+				self._player_dict[0].round_reward = self._totalpot
+
+			elif(action == ('fold', 0) and self._last_player.get_seat() == 0):
+				reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players)
+			else:
+				reward = 0
+			# if action is ('fold', 0) or action is ('check', 0) or action[0] is 'call' or action[0] is 'raise':
+			# 	regret = self.compute_regret_given_action(action, respective_evaluations, evaluations_opposing_players)
 			
-			return observations, action, rewards, terminal, [] # TODO, return some info?
-
-	def compute_reward_end_round(self):
-		respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
-		respective_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._current_player.get_seat() and x!=None]
-		self._current_player.round_reward = (respective_evaluations[self._current_player.get_seat()] - mean([other_player_eval for other_player_eval in respective_opposing_players])) / self.weighting_coefficient_round_resolve
-
-	def compute_regret_given_action(self, my_action):
-		respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
-		respective_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._current_player.get_seat() and x!=None]
-		# self.compare_evaluations_players()
-
-		# Now player has his regret filled in to his own player instance
-
-		my_expected_value = self.expected_value()
+			return observations, action, reward, terminal, [] # TODO, return some info?
 
 
+	def compute_reward(self):
+		player_ev = self.expected_value()[self._last_player.get_seat()]
+		current_pot_equity = player_ev * self._totalpot
+		return current_pot_equity
 
-	def compare_evaluations_players(self, my_action):
-		if my_action is ('fold', 0):
-			_, raiser_bot = self.highest_in_LR()
-			raiser_evaluation = raiser_bot.he.evaluation
-			regret = (respective_evaluations[self._current_player.get_seat()] - raiser_evaluation) / self.weighting_coefficient_regret_fold
-			self._current_player.regret.update({'fold': regret})
+
+	def compute_reward_end_round(self, respective_evaluations, evaluations_opposing_players):
+		return (respective_evaluations[self._last_player.get_seat()] - mean([other_player_eval for other_player_eval in evaluations_opposing_players])) / self.weighting_coefficient_round_resolve
+
+	def compute_regret_given_action(self, my_action, respective_evaluations, evaluations_opposing_players):
 		
+		self.compare_evaluations_players(my_action, respective_evaluations, evaluations_opposing_players)
+		# Now player has his regret filled in to his own player instance
+		pass
+
+
+
+	#Using evlaluation here. Might be better to use player.handstrength
+	def compare_evaluations_players(self, my_action, respective_evaluations, evaluations_opposing_players):
+		
+		pass
+
+		# expected_value = self.expected_value()
+		
+		# if my_action is ('fold', 0):
+		# 	# calculate how good my cards are compared to raisers cards
+		# 	_, raiser_bot = self.highest_in_LR()
+		# 	raiser_strength = raiser_bot.he.evaluation
+		# 	regret = (raiser_strength - respective_evaluations[self._current_player.get_seat()]) / self.weighting_coefficient_regret_fold
+		# 	# Remember: Higher evaluation means worse cards, lower means better cards.
+		# 	# e.g. If my evaluation was 5400, and my opponents evaluation was 7500, I would have positive regret ( I would regret having folded)
+		# 	self._current_player.regret.update({'fold': regret})
+		# elif my_action is ('check', 0):
+		# 	# calculate how good my cards are compared to other players, and thus compute how much I regret not having raised
+		# 	# If my evaluation is lower (better cards) than my opponents relatively high evaluation (worse cards), I would have positive regret
+		# 	_, opposing_bot = self.current_player() # We can assign opposing as current_player (2-players heads-up) because we already rotated the table position
+		# 	opposing_bot_strength = opposing_bot.he.evaluation
+		# 	regret = (opposing_bot_strength - respective_evaluations[self._current_player.get_seat()]) / self.weighting_coefficient_regret_check
+		# 	self._current_player.regret.update({'check': regret})
+		# elif my_action[0] is 'call':
+		# 	# Now we must compute the regret based on how much we would have been better of taking another action: Here, unlike other times, we have
+		# 	# 2 possible alternatives : Raise or fold. If we take a call action, we must compute the expected value for the other alternatives. 
+		# 	pass
+
+		# elif my_action[0] is 'raise':
+		# 	_, raiser_bot = self.highest_in_LR()
+		# 	raiser_strength = raiser_bot.he.evaluation
+		# 	regret = (raiser_evaluation - respective_evaluations[self._current_player.get_seat()]) / self.weighting_coefficient_regret_check
+		# 	self._current_player.regret.update({'check': regret})
+
 
 	def expected_value(self):
 		# Expected value is a mathematical concept used to judge whether calling a raise in a game of poker will be profitable.  
@@ -820,22 +866,59 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# profitable in the long-term.
 
 		# EV = (Size of Pot x Probability of Winning) – Cost of Entering it.
+		ev = None
+		to_call=None
+		if self._round == 1 and and self.signal_end_round and self._current_player.position == 0: # Only works for heads up: Due to bug with tocall
+			to_call = 15
+		else:
+			to_call = self._tocall
 
-		# ev = self._totalpot * 
+		if (self._round == 2 or self._round == 3) and self.signal_end_round is True: # Implies last rounds were either 1 or 2
+			ev = (self._totalpot * self.compute_winner_simulation()[self._last_player.get_seat()]) - to_call	
+		else:
+			ev = (self._totalpot * self._current_player.he.hand_strength) - to_call
 
-		# import requests
-		# import urllib
-		# import bs4
-		# import pandas
-		# import numpy as np
+		return ev
 
-		# url = "http://www.bigdataexaminer.com/"
-		# req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
-		# con = urllib.request.urlopen( req ).read()
-		# print(bs4.BeautifulSoup(con).prettify())
 
-		
+	def compute_winner_simulation(self):
+		_evaluator = Evaluator()
+		deck = self._deck
+		community = self.community
+		opp1_cards = self._last_player.hand
+		opp2_cards = self._current_player.hand
+		unrevealed_cards = [card for card in deck.cards if card not in community and card not in opp1_cards and card not in opp2_cards]
+		print(Card.print_pretty_cards(opp1_cards))
+		print(Card.print_pretty_cards(opp2_cards))
+		winning_players_list = []
 
-		# top value is 7462  (treys)
-	
-		pass
+		if self._round == 1:
+			for turn_card_idx in range(len(unrevealed_cards)):
+
+				for river_card_idx in range(turn_card_idx, len(unrevealed_cards)):
+					player_handranks = []
+					print(Card.print_pretty_cards(community+[card]))
+					player_handranks.append(_evaluator.evaluate(opp1_cards, community + [unrevealed_cards[turn_card_idx]] + [unrevealed_cards[river_card_idx]]))
+					player_handranks.append(_evaluator.evaluate(opp2_cards, community + [unrevealed_cards[turn_card_idx]] + [unrevealed_cards[river_card_idx]]))
+
+					winning_rank = min(player_handranks)
+					winning_players = [player for player, rank in enumerate(player_handranks) if rank == winning_rank]
+					winning_players_list.append(winning_players[0])
+					print(winning_players_list)
+
+		elif self._round == 2:
+
+			for river_card in unrevealed_cards:
+				player_handranks = []
+				print(Card.print_pretty_cards(community+[river_card]))
+				player_handranks.append(_evaluator.evaluate(opp1_cards, community+[river_card]))
+				player_handranks.append(_evaluator.evaluate(opp2_cards, community+[river_card]))
+
+				winning_rank = min(player_handranks)
+				winning_players = [player for player, rank in enumerate(player_handranks) if rank == winning_rank]
+				winning_players_list.append(winning_players[0])
+				print(winning_players_list)
+
+		my_player_seat = self._last_player.get_seat()
+		opp_player_seat = self._current_player.get_seat()
+		return {my_player_seat: winning_players_list.count(my_player_seat)/len(winning_players_list), opp_player_seat: winning_players_list.count(opp_player_seat)/len(winning_players_list)}

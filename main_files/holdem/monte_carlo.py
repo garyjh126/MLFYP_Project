@@ -27,7 +27,7 @@ def which_round(community_cards):
 def fill_range_structure(_round, player):
 	range_structure = None
 	if _round == 'Preflop': 
-		range_structure = hand_strength_preflop
+		range_structure = preflop_range
 	elif _round == 'Flop':
 		range_structure = hand_strength_flop
 	elif _round == 'Turn':
@@ -135,7 +135,8 @@ def generate_episode(env, n_seats):
 		a = (env._current_player.currentbet)
 		actions = get_action_policy(player_infos, player_hands, community_infos, community_cards, env, _round, n_seats)
 		(player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(actions)
-		episode.append((current_state, action, rewards))
+		if env._last_player.get_seat() is 0:
+			episode.append((current_state, action, rewards))
 
 		env.render(mode='human')
 

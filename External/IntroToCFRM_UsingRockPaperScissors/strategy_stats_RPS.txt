@@ -125,10 +125,10 @@ Player_no: p2
 	Action: PAPER
 
 Player_no: p1
-	Action: ROCK
+	Action: SCISSORS
 
 Player_no: p2
-	Action: PAPER
+	Action: SCISSORS
 
 Player_no: p1
 	Action: SCISSORS
@@ -137,7 +137,7 @@ Player_no: p2
 	Action: SCISSORS
 
 Player_no: p1
-	Action: PAPER
+	Action: SCISSORS
 
 Player_no: p2
 	Action: SCISSORS

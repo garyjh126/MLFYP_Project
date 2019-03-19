@@ -178,7 +178,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    os.remove("strategy_stats_RPS.txt")
+    # os.remove("strategy_stats_RPS.txt")
     game = Game()
 
     print('==== Use simple regret-matching strategy === ')
