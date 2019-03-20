@@ -66,14 +66,14 @@ class HandEvaluation(Player):
         if not(all([card is -1 for card in board])):
             self.board = board 
 
-    def parse_turn_river_cards(self, event):
-        a = None
-        if event == 'Turn':
-            a = self.community_cards[3]
-        elif event == 'River':
-            a = self.community_cards[4]
-        card1 = self.from_num_to_cardstring(a)
-        return (card1)
+    # def parse_turn_river_cards(self, event):
+    #     a = None
+    #     if event == 'Turn':
+    #         a = self.community_cards[3]
+    #     elif event == 'River':
+    #         a = self.community_cards[4]
+    #     card1 = self.from_num_to_cardstring(a)
+    #     return (card1)
 
 
     def take(self, num_take):
@@ -155,14 +155,14 @@ class HandEvaluation(Player):
         
 
 
-
     def set_evaluation(self, value):
         self.evaluation = value
 
     def evaluate(self, event):
         if event == 'Preflop':
             self.set_evaluation(self.do_mean_evaluation(self.hand, event, n=self.preflop_evaluation_mean_control))
-            # self.hand_strength = self.handStrength(event) 
+            self.hand_strength = ((1 - self.evaluation/7462)*2) if ((1 - self.evaluation/7462)*2) < 1.0 else 1.0
+            # self.hand_strength = self.handStrength(event)
             # self.estimate_winrate()
             # self.detect_draws()
 

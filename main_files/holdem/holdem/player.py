@@ -36,8 +36,9 @@ class Player(object):
     self.possible_moves = []
     self.position = player_id # safe to do because positions are same as id's when sarting game which is the only time when Player object is called
     self.debug_raises = {}
-    self.round_reward = None
+    self.reward = None
     self.regret = {}
+
    
 
   def get_seat(self):

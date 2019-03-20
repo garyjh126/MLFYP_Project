@@ -5,43 +5,32 @@ np.set_printoptions(suppress=True)
 
 ROCK, PAPER, SCISSORS = 0, 1, 2
 NUM_ACTIONS = 3
-regretSum = np.zeros(NUM_ACTIONS, dtype = np.float64)
-strategySum = np.zeros(NUM_ACTIONS, dtype = np.float64)
 oppStrategy = np.array([0.4, 0.3, 0.3])
 
 def value(p1, p2):
     if p1==p2:
         return 0
-    elif p1==ROCK and p2==SCISSORS:
-        return 1
-    elif p1==SCISSORS and p2==PAPER:
-        return 1
-    elif p1==PAPER and p2==ROCK:
+    if (p1 - 1)% NUM_ACTIONS == p2:
         return 1
     else:
         return -1
 
-def getStrategy():
-    global regretSum, strategySum
-    strategy = np.maximum(regretSum, 0)
+def normalize(strategy):
+    strategy = np.copy(strategy)
     normalizingSum = np.sum(strategy)
     if normalizingSum > 0:
-        strategy/= normalizingSum
+        strategy /= normalizingSum
     else:
-        strategy= np.ones(NUM_ACTIONS)/NUM_ACTIONS
+        strategy= np.ones(strategy.shape[0])/strategy.shape[0]
 
-    strategySum += strategy
     return strategy
 
-def getAverageStrategy():
-    global strategySum
-    normalizingSum = np.sum(strategySum)
-    if normalizingSum > 0:
-        avgStrategy = strategySum / normalizingSum
-    else:
-        avgStrategy = np.ones(NUM_ACTIONS)/NUM_ACTIONS
+def getStrategy(regretSum):
+    strategy = np.maximum(regretSum, 0)
+    return normalize(strategy)
 
-    return avgStrategy
+def getAverageStrategy(strategySum):
+    return normalize(strategySum)
 
 def getAction(strategy):
     strategy = strategy/ np.sum(strategy)  ## Normalize
@@ -56,10 +45,14 @@ def train(iterations):
     # <Compute action utilities>
     # <Accumulate action regrets>
 
-    global regretSum
+    regretSum = np.zeros(NUM_ACTIONS, dtype = np.float64)
+    strategySum = np.zeros(NUM_ACTIONS, dtype = np.float64)
+
     actionUtility = np.zeros(NUM_ACTIONS)
     for i in range(iterations):
-        strategy = getStrategy()
+        strategy = getStrategy(regretSum)
+        strategySum += strategy
+
         myAction = getAction(strategy)
         otherAction = getAction(oppStrategy)
 
@@ -69,16 +62,20 @@ def train(iterations):
 
         regretSum += actionUtility - actionUtility[myAction]
 
-
-train(100000)
-print(getAverageStrategy()) 
+    return strategySum
 
 
+
+strategySum = train(100000)
+
+
+strategy = getAverageStrategy(strategySum)
+print(strategy)
 vvv = []
+
 for i in range(100):
     vv = 0
     for j in range(100):
-        strategy = getAverageStrategy()
         myAction = getAction(strategy)
         otherAction = getAction(oppStrategy)
         vv += value(myAction, otherAction)
@@ -86,8 +83,6 @@ for i in range(100):
 plt.title("CFR learned strategy (Learns to always choose paper).\nOur opponent uses fixed strategy (Rock-40%, Paper-30%, Scissors-30%)")
 plt.plot(sorted(vvv))
 plt.show()
-
-
 
 
 
