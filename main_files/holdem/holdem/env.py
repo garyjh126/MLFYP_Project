@@ -109,7 +109,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# 	max_limit,             # raise_amount
 		# ]),
 		# ] * n_seats) 
-		self.action_space = spaces.Discrete(4)
+		self.action_space = spaces.Discrete(3)
 		
 
 	def seed(self, seed=None):
@@ -199,7 +199,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			del self._player_dict[player_id]
 			self.emptyseats += 1
 			self.filled_seats-=1
-			HandHoldem.HandEvaluation.total_players-=1
+			Player.total_plrs-=1
 
 			#self.reassign_players_seats()
 		except ValueError:
@@ -286,7 +286,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				move = ("check", 0) # Protects against player making bets without any other stacked/active players
 			self._last_actions = move
 			if move[0] == 'call':
-				assert self.action_space.contains(1)
+				assert self.action_space.contains(0)
 				self._player_bet(self._current_player, self._tocall, is_posting_blind=False, bet_type=move[0])
 				if self._debug:
 					print('Player', self._current_player.player_id, move)
@@ -295,7 +295,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self.playedthisround = True
 
 			elif move[0] == 'check':
-				assert self.action_space.contains(0)
+				# assert self.action_space.contains(0)
 				self._player_bet(self._current_player, self._current_player.currentbet, is_posting_blind=False, bet_type=move[0])
 				if self._debug:
 					print('Player', self._current_player.player_id, move)
@@ -305,7 +305,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 			elif move[0] == 'raise':
 			
-				assert self.action_space.contains(2)
+				assert self.action_space.contains(1)
 				
 				self._player_bet(self._current_player, move[1]+self._current_player.currentbet, is_posting_blind=False, bet_type="bet/raise")
 				if self._debug:
@@ -317,7 +317,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				
 				self.last_seq_move.append('R')
 			elif move[0] == 'fold':
-				assert self.action_space.contains(3)
+				assert self.action_space.contains(2)
 				self._current_player.playing_hand = False
 				self._current_player.playedthisround = True
 				if self._debug:
@@ -419,6 +419,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				
 			print('{}{}stack: {} {}'.format(idx, hand_to_str(hand), self._seats[idx].stack, self.current_player_notifier))
 			self.current_player_notifier = ""
+
 	def _resolve(self, players):
 		
 		self.signal_end_round = True
@@ -787,13 +788,13 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		reward = None
 			
 		if(action is None):
-			return observations, rewards, terminal, [] # TODO, return some info?
+			return observations, reward, terminal, [] # TODO, return some info?
 
 		else: 	 # Focus on this. At end of step, when player has already decided his action. 
 			respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
 			evaluations_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._last_player.get_seat() and x!=None]
 			
-			if (self._last_player is self.learner_bot): # Learner bot step return
+			if (self._last_player is self.learner_bot): 					# Learner bot step return
 				
 
 				if(action == ('fold', 0)): # Learner Folded
@@ -807,7 +808,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 						self.learner_bot.reward = self.compute_reward()
 
 
-			else:  # Artifical agent step return
+			else:  															# Artifical agent step return
+
 				if(self.signal_end_round == True):
 					self.signal_end_round = False
 
@@ -904,7 +906,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 					winning_rank = min([learner_eval, opp_eval])
 					winning_players = [player for player, rank in enumerate([learner_eval, opp_eval]) if rank == winning_rank]
 					if len(winning_players) is 2:
-						pass
+						learner_wins+=1
+						opp_wins+=1
 					else:
 						if winning_players[0] == 0:
 							learner_wins+=1
@@ -922,15 +925,17 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 				winning_rank = min([learner_eval, opp_eval])
 				winning_players = [player for player, rank in enumerate([learner_eval, opp_eval]) if rank == winning_rank]
-				# print(winning_players_list)
 				if len(winning_players) is 2:
-					pass
+					learner_wins+=1
+					opp_wins+=1
 				else:
 					if winning_players[0] == 0:
 						learner_wins+=1
 					else:
 						opp_wins+=1
 		
+		if opp_wins == 0 and learner_wins == 0:
+			raise("error: division by zero")
 		return (learner_wins/(learner_wins + opp_wins), opp_wins/(learner_wins + opp_wins))
 
 

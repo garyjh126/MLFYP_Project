@@ -64,14 +64,20 @@ def hand_to_str(hand):
   return output
 
 
-def safe_actions(community_infos, which_action, n_seats):
+def safe_actions(community_infos, which_action, n_seats, choice=None):
   current_player = community_infos[-1]
   to_call = community_infos[-2]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
   if to_call > 0:
     # CALL/RAISE (Rule excludes opening up with paying of the blinds)
-    if which_action is None:
-      actions[current_player] = [action_table.CALL, action_table.NA]
+
+    if which_action is None: # Learner bot
+      if choice == 0:
+        actions[current_player] = [action_table.CALL, action_table.NA]
+      elif type(choice) is tuple:
+        actions[current_player] = [choice[0], choice[1]]
+      else:
+        actions[current_player] = [3, 0]
     else:
       if type(which_action) is list: # Call
         actions[current_player] = [which_action[0][0], which_action[0][1]]
@@ -80,8 +86,12 @@ def safe_actions(community_infos, which_action, n_seats):
   else:
     ## This is where a player may take initiative and BET (Rule excludes opening up with paying of the blinds)
     ## They may also CHECK
-    if which_action is None:
-      actions[current_player] = [action_table.CHECK, action_table.NA]
+
+    if which_action is None: # Learner bot
+      if choice == 0:
+        actions[current_player] = [action_table.CHECK, action_table.NA]
+      elif type(choice) is tuple:
+        actions[current_player] = [choice[0], choice[1]]
     else:
       if type(which_action) is list: # Check
         actions[current_player] = [which_action[1][0], which_action[1][1]]

@@ -76,7 +76,7 @@ class Player(object):
       self.round['possible_moves'].add('c')
       self.round['possible_moves'].add('f')
 
-  def choose_action(self, _round, range_structure, env):
+  def choose_action(self,  _round, range_structure, env):
     self.debug_raises.update({_round:env.level_raises})
     betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
     calling_threshold = range_structure['calling'][self.round['raises_i_owe']][self.position]
