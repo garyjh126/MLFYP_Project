@@ -1,4 +1,13 @@
-# MLFYP_Project
+# Poker Bot Using Model-free Deep Reinforcement Learning Algorithms
+
+
+# Heading 1 #
+
+    Markup :  # Heading 1 #
+
+    -OR-
+
+    Markup :  ============= (below H1 text)
 
 The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
 
