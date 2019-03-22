@@ -20,7 +20,7 @@ env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
 env.add_player(2, stack=2000) # aggressive#
 
 
-state_size = 18
+state_size = 19
 action_size = env.action_space.n
 
 batch_size = 32
@@ -98,7 +98,7 @@ def create_np_array(player_infos, player_hands, community_cards, community_infos
         ps1 = np.append(ps1, info)    
     for card in community_cards:
         ps1 = np.append(ps1, card)    
-    ps1 = np.reshape(ps1, [1, 18])
+    ps1 = np.reshape(ps1, [1, state_size])
     return ps1
 
 
@@ -132,9 +132,9 @@ def make_epsilon_greedy_policy(Q, epsilon, nA):
 
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
-	current_player = community_infos[-1]
+	current_player = community_infos[-3]
 	player_object = env._player_dict[current_player]
-	to_call = community_infos[-3]
+	to_call = community_infos[3]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
@@ -187,7 +187,8 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
         else:
             action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
-
+        if action is 0:
+            raise("cannot be zero")
         (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
         ps = list(zip(*player_states))

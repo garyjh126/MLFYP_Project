@@ -65,8 +65,8 @@ def hand_to_str(hand):
 
 
 def safe_actions(community_infos, which_action, n_seats, choice=None):
-  current_player = community_infos[-1]
-  to_call = community_infos[-3]
+  current_player = community_infos[-3]
+  to_call = community_infos[3]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
   if to_call > 0:
     # CALL/RAISE (Rule excludes opening up with paying of the blinds)

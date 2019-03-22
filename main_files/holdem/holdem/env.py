@@ -98,6 +98,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				spaces.Discrete(max_limit),   # last raise
 				spaces.Discrete(max_limit),   # to_call
 				spaces.Discrete(n_seats - 1), # current player seat location.
+				spaces.Discrete(max_limit),   # minimum amount to raise
+				spaces.Discrete(max_limit), # how much needed to call by current player.
 				spaces.Tuple([
 					spaces.MultiDiscrete([    # card
 						n_suits - 1,          # suit
@@ -776,7 +778,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			int(self._lastraise),
 			int(self._tocall),
 			int(self._current_player.get_seat()),
-			int(self._current_player.player_id),
+			int(max(self._bigblind, self._lastraise + self._tocall)),
+			int(self._tocall - self._current_player.currentbet),
 		], self._pad(self.community, 5, -1))
 		return (tuple(player_states), community_states)
 
