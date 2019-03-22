@@ -2,13 +2,13 @@
 
 [Link to main code](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title")
 
-# Heading 1 #
+# Install Requirements #
 
-    Markup :  # Heading 1 #
-
-    -OR-
-
-    Markup :  ============= (below H1 text)
+    pip install matplotlib
+    pip install gym
+    pip install holdem
+    pip install treys
+    pip install keras
 
 The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
 
