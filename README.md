@@ -1,5 +1,6 @@
 # Poker Bot Using Model-free Deep Reinforcement Learning Algorithms
 
+[Link to main code](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title")
 
 # Heading 1 #
 
