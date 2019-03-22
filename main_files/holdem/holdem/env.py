@@ -96,7 +96,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				spaces.Discrete(max_limit),   # learner position
 				spaces.Discrete(max_limit),   # pot amount
 				spaces.Discrete(max_limit),   # last raise
-				spaces.Discrete(max_limit),   # to_call
 				spaces.Discrete(n_seats - 1), # current player seat location.
 				spaces.Discrete(max_limit),   # minimum amount to raise
 				spaces.Discrete(max_limit), # how much needed to call by current player.
@@ -776,7 +775,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			int(self.learner_bot.position),
 			int(self._totalpot),
 			int(self._lastraise),
-			int(self._tocall),
 			int(self._current_player.get_seat()),
 			int(max(self._bigblind, self._lastraise + self._tocall)),
 			int(self._tocall - self._current_player.currentbet),

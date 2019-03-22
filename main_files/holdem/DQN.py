@@ -20,16 +20,19 @@ env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
 env.add_player(2, stack=2000) # aggressive#
 
 
-state_size = 19
+state_size = 18
 action_size = env.action_space.n
 
 batch_size = 32
+
+epsilon = 0.2
 
 n_episodes = 1001 # n games we want agent to play (default 1001)
 
 output_dir = 'model_output/TexasHoldemDirectory/'
 
 with_render = False
+
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -41,7 +44,7 @@ class DQNAgent:
         self.action_size = action_size
         self.memory = deque(maxlen=2000) # double-ended queue; acts like list, but elements can be added/removed from either end
         self.gamma = 0.95 # decay or discount rate: enables agent to take into account future actions in addition to the immediate ones, but discounted at this rate
-        self.epsilon = 0.7 # exploration rate: how much to act randomly; more initially than later due to epsilon decay
+        self.epsilon = epsilon # exploration rate: how much to act randomly; more initially than later due to epsilon decay
         self.epsilon_decay = 0.995 # decrease number of random explorations as the agent's performance (hopefully) improves over time
         self.epsilon_min = 0.01 # minimum amount of random exploration permitted
         self.learning_rate = 0.001 # rate at which NN adjusts models parameters via SGD to reduce cost 
@@ -65,7 +68,13 @@ class DQNAgent:
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy)
             return action
         act_values = self.model.predict(state) # if not acting according to safe_strategy, predict reward value based on current state
-        return np.argmax(act_values[0]) # pick the action that will give the highest reward (i.e., go left or right?)
+        predicted_action = np.argmax(act_values[0])
+        choice = None
+        if predicted_action is 1:
+            total_bet = env._tocall + env._bigblind - env.opponent.currentbet
+            choice = (2, total_bet)
+        predicted_action = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
+        return predicted_action # pick the action that will give the highest reward (i.e., go left or right?)
 
     def replay(self, batch_size): # method that trains NN with experiences sampled from memory
         minibatch = random.sample(self.memory, batch_size) # sample a minibatch from memory
@@ -134,7 +143,7 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	player_actions = None
 	current_player = community_infos[-3]
 	player_object = env._player_dict[current_player]
-	to_call = community_infos[3]
+	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
@@ -187,18 +196,18 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
         else:
             action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
-        if action is 0:
-            raise("cannot be zero")
+       
         (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
+        action = utilities.convert_step_return_to_action(action)
         ps = list(zip(*player_states))
         next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
         agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
         state = next_state
         if terminal: # episode ends if agent drops pole or we reach timestep 5000
             print("episode: {}/{}, reward: {}, e: {:.2}" # print the episode's score and agent's epsilon
-                .format(e, n_episodes, reward, agent.epsilon))
-        action = utilities.convert_step_return_to_action(action)
+                .format(e, n_episodes, env.learner_bot.reward, agent.epsilon))
+        
         current_state = (player_states, (community_infos, community_cards)) # state = next_state
         env.render(mode='human')
 
