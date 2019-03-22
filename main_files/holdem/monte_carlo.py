@@ -6,94 +6,12 @@ from include import *
 import matplotlib.pyplot as plt
 from libs import plotting
 import sys
+import utilities
 if "../" not in sys.path:
   sys.path.append("../") 
 
 with_render = True
 
-def which_round(community_cards):
-	count_cards = 0
-	_round = ''
-	for i in community_cards:
-		if not i == -1:
-			count_cards = count_cards + 1
-	if count_cards == 0:
-		_round = 'Preflop'
-	elif count_cards == 3:
-		_round = 'Flop'
-	elif count_cards == 4:
-		_round = 'Turn'
-	elif count_cards == 5:
-		_round = 'River'
-	return _round 
-
-def fill_range_structure(_round, player):
-	range_structure = None
-	if _round == 'Preflop': 
-		range_structure = preflop_range
-	elif _round == 'Flop':
-		range_structure = hand_strength_flop
-	elif _round == 'Turn':
-		range_structure = hand_strength_turn
-	elif _round == 'River':
-		range_structure = hand_strength_river
-	return range_structure
-
-def set_attributes(hand_strength, evaluation, player, rc, score_desc, event):
-	if event == 'Preflop':
-		if player.evaluation_preflop["he"] == '':
-			player.evaluation_preflop["hand_strength"] = hand_strength
-			player.evaluation_preflop["he"] = player.he
-			player.evaluation_preflop["rc"] = rc
-			player.evaluation_preflop["score_desc"] = score_desc
-			player.evaluation_preflop["evaluation"] = evaluation
-	elif event == 'Flop':
-		if player.evaluation_flop["he"] == '':
-			player.evaluation_flop["hand_strength"] = hand_strength
-			player.evaluation_flop["he"] = player.he
-			player.evaluation_flop["rc"] = rc
-			player.evaluation_flop["score_desc"] = score_desc
-			player.evaluation_flop["evaluation"] = evaluation
-	elif event == 'Turn':
-		if player.evaluation_turn["he"] == '':
-			player.evaluation_turn["hand_strength"] = hand_strength
-			player.evaluation_turn["he"] = player.he
-			player.evaluation_turn["rc"] = rc
-			player.evaluation_turn["score_desc"] = score_desc
-			player.evaluation_turn["evaluation"] = evaluation
-	elif event == 'River':
-		if player.evaluation_river["he"] == '':
-			player.evaluation_river["hand_strength"] = hand_strength
-			player.evaluation_river["he"] = player.he
-			player.evaluation_river["rc"] = rc
-			player.evaluation_river["score_desc"] = score_desc
-			player.evaluation_river["evaluation"] = evaluation
-
-def highest_in_LR(player_o, env):
-    highest_lr_bot = 0
-    highest_lr_value = 0
-    
-    for key, value in env.level_raises.items():
-        if value > highest_lr_value:
-            highest_lr_value = value
-            highest_lr_bot = key
-    return highest_lr_value, highest_lr_bot
-
-def calc_raises_i_face(player_o, env):
-	bot_position_num = player_o.get_seat()
-	my_lr_value = env.level_raises[bot_position_num]
-	highest_lr_value, highest_lr_bot = highest_in_LR(player_o, env)
-	add_me = highest_lr_value - my_lr_value
-	return player_o.round['raises_i_owe'] + add_me
-	
-
-
-def assign_evals_player(player_o, _round, env):
-	hand_strength, evaluation, rc, score_desc, hand, board = player_o.he.get_evaluation(_round)
-	set_attributes(hand_strength, evaluation, player_o, rc, score_desc, _round)
-	player_o.populatePlayerPossibleMoves(env)
-	player_o.round['raises_i_owe'] = calc_raises_i_face(player_o, env)
-	
 
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
@@ -105,8 +23,8 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	
 	if _round is not "Preflop": # preflop already evaluated
 		player_object.he.evaluate(_round)
-	range_structure = fill_range_structure(_round, player_object)
-	assign_evals_player(player_object, _round, env)
+	range_structure = utilities.fill_range_structure(_round, player_object)
+	utilities.assign_evals_player(player_object, _round, env)
 
 	if(current_player == 0): # learner move 
 		probs = policy(state)
@@ -137,7 +55,7 @@ def generate_episode(env, n_seats):
 	terminal = False
 	while not terminal:
 
-		_round = which_round(community_cards)
+		_round = utilities.which_round(community_cards)
 		current_player = community_infos[-1]
 		a = (env._current_player.currentbet)
 		actions = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats)
@@ -147,15 +65,6 @@ def generate_episode(env, n_seats):
 		env.render(mode='human')
 
 	return episode
-	
-
-
-def do_necessary_env_cleanup():
-    list_players = env._player_dict.copy()
-    for player in list_players.values():
-        if player.stack <= 0:
-            env.remove_player(player.get_seat())
-    env.assign_positions()
 
 def simulate_episodes_with_graphs(no_of_episodes=100):
 	episode_list = []
@@ -165,7 +74,7 @@ def simulate_episodes_with_graphs(no_of_episodes=100):
 	for i in range(no_of_episodes):
 		print("\n\n********{}*********".format(i))
 		episode = generate_episode(env, env.n_seats) 
-		do_necessary_env_cleanup()
+		utilities.do_necessary_env_cleanup(env)
 		stack_list = env.report_game(requested_attributes = ["stack"])
 		count_existing_players = 0
 
@@ -202,7 +111,7 @@ def mc_prediction_poker(total_episodes):
     for k in range(1, total_episodes + 1):
         print("\n\n********{}*********".format(k))
         episode = generate_episode(env, env.n_seats)
-        do_necessary_env_cleanup()
+        utilities.do_necessary_env_cleanup(env)
         possible_actions = np.array(np.identity(env.action_space.n,dtype=int).tolist()) # Here we create an hot encoded version of our actions
 
         # (PSEUDOCODE)
@@ -270,48 +179,6 @@ env.add_player(2, stack=2000) # aggressive
 # #     print(line_no, line)
 
 # plotting.plot_value_function(v, title="10 Steps")
-
-def convert_list_to_tupleA(learner_bot_state, community_state):
-    
-    info = [tuple(p) for p in learner_bot_state]
-    info = tuple(info[0]+info[1])
-    community = [tuple(p) for p in community_state]
-    community = tuple(community[0]+community[1])
-    states_in_episode = info + community
-    return states_in_episode
-
-def convert_step_return_to_action(action_from_step):
-	if action_from_step[0] == 'raise' or action_from_step[0] == 'bet':
-		return 1
-	elif action_from_step[1] == 'call' or action_from_step[1] == 'check':
-		return 0
-	else:
-		return 2
-
-def convert_step_return_to_set(sar):
-    
-    player_features_tuples = []
-    player_cards_tuples = []
-    community_state_tuples = []
-    pf = sar[0][0][0][0]
-    player_features = tuple(pf)
-    player_features_tuples.append(player_features)
-
-    pf = sar[0][0][0][1]
-    player_cards = tuple(pf)
-    player_cards_tuples.append(player_cards)
-
-    pf = sar[0][1][0]
-    community_state = tuple(pf)
-    community_state_tuples.append(community_state)
-
-    # states_in_episode = list(set([sar[0] for sar in episode])) # sar--> state,action,reward
-    states = []
-    for i in range(len(player_features_tuples)):
-        my_tup = (player_features_tuples[i] + player_cards_tuples[i] + community_state_tuples[i])
-        states.append(my_tup)
-
-    return states
 
 def make_epsilon_greedy_policy(Q, epsilon, nA):
     """
@@ -383,26 +250,28 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         current_state = ((player_infos, player_hands), (community_infos, community_cards))
 
         # Only want the state set that is relevant to learner bot every step. 
-        state_set = convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
+        state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
         if is_with_rendering:
             env.render(mode='human', initial=True)
         terminal = False
         while not terminal:
 
-            _round = which_round(community_cards)
+            _round = utilities.which_round(community_cards)
             current_player = community_infos[-1]
             a = (env._current_player.currentbet)
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
+            
             (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
-            parsed_return_state = convert_step_return_to_set((current_state, action, env.learner_bot.reward))
-            action = convert_step_return_to_action(action)
+
+            parsed_return_state = utilities.convert_step_return_to_set((current_state, action, env.learner_bot.reward))
+            action = utilities.convert_step_return_to_action(action)
             episode.append((parsed_return_state, action, env.learner_bot.reward))
             current_state = (player_states, (community_infos, community_cards)) # state = next_state
             if is_with_rendering:
                 env.render(mode='human')
 
-        do_necessary_env_cleanup() # assign new positions, remove players if stack < 0 etc ..
+        utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
 
 
         # Find all (state, action) pairs we've visited in this episode
@@ -431,8 +300,7 @@ Q, policy = mc_control_epsilon_greedy(num_episodes=100, epsilon=0.1)
 for item in Q.items():
     print(item)
 
-print(len(Q))
-
-print(policy)
+# Here we have a Q-table defined which allows us to reference state-action pairs from our poker environment,
+# each state-action pair informing the agent on which action led to achieving the optimal policy. 
 
 

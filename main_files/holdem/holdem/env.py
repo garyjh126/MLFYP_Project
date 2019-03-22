@@ -41,6 +41,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self.last_seq_move = [] 
 		self.filled_seats = 0
 		self.signal_end_round = False
+		self.winning_players = None
 
 		self.community = []
 		self._round = 0
@@ -57,7 +58,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# fill seats with dummy players
 		self._seats = [Player(i, stack=0, emptyplayer=True) for i in range(n_seats)]
 		self.learner_bot = None
-		self.villian = None
+		self.villain = None
 		self.emptyseats = n_seats
 		self._player_dict = {}
 		self._current_player = None
@@ -65,41 +66,46 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._last_player = None
 		self._last_actions = None
 
+
+
+		# (PSEUDOCODE)
+        # MODEL HYPERPARAMETERS: 
+        # state_size = [(position, learner.stack, learner.handrank, played_this_round ...[card1, card2]), (pot_total, learner.to_call, opponent.stack, community_cards)]
+        # action_size = env.action_space.n
+        # learning_rate = 0.00025
+
 		self.observation_space = spaces.Tuple([
-		spaces.Tuple([                # players
-			spaces.MultiDiscrete([
-			1,                   # emptyplayer
-			n_seats - 1,         # seat
-			max_limit,           # stack
-			1,                   # is_playing_hand
-			max_limit,           # handrank
-			1,                   # playedthisround
-			1,                   # is_betting
-			1,                   # isallin
-			max_limit,           # last side pot
-			]),
+
+			spaces.Tuple([                # players
+				spaces.MultiDiscrete([
+				max_limit,           # stack
+				max_limit,           # handrank
+				1,                   # playedthisround
+				1,                   # is_betting
+				max_limit,           # last side pot
+				]),
+				spaces.Tuple([
+					spaces.MultiDiscrete([    # card
+						n_suits,          # suit, can be negative one if it's not avaiable.
+						n_ranks,          # rank, can be negative one if it's not avaiable.
+					])
+				] * n_pocket_cards)
+			] * 1),
+
 			spaces.Tuple([
-			spaces.MultiDiscrete([    # hand
-				n_suits,          # suit, can be negative one if it's not avaiable.
-				n_ranks,          # rank, can be negative one if it's not avaiable.
+				spaces.Discrete(max_limit),   # learner position
+				spaces.Discrete(max_limit),   # pot amount
+				spaces.Discrete(max_limit),   # last raise
+				spaces.Discrete(max_limit),   # to_call
+				spaces.Discrete(n_seats - 1), # current player seat location.
+				spaces.Tuple([
+					spaces.MultiDiscrete([    # card
+						n_suits - 1,          # suit
+						n_ranks - 1,          # rank
+						1,                     # is_flopped
+					])
+				] * n_community_cards)
 			])
-			] * n_pocket_cards)
-		] * n_seats),
-		spaces.Tuple([
-			spaces.Discrete(n_seats - 1), # big blind location
-			spaces.Discrete(max_limit),   # small blind
-			spaces.Discrete(max_limit),   # big blind
-			spaces.Discrete(max_limit),   # pot amount
-			spaces.Discrete(max_limit),   # last raise
-			spaces.Discrete(max_limit),   # minimum amount to raise
-			spaces.Discrete(max_limit),   # how much needed to call by current player.
-			spaces.Discrete(n_seats - 1), # current player seat location.
-			spaces.MultiDiscrete([        # community cards
-			n_suits - 1,          # suit
-			n_ranks - 1,          # rank
-			1,                     # is_flopped
-			]),
-		] * n_stud),
 		])
 
 		### MAY NEED TO ALTER FOR HEADS-UP
@@ -170,7 +176,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		if new_player.get_seat() == 0:
 			self.learner_bot = new_player
 		else:
-			self.villian = new_player
+			self.villain = new_player
 			
 			
 			
@@ -651,6 +657,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		if len(players) == 1:
 			players[0].refund(sum(self._side_pots))
 			self._totalpot = 0
+			self.winning_players = players[0]
 		else:
 			# compute hand ranks
 			for player in players:
@@ -666,7 +673,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				pot_contributors = [p for p in players if p.lastsidepot >= pot_idx]
 				winning_rank = min([p.handrank for p in pot_contributors])
 				winning_players = [p for p in pot_contributors if p.handrank == winning_rank]
-
+				self.winning_players = winning_players[0]
 				for player in winning_players:
 					split_amount = int(self._side_pots[pot_idx]/len(winning_players))
 					if self._debug:
@@ -724,6 +731,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._side_pots = [0] * len(self._seats)
 		self._deck.shuffle()
 		self.level_raises = {0:0, 1:0, 2:0}
+		self.winning_players = None
 
 		if playing:
 			self._button = (self._button + 1) % len(self._seats)
@@ -753,33 +761,35 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _get_current_state(self):
 		player_states = []
-		for player in self._seats:
+		for player in self._player_dict.values():
 			player_features = [
-				int(player.emptyplayer),
-				int(player.get_seat()),
 				int(player.stack),
-				int(player.playing_hand),
 				int(player.handrank),
 				int(player.playedthisround),
 				int(player.betting),
-				int(player.isallin),
 				int(player.lastsidepot),
 			]
 			player_states.append((player_features, self._pad(player.hand, 2, -1)))
 		community_states = ([
-			int(self._button),
-			int(self._smallblind),
-			int(self._bigblind),
+			int(self.learner_bot.position),
 			int(self._totalpot),
 			int(self._lastraise),
-			int(max(self._bigblind, self._lastraise + self._tocall)),
-			int(self._tocall - self._current_player.currentbet),
+			int(self._tocall),
+			int(self._current_player.get_seat()),
 			int(self._current_player.player_id),
 		], self._pad(self.community, 5, -1))
 		return (tuple(player_states), community_states)
 
 	def _get_current_reset_returns(self):
 		return self._get_current_state()
+
+	def distribute_rewards_given_endgame(self):
+	
+		if self.learner_bot is self.winning_players:
+			self.learner_bot.reward = self.compute_reward() + self._totalpot
+		else:
+			self.learner_bot.reward = self.compute_reward() - self._totalpot
+
 
 	def _get_current_step_returns(self, terminal, action=None):
 
@@ -797,15 +807,23 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			if (self._last_player is self.learner_bot): 					# Learner bot step return
 				
 
-				if(action == ('fold', 0)): # Learner Folded
-					self.learner_bot.reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players)
-			
-				else:
-					if(self.signal_end_round == True):
-						self.learner_bot.reward = self.compute_reward()
-						self.signal_end_round = False
+				if(self.signal_end_round == True):
+					if(action == ('fold', 0)): # Learner Folded
+						self.learner_bot.reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players) - self._totalpot
 					else:
 						self.learner_bot.reward = self.compute_reward()
+					self.signal_end_round = False
+
+				else:
+					if(action == ('fold', 0)): # Learner Folded
+						self.learner_bot.reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players) - self._totalpot
+
+					else:
+						if self.winning_players is not None and terminal == True:
+							self.distribute_rewards_given_endgame()
+
+						else:
+							self.learner_bot.reward = self.compute_reward()		# Most common entry point (Learner Checks or raises)
 
 
 			else:  															# Artifical agent step return
@@ -817,10 +835,15 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 					self.learner_bot.reward = self._totalpot
 				
 				else:
-					self.learner_bot.reward = 0
+					if self.winning_players is not None and terminal == True:
+						self.distribute_rewards_given_endgame()
+					else:
+						self.learner_bot.reward = 0
 			# if action is ('fold', 0) or action is ('check', 0) or action[0] is 'call' or action[0] is 'raise':
 			# 	regret = self.compute_regret_given_action(action, respective_evaluations, evaluations_opposing_players)
 			
+			
+
 			return observations, action, reward, terminal, [] # TODO, return some info?
 
 
@@ -837,18 +860,55 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# EV = (Size of Pot x Probability of Winning) – Cost of Entering it.
 
 		equity = self.equity()
-
 		ev = None
 		if self._round == 0 and self._last_player.position == 0: # Only works for heads up: Due to bug with tocall
 			to_call = 15
+			total_pot = self._totalpot - to_call
 		else:
 			to_call = self._last_actions[1]
+			total_pot = self._totalpot if self._last_player is not self.learner_bot else (self._totalpot - self._last_actions[1])
+			
+				
 
+		# Here we compute expected values for actions that were possible during their execution, and we reflect on them here by comparing the expected values
+		# of alternatives.
+		expected_values_order = [0, 0, 0] # In order of call/check, raise/bet, fold
+		
+		if self._last_actions[0] == 'call' or self._last_actions[0] == 'check':
+			action_taken = 0
+		elif self._last_actions[0] == 'raise' or self._last_actions[0] == 'bet':
+			action_taken = 1
+		else:
+			action_taken = 2
+
+		# Call/Check Regret
 		learner_equity, opp_equity = equity[0], equity[1]
-		stand_to_win = (self._totalpot * learner_equity) 
+		stand_to_win = (total_pot * learner_equity) 
 		stand_to_lose = to_call * opp_equity
 		expected_value = stand_to_win - stand_to_lose
-		return expected_value
+		expected_values_order[0] = expected_value
+
+		# Fold Regret
+		stand_to_win = to_call * opp_equity
+		stand_to_lose = (total_pot) * learner_equity
+		expected_value = stand_to_win - stand_to_lose
+		expected_values_order[2] = expected_value
+
+		# Raise/Bet Regret
+		if (self.learner_bot.raise_possible_tba):
+			# implied raise (How much more we stand to win given that villain shows confidence in his hand)
+			stand_to_win = ( ((total_pot + 25) * learner_equity) * self.villain.certainty_to_call ) + (total_pot * learner_equity) * (1 - self.villain.certainty_to_call)
+			stand_to_lose = (to_call + 25) * opp_equity
+			expected_value = stand_to_win - stand_to_lose
+			expected_values_order[1] = expected_value
+
+	
+		max_ev = max(expected_values_order)
+		highest_paying_action = [i for i, j in enumerate(expected_values_order) if j == max_ev]
+		
+		# reward = expected_values_order[action_taken]/max_ev
+		reward = expected_values_order[action_taken] - mean(expected_values_order)
+		return reward 
 
 	def compute_reward_end_round(self, respective_evaluations, evaluations_opposing_players):
 		return (respective_evaluations[self._last_player.get_seat()] - mean([other_player_eval for other_player_eval in evaluations_opposing_players])) / self.weighting_coefficient_round_resolve
@@ -870,11 +930,14 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# “belongs” to you, or to put it another way, the percentage of the time
 		#  you expect to win the hand on average from that point onwards.
 		_round = self._round if self.signal_end_round is not True else self._round - 1
-		if (_round == 1 or _round == 2): # Implies last rounds were either 1 or 2
+		if (_round == 1 or _round == 2 or _round ==3): # Implies last rounds were either 1 or 2
 			learner_utility, opp_utility = self.compute_winner_simulation(_round)
 			equity = learner_utility, opp_utility
+			
 		else:
-			equity = self._last_player.he.hand_strength, 1 - self._last_player.he.hand_strength
+			learner_hs = self.learner_bot.he.hand_strength, 1 - self.villain.he.hand_strength
+			bot_hs = self.villain.he.hand_strength, 1 - self.learner_bot.he.hand_strength
+			equity = (learner_hs[0] + learner_hs[1])/2, (bot_hs[0] + bot_hs[1])/2
 		return equity
 
 
@@ -885,8 +948,10 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			community = [self.community[i] for i in range(3)]
 		elif _round == 2:
 			community = [self.community[i] for i in range(4)]
+		else:
+			community = [self.community[i] for i in range(5)]
 		opp1_cards = self.learner_bot.hand
-		opp2_cards = self.villian.hand
+		opp2_cards = self.villain.hand
 		unrevealed_cards = sorted([card for card in deck.cards if card not in community and card not in opp1_cards and card not in opp2_cards])
 		# print(Card.print_pretty_cards(opp1_cards))
 		# print(Card.print_pretty_cards(opp2_cards))
@@ -933,6 +998,12 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 						learner_wins+=1
 					else:
 						opp_wins+=1
+
+		elif _round == 3:
+			if self.learner_bot is self.winning_players:
+				return 1.0, 0.0
+			else:
+				return 0.0, 1.0
 		
 		if opp_wins == 0 and learner_wins == 0:
 			raise("error: division by zero")

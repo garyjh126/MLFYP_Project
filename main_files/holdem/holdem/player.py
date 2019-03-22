@@ -38,6 +38,8 @@ class Player(object):
     self.debug_raises = {}
     self.reward = None
     self.regret = {}
+    self.raise_possible_tba = False
+    self.certainty_to_call = 0
 
    
 
@@ -51,6 +53,18 @@ class Player(object):
         return True
         break
     return move_possible 
+
+  def how_many_more_raises_possible(self):
+    example_perspective_move = 'r'
+    if(self.count_r(env.last_seq_move) == 3):
+      return 0
+    elif(self.count_r(env.last_seq_move) == 2):
+      return 1
+    elif(self.count_r(env.last_seq_move) == 1):
+      return 2
+    else:
+      return 3
+
 
   def count_r(self, my_string):
     count_r = 0
@@ -81,16 +95,30 @@ class Player(object):
     betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
     calling_threshold = range_structure['calling'][self.round['raises_i_owe']][self.position]
     action = None
-    
+    using_handstrength = False
+
     if range_structure == preflop_range:
       eval_cards = self.evaluation_preflop["evaluation"]
       
     else:
       eval_cards = self.he.hand_strength
+      using_handstrength = True
 
     decide_boundaries = self.compare_eval_threshold(eval_cards, [betting_threshold, calling_threshold])
 
+    self.raise_possible_tba = self.is_possible('r')
+    # Now, for distributing rewards later we need to know how the probability that our villain will stay in the hand given that he faces another raise:
+    # The reason for checking that here is that, with the artifical agent, we get certainties about his actions.
+    check_next = self.round['raises_i_owe'] + 1
+    if check_next < 3:
+        
+      potential_calling_threshold = range_structure['calling'][check_next][self.position] # Tells you how strong villains next hand must be
     
+    if using_handstrength:
+      self.certainty_to_call = 1 if eval_cards > potential_calling_threshold else 0            
+    else:
+      self.certainty_to_call = 1 if eval_cards < potential_calling_threshold else 0       
+
 
     if (decide_boundaries == betting_threshold) and self.is_possible('r'):
       total_bet = env._tocall + env._bigblind - self.currentbet
