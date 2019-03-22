@@ -20,7 +20,7 @@ env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
 env.add_player(2, stack=2000) # aggressive#
 
 
-state_size = 29
+state_size = 18
 action_size = env.action_space.n
 
 batch_size = 32
@@ -41,7 +41,7 @@ class DQNAgent:
         self.action_size = action_size
         self.memory = deque(maxlen=2000) # double-ended queue; acts like list, but elements can be added/removed from either end
         self.gamma = 0.95 # decay or discount rate: enables agent to take into account future actions in addition to the immediate ones, but discounted at this rate
-        self.epsilon = 1.0 # exploration rate: how much to act randomly; more initially than later due to epsilon decay
+        self.epsilon = 0.7 # exploration rate: how much to act randomly; more initially than later due to epsilon decay
         self.epsilon_decay = 0.995 # decrease number of random explorations as the agent's performance (hopefully) improves over time
         self.epsilon_min = 0.01 # minimum amount of random exploration permitted
         self.learning_rate = 0.001 # rate at which NN adjusts models parameters via SGD to reduce cost 
@@ -134,8 +134,8 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	player_actions = None
 	current_player = community_infos[-1]
 	player_object = env._player_dict[current_player]
-	to_call = community_infos[-2]
-	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player]
+	to_call = community_infos[-3]
+	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
 	if _round is not "Preflop": # preflop already evaluated
@@ -177,8 +177,7 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
     # Only want the state set that is relevant to learner bot every step. 
     state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
-    # if is_with_rendering:
-    #     env.render(mode='human', initial=True)
+    env.render(mode='human', initial=True)
     terminal = False
     while not terminal:
 
@@ -191,17 +190,16 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
 
         (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
-        ps = zip(*player_states)
+        ps = list(zip(*player_states))
         next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
-        agent.remember(state, action, reward, next_state, done)
+        agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
         state = next_state
         if terminal: # episode ends if agent drops pole or we reach timestep 5000
             print("episode: {}/{}, reward: {}, e: {:.2}" # print the episode's score and agent's epsilon
                 .format(e, n_episodes, reward, agent.epsilon))
         action = utilities.convert_step_return_to_action(action)
         current_state = (player_states, (community_infos, community_cards)) # state = next_state
-        # if is_with_rendering:
-        #     env.render(mode='human')
+        env.render(mode='human')
 
         if len(agent.memory) > batch_size:
             agent.replay(batch_size) # train the agent by replaying the experiences of the episode

@@ -90,7 +90,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 						n_ranks,          # rank, can be negative one if it's not avaiable.
 					])
 				] * n_pocket_cards)
-			] * 1),
+			] * 4),
 
 			spaces.Tuple([
 				spaces.Discrete(max_limit),   # learner position
@@ -761,7 +761,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _get_current_state(self):
 		player_states = []
-		for player in self._player_dict.values():
+		for player in self._seats:
 			player_features = [
 				int(player.stack),
 				int(player.handrank),
