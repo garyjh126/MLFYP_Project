@@ -74,8 +74,10 @@ def safe_actions(community_infos, which_action, n_seats, choice=None):
     if which_action is None: # Learner bot
       if choice == 0:
         actions[current_player] = [action_table.CALL, action_table.NA]
-      elif type(choice) is tuple or choice is 1:
+      elif type(choice) is tuple:
         actions[current_player] = [choice[0], choice[1]]
+      elif choice == 1:
+        actions[current_player] = [2, 25]
       else:
         actions[current_player] = [3, 0]
     else:
@@ -90,8 +92,10 @@ def safe_actions(community_infos, which_action, n_seats, choice=None):
     if which_action is None: # Learner bot
       if choice == 0:
         actions[current_player] = [action_table.CHECK, action_table.NA]
-      elif type(choice) is tuple or choice is 1:
+      elif type(choice) is tuple:
         actions[current_player] = [choice[0], choice[1]]
+      elif choice == 1:
+        actions[current_player] = [2, 25]
     else:
       if type(which_action) is list: # Check
         actions[current_player] = [which_action[1][0], which_action[1][1]]
@@ -105,3 +109,13 @@ def safe_actions(community_infos, which_action, n_seats, choice=None):
 	
 
 
+def safe_actions_call_bot(community_infos, which_action, n_seats):
+  current_player = community_infos[-3]
+  to_call = community_infos[-1]
+  actions = [[action_table.CHECK, action_table.NA]] * n_seats
+  if to_call > 0:
+    if which_action is None:
+      actions[current_player] = [action_table.CALL, action_table.NA]
+    else:
+      actions[current_player] = [which_action[0], which_action[1]]
+  return actions

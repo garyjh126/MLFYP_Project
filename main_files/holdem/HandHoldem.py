@@ -1,7 +1,6 @@
 from treys import Card, Evaluator, Deck
 from itertools import combinations 
 from holdem.player import Player
-from pypokerengine.utils.card_utils import gen_cards, estimate_hole_card_win_rate
 
 class HandEvaluation(Player):
     preflop_opprank_control = 5
@@ -65,15 +64,6 @@ class HandEvaluation(Player):
 
         if not(all([card is -1 for card in board])):
             self.board = board 
-
-    # def parse_turn_river_cards(self, event):
-    #     a = None
-    #     if event == 'Turn':
-    #         a = self.community_cards[3]
-    #     elif event == 'River':
-    #         a = self.community_cards[4]
-    #     card1 = self.from_num_to_cardstring(a)
-    #     return (card1)
 
 
     def take(self, num_take):
@@ -163,31 +153,16 @@ class HandEvaluation(Player):
             self.set_evaluation(self.do_mean_evaluation(self.hand, event, n=self.preflop_evaluation_mean_control))
             self.hand_strength = ((1 - self.evaluation/7462)*2) if ((1 - self.evaluation/7462)*2) < 1.0 else 1.0
             # self.hand_strength = self.handStrength(event)
-            # self.estimate_winrate()
             # self.detect_draws()
 
         else:
             # self.detect_draws()
             self.set_evaluation(self.evaluator.evaluate(self.board, self.hand))
             self.hand_strength = self.handStrength(event) # UPDATE 12/03: Only using handStrength for post-flop for the moment
-            # self.ew_score = self.estimate_winrate()
         self.rc = self.rank_class(self.evaluation)
         self.score_desc = self.evaluator.class_to_string(self.rc)
         self.summary = self.hand_strength, self.evaluation, self.rc, self.score_desc, self.hand, self.board
         return self.summary
-
-    def estimate_winrate(self):
-        nb_simulation = 100
-        nb_player = 3
-        hole_cards=[]
-        board = []
-        hole_cards = gen_cards(self.ew_parse(self.hand, is_num=True))
-        if self.board is not None:
-            board = gen_cards(self.ew_parse(self.board, is_num=True))
-            return estimate_hole_card_win_rate(nb_simulation=1000, nb_player=3, hole_card=hole_cards, community_card=board)
-
-    
-        
     
     def ew_parse(self, card_list, is_num=True):
         list_trey_to_st = []

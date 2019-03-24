@@ -15,9 +15,10 @@ import os # for creating directories
 
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
-env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
+starting_stack_size = 2000
+env.add_player(0, stack=starting_stack_size) # add a player to seat 0 with 2000 "chips"
 # env.add_player(1, stack=2000) # tight
-env.add_player(2, stack=2000) # aggressive#
+env.add_player(2, stack=starting_stack_size) # aggressive#
 
 
 state_size = 18
@@ -25,13 +26,15 @@ action_size = env.action_space.n
 
 batch_size = 32
 
-epsilon = 0.2
+epsilon = 1.0
 
 n_episodes = 1001 # n games we want agent to play (default 1001)
 
 output_dir = 'model_output/TexasHoldemDirectory/'
 
-with_render = False
+with_render = True
+
+villain = "Strong"
 
 
 if not os.path.exists(output_dir):
@@ -46,8 +49,8 @@ class DQNAgent:
         self.gamma = 0.95 # decay or discount rate: enables agent to take into account future actions in addition to the immediate ones, but discounted at this rate
         self.epsilon = epsilon # exploration rate: how much to act randomly; more initially than later due to epsilon decay
         self.epsilon_decay = 0.995 # decrease number of random explorations as the agent's performance (hopefully) improves over time
-        self.epsilon_min = 0.01 # minimum amount of random exploration permitted
-        self.learning_rate = 0.001 # rate at which NN adjusts models parameters via SGD to reduce cost 
+        self.epsilon_min = 0.001 # minimum amount of random exploration permitted
+        self.learning_rate = 0.01 # rate at which NN adjusts models parameters via SGD to reduce cost 
         self.model = self._build_model() # private method 
     
     def _build_model(self):
@@ -65,14 +68,18 @@ class DQNAgent:
 
     def act(self, state, player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy):
         if np.random.rand() <= self.epsilon: # if acting randomly, take random action
-            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy)
+            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy, villain)
             return action
         act_values = self.model.predict(state) # if not acting according to safe_strategy, predict reward value based on current state
         predicted_action = np.argmax(act_values[0])
         choice = None
-        if predicted_action is 1:
-            total_bet = env._tocall + env._bigblind - env.opponent.currentbet
+        if predicted_action == 0:
+            choice = 1
+        elif predicted_action == 1:
+            total_bet = env._tocall + env._bigblind - env.villain.currentbet
             choice = (2, total_bet)
+        elif predicted_action == 2:
+            choice = 3
         predicted_action = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
         return predicted_action # pick the action that will give the highest reward (i.e., go left or right?)
 
@@ -139,7 +146,7 @@ def make_epsilon_greedy_policy(Q, epsilon, nA):
 
 
 
-def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
+def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy, villain):
 	player_actions = None
 	current_player = community_infos[-3]
 	player_object = env._player_dict[current_player]
@@ -162,9 +169,11 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 		player_actions = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
 		
 	else: # bot move 
-		
-		which_action = player_object.choose_action(_round, range_structure, env) 
-		player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats, choice=None)
+		if villain == "CallChump":
+			player_actions = utilities.safe_actions_call_bot(community_infos, which_action=None, n_seats=n_seats)
+		else:
+			which_action = player_object.choose_action(_round, range_structure, env) 
+			player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats, choice=None)
 	
 	return player_actions
 
@@ -175,8 +184,15 @@ Q = defaultdict(lambda: np.zeros(env.action_space.n))
 # The policy we're following
 policy = make_epsilon_greedy_policy(Q, agent.epsilon, env.action_space.n)
 
+episode_list = []
+stacks_over_time = {}
+for index, player in env._player_dict.items():
+    stacks_over_time.update({player.get_seat(): [player.stack]})
 for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
 
+    
+    if with_render:
+        print("\n\n********Episode {}*********".format(e)) 
     episode = []
     (player_states, (community_infos, community_cards)) = env.reset()
     (player_infos, player_hands) = zip(*player_states)
@@ -186,17 +202,19 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
     # Only want the state set that is relevant to learner bot every step. 
     state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
-    env.render(mode='human', initial=True)
+    if with_render:
+        env.render(mode='human', initial=True)
     terminal = False
     while not terminal:
 
         _round = utilities.which_round(community_cards)
-        current_player = community_infos[-1]
+        current_player = community_infos[-3]
         if current_player is not 0:
-            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
+            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy, villain)
         else:
             action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
-       
+        
+        #STEP
         (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
         action = utilities.convert_step_return_to_action(action)
@@ -205,11 +223,12 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
         agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
         state = next_state
         if terminal: # episode ends if agent drops pole or we reach timestep 5000
-            print("episode: {}/{}, reward: {}, e: {:.2}" # print the episode's score and agent's epsilon
-                .format(e, n_episodes, env.learner_bot.reward, agent.epsilon))
+            print("episode: {}/{}, reward: {}, e: {:.2}, Profit Margin {}" # print the episode's score and agent's epsilon
+                .format(e, n_episodes, env.learner_bot.reward, agent.epsilon, env.learner_bot.stack - starting_stack_size))
         
         current_state = (player_states, (community_infos, community_cards)) # state = next_state
-        env.render(mode='human')
+        if with_render:
+            env.render(mode='human')
 
         if len(agent.memory) > batch_size:
             agent.replay(batch_size) # train the agent by replaying the experiences of the episode
@@ -217,145 +236,29 @@ for e in range(n_episodes): # iterate over new episodes of the game    # Print o
             agent.save(output_dir + "weights_" + '{:04d}'.format(e) + ".hdf5")
 
     utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
+    if len(env._player_dict) > 1:
+        if env._player_dict[0].stack + env._player_dict[2].stack != 2*starting_stack_size:
+            raise("Stacks should add to equal", 2*starting_stack_size)
+    stack_list = env.report_game(requested_attributes = ["stack"])
+    count_existing_players = 0
+    for stack_record_index, stack_record in env._player_dict.items():
+        arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
+        stacks_over_time.update({stack_record_index: arr})
+        if(stack_list[stack_record_index] != 0):
+            count_existing_players += 1
+    episode_list.append(episode)
 
+    if(count_existing_players == 1):
+        break
 
+# Episode end
+for player_idx, stack in stacks_over_time.items():
+    if player_idx == 0:
+        plt.plot(stack, label = "Player {} - Learner".format(player_idx))
+    else:	
+        plt.plot(stack, label = "Player {}".format(player_idx))
 
-
-
-
-
-
-
-def generate_episode(env, n_seats):
-	# state observation
-	episode = []
-	(player_states, (community_infos, community_cards)) = env.reset()
-	(player_infos, player_hands) = zip(*player_states)
-	current_state = ((player_infos, player_hands), (community_infos, community_cards))
-
-	env.render(mode='human', initial=True)
-	terminal = False
-	while not terminal:
-
-		_round = utilities.which_round(community_cards)
-		current_player = community_infos[-1]
-		a = (env._current_player.currentbet)
-		actions = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats)
-		(player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(actions)
-		current_state = (player_states, (community_infos, community_cards))
-		episode.append((current_state, action, env.learner_bot.reward))
-		env.render(mode='human')
-
-	return episode
-
-
-
-
-
-# v = mc_prediction_poker(10)
-# # for line_no, line in enumerate(v.items()):
-# #     print(line_no, line)
-
-# plotting.plot_value_function(v, title="10 Steps")
-
-def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is_with_rendering=with_render):
-    """
-    Monte Carlo Control using Epsilon-Greedy policies.
-    Finds an optimal epsilon-greedy policy.
-    
-    Args:
-        env: OpenAI gym environment.
-        num_episodes: Number of episodes to sample.
-        discount_factor: Gamma discount factor.
-        epsilon: Chance the sample a random action. Float betwen 0 and 1.
-    
-    Returns:
-        A tuple (Q, policy).
-        Q is a dictionary mapping state -> action values.
-        policy is a function that takes an observation as an argument and returns
-        action probabilities
-    """
-    
-    # Keeps track of sum and count of returns for each state
-    # to calculate an average. We could use an array to save all
-    # returns (like in the book) but that's memory inefficient.
-    returns_sum = defaultdict(float)
-    returns_count = defaultdict(float)
-    
-    # The final action-value function.
-    # A nested dictionary that maps state -> (action -> action-value).
-    Q = defaultdict(lambda: np.zeros(env.action_space.n))
-    
-    # The policy we're following
-    policy = make_epsilon_greedy_policy(Q, epsilon, env.action_space.n)
-    
-    for i_episode in range(1, num_episodes + 1):
-        # Print out which episode we're on, useful for debugging.
-        if i_episode % 10 == 0:
-            print("\rEpisode {}/{}.".format(i_episode, num_episodes), end="")
-            sys.stdout.flush()
-
-        # Generate an episode.
-        # An episode is an array of (state, action, reward) tuples
-        # episode = generate_episode_control(env, env.n_seats, policy)
-
-        episode = []
-        (player_states, (community_infos, community_cards)) = env.reset()
-        (player_infos, player_hands) = zip(*player_states)
-        current_state = ((player_infos, player_hands), (community_infos, community_cards))
-
-        # Only want the state set that is relevant to learner bot every step. 
-        state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
-
-        if is_with_rendering:
-            env.render(mode='human', initial=True)
-        terminal = False
-        while not terminal:
-
-            _round = utilities.which_round(community_cards)
-            current_player = community_infos[-1]
-            a = (env._current_player.currentbet)
-            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
-            
-            (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
-
-            parsed_return_state = utilities.convert_step_return_to_set((current_state, action, env.learner_bot.reward))
-            action = utilities.convert_step_return_to_action(action)
-            episode.append((parsed_return_state, action, env.learner_bot.reward))
-            current_state = (player_states, (community_infos, community_cards)) # state = next_state
-            if is_with_rendering:
-                env.render(mode='human')
-
-        utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
-
-
-        # Find all (state, action) pairs we've visited in this episode
-        # We convert each state to a tuple so that we can use it as a dict key
-        sa_in_episode = set([(tuple(sar[0]), sar[1]) for sar in episode])
-        for state, action in sa_in_episode:
-            state = state[0]
-            sa_pair = (state, action)
-            # Find the first occurance of the (state, action) pair in the episode
-            first_occurence_idx = next(i for i,x in enumerate(episode)
-                                       if x[0][0] == state and x[1] == action)
-            # Sum up all rewards since the first occurance
-            G = sum([x[2]*(discount_factor**i) for i,x in enumerate(episode[first_occurence_idx:])])
-            # Calculate average return for this state over all sampled episodes
-            returns_sum[sa_pair] += G
-            returns_count[sa_pair] += 1.0
-            Q[state][action] = returns_sum[sa_pair] / returns_count[sa_pair]
-        
-        # The policy is improved implicitly by changing the Q dictionary
-    
-    return Q, policy
-
-# Q, policy = mc_control_epsilon_greedy(num_episodes=100, epsilon=0.1)
-
-
-# for item in Q.items():
-#     print(item)
-
-# Here we have a Q-table defined which allows us to reference state-action pairs from our poker environment,
-# each state-action pair informing the agent on which action led to achieving the optimal policy. 
-
-
+plt.ylabel('Stack Size')
+plt.xlabel('Episode')
+plt.legend()
+plt.show()

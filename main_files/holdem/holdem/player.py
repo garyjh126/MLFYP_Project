@@ -34,7 +34,7 @@ class Player(object):
     self.he = None
     self.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
     self.possible_moves = []
-    self.position = player_id # safe to do because positions are same as id's when sarting game which is the only time when Player object is called
+    self.position = player_id 
     self.debug_raises = {}
     self.reward = None
     self.regret = {}
@@ -92,6 +92,8 @@ class Player(object):
 
   def choose_action(self,  _round, range_structure, env):
     self.debug_raises.update({_round:env.level_raises})
+    if self.round['raises_i_owe'] == 3:
+      raise("error")
     betting_threshold = range_structure['betting'][self.round['raises_i_owe']][self.position]
     calling_threshold = range_structure['calling'][self.round['raises_i_owe']][self.position]
     action = None
@@ -114,11 +116,11 @@ class Player(object):
         
       potential_calling_threshold = range_structure['calling'][check_next][self.position] # Tells you how strong villains next hand must be
     
-    if using_handstrength:
-      self.certainty_to_call = 1 if eval_cards > potential_calling_threshold else 0            
-    else:
-      self.certainty_to_call = 1 if eval_cards < potential_calling_threshold else 0       
-
+      if using_handstrength:
+        self.certainty_to_call = 1 if eval_cards > potential_calling_threshold else 0            
+      else:
+        
+        self.certainty_to_call = 1 if eval_cards < potential_calling_threshold else 0       
 
     if (decide_boundaries == betting_threshold) and self.is_possible('r'):
       total_bet = env._tocall + env._bigblind - self.currentbet
@@ -223,26 +225,3 @@ class Player(object):
       else:
         raise error.Error('invalid action ({}) must be raise (2), call (1), or fold (3)'.format(action_idx))
     return move_tuple
-
-
-class CardHolding(Player):
-
-  def __init__(self, name, first_card_suit, first_card_rank, second_card_suit, second_card_rank):
-    self.name = name
-    self.first_card_suit = first_card_suit
-    self.first_card_rank = first_card_rank
-    self.second_card_suit = second_card_suit
-    self.second_card_rank = second_card_rank
-
-  def __str__(self):
-    first_card = self.first_card_suit, self.first_card_rank
-    second_card = self.second_card_suit, self.second_card_rank
-    st = 'Name: {}'.format(self.name) + '\tFirst Card: {}'.format(str(first_card)) + '\tSecond Card: {}\n'.format(str(second_card))
-    return (str(st))
-  
-  def get_card(self, card_no):
-    if card_no == 0:
-      return self.first_card_rank + self.first_card_suit
-        
-    else:
-      return self.second_card_rank,self.second_card_suit

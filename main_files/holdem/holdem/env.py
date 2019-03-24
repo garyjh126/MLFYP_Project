@@ -42,7 +42,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self.filled_seats = 0
 		self.signal_end_round = False
 		self.winning_players = None
-
+		self.starting_stack_size = None
 		self.community = []
 		self._round = 0
 		self._button = 0
@@ -166,6 +166,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		if player_id not in self._player_dict:
 			new_player = Player(player_id, stack=stack, emptyplayer=False)
 			Player.total_plrs+=1
+			self.starting_stack_size = stack
 			if self._seats[player_id].emptyplayer:
 				self._seats[player_id] = new_player
 				new_player.set_seat(player_id)
@@ -300,6 +301,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._current_player = self._next(players, self._current_player)
 				self.last_seq_move.append('C')
 				self.playedthisround = True
+				self._current_player.round['raises_i_owe'] = 0
 
 			elif move[0] == 'check':
 				# assert self.action_space.contains(0)
@@ -323,6 +325,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._current_player = self._next(players, self._current_player)
 				
 				self.last_seq_move.append('R')
+				self._current_player.round['raises_i_owe'] = 0
+				
 			elif move[0] == 'fold':
 				assert self.action_space.contains(2)
 				self._current_player.playing_hand = False
@@ -334,8 +338,11 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._folded_players.append(self._current_player)
 				self.last_seq_move.append('F')
 				# break if a single player left
-				if len(players) == 1:
-					self._resolve(players)
+				# players = [p for p in self._seats if p.playing_hand]
+				# if len(players) == 1:
+				# 	self._resolve(players)
+
+		players = [p for p in self._seats if p.playing_hand]
 
 		# else:	## This will help eliminate infinite loop
 		# 	self._current_player = self._next(players, self._current_player)
@@ -366,6 +373,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 		if self._round == 4 or len(players) == 1:
 			terminal = True
+			self._resolve(players)
 			self._resolve_round(players)
 
 
@@ -656,9 +664,19 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _resolve_round(self, players):
 		if len(players) == 1:
-			players[0].refund(sum(self._side_pots))
-			self._totalpot = 0
-			self.winning_players = players[0]
+			if (self._round == 1 or self._round == 2) and self._last_player.get_seat() == 0 and self._last_actions[0] == 'fold':
+				if self.learner_bot.position == 0:
+					players[0].refund(self._bigblind + self._smallblind)
+					self._totalpot = 0
+					self.winning_players = players[0]
+				else:
+					players[0].refund(self._bigblind + self._smallblind + 40)
+					self._totalpot = 0
+					self.winning_players = players[0]
+			else:
+				players[0].refund(sum(self._side_pots))
+				self._totalpot = 0
+				self.winning_players = players[0]
 		else:
 			# compute hand ranks
 			for player in players:
@@ -692,13 +710,12 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			# 		self.remove_player(player.get_seat())
 
 	def report_game(self, requested_attributes, specific_player=None):
-		
 		if "stack" in requested_attributes:
 			player_stacks = {}
 			for key, player in self._player_dict.items():
 				
 				player_stacks.update({key: player.stack})
-			
+				
 			# if len(player_stacks) < 3:
 			# 	for i in range(3):
 			# 		if i not in player_stacks:
@@ -709,6 +726,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			else:
 				return (player_dict[specific_player].values())
 				 
+			
 		
 		
 
@@ -720,6 +738,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def _reset_game(self):
 		
 		playing = 0
+
+		assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
 
 		
 		for player in self._seats:
