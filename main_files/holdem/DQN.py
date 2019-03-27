@@ -177,88 +177,88 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	
 	return player_actions
 
+if __name__ == "__main__":
 
-
-Q = defaultdict(lambda: np.zeros(env.action_space.n))
-    
-# The policy we're following
-policy = make_epsilon_greedy_policy(Q, agent.epsilon, env.action_space.n)
-
-episode_list = []
-stacks_over_time = {}
-for index, player in env._player_dict.items():
-    stacks_over_time.update({player.get_seat(): [player.stack]})
-for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
-
-    
-    if with_render:
-        print("\n\n********Episode {}*********".format(e)) 
-    episode = []
-    (player_states, (community_infos, community_cards)) = env.reset()
-    (player_infos, player_hands) = zip(*player_states)
-    current_state = ((player_infos, player_hands), (community_infos, community_cards))
-    state = create_np_array(player_infos, player_hands, community_cards, community_infos)
-
-    # Only want the state set that is relevant to learner bot every step. 
-    state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
-
-    if with_render:
-        env.render(mode='human', initial=True)
-    terminal = False
-    while not terminal:
-
-        _round = utilities.which_round(community_cards)
-        current_player = community_infos[-3]
-        if current_player is not 0:
-            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy, villain)
-        else:
-            action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
+    Q = defaultdict(lambda: np.zeros(env.action_space.n))
         
-        #STEP
-        (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
+    # The policy we're following
+    policy = make_epsilon_greedy_policy(Q, agent.epsilon, env.action_space.n)
 
-        action = utilities.convert_step_return_to_action(action)
-        ps = list(zip(*player_states))
-        next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
-        agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
-        state = next_state
-        if terminal: # episode ends if agent drops pole or we reach timestep 5000
-            print("episode: {}/{}, reward: {}, e: {:.2}, Profit Margin {}" # print the episode's score and agent's epsilon
-                .format(e, n_episodes, env.learner_bot.reward, agent.epsilon, env.learner_bot.stack - starting_stack_size))
+    episode_list = []
+    stacks_over_time = {}
+    for index, player in env._player_dict.items():
+        stacks_over_time.update({player.get_seat(): [player.stack]})
+    for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
+
         
-        current_state = (player_states, (community_infos, community_cards)) # state = next_state
         if with_render:
-            env.render(mode='human')
+            print("\n\n********Episode {}*********".format(e)) 
+        episode = []
+        (player_states, (community_infos, community_cards)) = env.reset()
+        (player_infos, player_hands) = zip(*player_states)
+        current_state = ((player_infos, player_hands), (community_infos, community_cards))
+        state = create_np_array(player_infos, player_hands, community_cards, community_infos)
 
-        if len(agent.memory) > batch_size:
-            agent.replay(batch_size) # train the agent by replaying the experiences of the episode
-        if e % 50 == 0:
-            agent.save(output_dir + "weights_" + '{:04d}'.format(e) + ".hdf5")
+        # Only want the state set that is relevant to learner bot every step. 
+        state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
-    utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
-    if len(env._player_dict) > 1:
-        if env._player_dict[0].stack + env._player_dict[2].stack != 2*starting_stack_size:
-            raise("Stacks should add to equal", 2*starting_stack_size)
-    stack_list = env.report_game(requested_attributes = ["stack"])
-    count_existing_players = 0
-    for stack_record_index, stack_record in env._player_dict.items():
-        arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
-        stacks_over_time.update({stack_record_index: arr})
-        if(stack_list[stack_record_index] != 0):
-            count_existing_players += 1
-    episode_list.append(episode)
+        if with_render:
+            env.render(mode='human', initial=True)
+        terminal = False
+        while not terminal:
 
-    if(count_existing_players == 1):
-        break
+            _round = utilities.which_round(community_cards)
+            current_player = community_infos[-3]
+            if current_player is not 0:
+                action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy, villain)
+            else:
+                action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
+            
+            #STEP
+            (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
-# Episode end
-for player_idx, stack in stacks_over_time.items():
-    if player_idx == 0:
-        plt.plot(stack, label = "Player {} - Learner".format(player_idx))
-    else:	
-        plt.plot(stack, label = "Player {}".format(player_idx))
+            action = utilities.convert_step_return_to_action(action)
+            ps = list(zip(*player_states))
+            next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
+            agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
+            state = next_state
+            if terminal: # episode ends if agent drops pole or we reach timestep 5000
+                print("episode: {}/{}, reward: {}, e: {:.2}, Profit Margin {}" # print the episode's score and agent's epsilon
+                    .format(e, n_episodes, env.learner_bot.reward, agent.epsilon, env.learner_bot.stack - starting_stack_size))
+            
+            current_state = (player_states, (community_infos, community_cards)) # state = next_state
+            if with_render:
+                env.render(mode='human')
 
-plt.ylabel('Stack Size')
-plt.xlabel('Episode')
-plt.legend()
-plt.show()
+            if len(agent.memory) > batch_size:
+                agent.replay(batch_size) # train the agent by replaying the experiences of the episode
+            if e % 50 == 0:
+                agent.save(output_dir + "weights_" + '{:04d}'.format(e) + ".hdf5")
+
+        utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
+        if len(env._player_dict) > 1:
+            if env._player_dict[0].stack + env._player_dict[2].stack != 2*starting_stack_size:
+                raise("Stacks should add to equal"+str(2*starting_stack_size))
+        stack_list = env.report_game(requested_attributes = ["stack"])
+        count_existing_players = 0
+        for stack_record_index, stack_record in env._player_dict.items():
+            arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
+            stacks_over_time.update({stack_record_index: arr})
+            if(stack_list[stack_record_index] != 0):
+                count_existing_players += 1
+        episode_list.append(episode)
+
+        if(count_existing_players == 1):
+            break
+
+    # Episode end
+    for player_idx, stack in stacks_over_time.items():
+        if player_idx == 0:
+            plt.plot(stack, label = "Player {} - Learner".format(player_idx))
+        else:	
+            plt.plot(stack, label = "Player {}".format(player_idx))
+
+    plt.ylabel('Stack Size')
+    plt.xlabel('Episode')
+    plt.legend()
+    plt.show()

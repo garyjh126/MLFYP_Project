@@ -80,7 +80,9 @@ for i in range(100):
         otherAction = getAction(oppStrategy)
         vv += value(myAction, otherAction)
     vvv.append(vv)
-plt.title("CFR learned strategy (Learns to always choose paper).\nOur opponent uses fixed strategy (Rock-40%, Paper-30%, Scissors-30%)")
+plt.title("CFR Algorithm")
+plt.xlabel('Episode')
+plt.ylabel('Wins')
 plt.plot(sorted(vvv))
 plt.show()
 
