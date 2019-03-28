@@ -37,10 +37,11 @@ class Player(object):
     self.position = player_id 
     self.debug_raises = {}
     self.reward = None
+    self.action_type = None
     self.regret = {}
     self.raise_possible_tba = False
     self.certainty_to_call = 0
-
+    self.round_track_stack = stack
    
 
   def get_seat(self):
@@ -51,20 +52,7 @@ class Player(object):
     for item in self.round['possible_moves']:
       if item == move:
         return True
-        break
     return move_possible 
-
-  def how_many_more_raises_possible(self):
-    example_perspective_move = 'r'
-    if(self.count_r(env.last_seq_move) == 3):
-      return 0
-    elif(self.count_r(env.last_seq_move) == 2):
-      return 1
-    elif(self.count_r(env.last_seq_move) == 1):
-      return 2
-    else:
-      return 3
-
 
   def count_r(self, my_string):
     count_r = 0
@@ -123,10 +111,18 @@ class Player(object):
         self.certainty_to_call = 1 if eval_cards < potential_calling_threshold else 0       
 
     if (decide_boundaries == betting_threshold) and self.is_possible('r'):
-      total_bet = env._tocall + env._bigblind - self.currentbet
+      # total_bet = env._tocall + env._bigblind - self.currentbet if _round == 'Preflop' else 25
+      total_bet = None
+      if _round == 'Preflop' and self.position == 0:
+      
+        total_bet = 40
+      else:
+        total_bet = 25
+
       action = (2, total_bet)
+      assert action[1] == 40 or action[1] == 25
     elif (decide_boundaries == calling_threshold or decide_boundaries == betting_threshold) and self.is_possible('c'):
-      action = [(1, 0), (0,0)] # or 0
+      action = [(1, 0), (0, 0)] # or 0
     else:
       action = (3, 0)
 

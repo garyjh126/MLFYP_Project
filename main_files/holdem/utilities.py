@@ -107,10 +107,10 @@ class action_table:
 	NA = 0
 
 def convert_step_return_to_action(action_from_step):
-	if action_from_step[0] == 'raise' or action_from_step[0] == 'bet':
-		return 1
-	elif action_from_step[1] == 'call' or action_from_step[1] == 'check':
+	if action_from_step[0] == 'call' or action_from_step[0] == 'check':
 		return 0
+	elif action_from_step[0] == 'raise' or action_from_step[0] == 'bet':
+		return 1
 	else:
 		return 2
 

@@ -1,6 +1,5 @@
 from treys import Card
 
-
 class action_table:
   CHECK = 0
   CALL = 1
@@ -64,46 +63,56 @@ def hand_to_str(hand):
   return output
 
 
-def safe_actions(community_infos, which_action, n_seats, choice=None):
+def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None, player_o=None, best_nonlearning_action=None):
   current_player = community_infos[-3]
-  to_call = community_infos[-1]
+  # to_call = community_infos[-1]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
   if to_call > 0:
     # CALL/RAISE (Rule excludes opening up with paying of the blinds)
 
-    if which_action is None: # Learner bot
+    if villain_choice is None: # Learner bot
       if choice == 0:
         actions[current_player] = [action_table.CALL, action_table.NA]
       elif type(choice) is tuple:
-        actions[current_player] = [choice[0], choice[1]]
+        actions[current_player] = [choice[0], choice[1]] 
       elif choice == 1:
-        actions[current_player] = [2, 25]
+        if player_o.is_possible('r'):
+          if best_nonlearning_action[1] is 40:
+            actions[current_player] = [2, 25] if best_nonlearning_action is None else [2, best_nonlearning_action[1]]
+        else:
+          actions[current_player] = [action_table.CALL, action_table.NA]
       else:
         actions[current_player] = [3, 0]
     else:
-      if type(which_action) is list: # Call
-        actions[current_player] = [which_action[0][0], which_action[0][1]]
+      if type(villain_choice) is list: # Call
+        actions[current_player] = [villain_choice[0][0], villain_choice[0][1]]
       else:
-        actions[current_player] = [which_action[0], which_action[1]]
+        actions[current_player] = [villain_choice[0], villain_choice[1]]
   else:
     ## This is where a player may take initiative and BET (Rule excludes opening up with paying of the blinds)
     ## They may also CHECK
 
-    if which_action is None: # Learner bot
+    if villain_choice is None: # Learner bot
       if choice == 0:
         actions[current_player] = [action_table.CHECK, action_table.NA]
       elif type(choice) is tuple:
         actions[current_player] = [choice[0], choice[1]]
       elif choice == 1:
-        actions[current_player] = [2, 25]
+        if player_o.is_possible('r'):
+          if best_nonlearning_action[1] is 40:
+            actions[current_player] = [2, 25] if best_nonlearning_action is None else [2, best_nonlearning_action[1]]
+        else:
+          actions[current_player] = [action_table.CALL, action_table.NA]
     else:
-      if type(which_action) is list: # Check
-        actions[current_player] = [which_action[1][0], which_action[1][1]]
+      if type(villain_choice) is list: # Check
+        actions[current_player] = [villain_choice[1][0], villain_choice[1][1]]
       else:
-        if [which_action[0], which_action[1]] == [3, 0]: # Prevent against folding when to_call = 0
+        if [villain_choice[0], villain_choice[1]] == [3, 0]: # Prevent against folding when to_call = 0
           actions[current_player] = [action_table.CHECK, action_table.NA]
         else:
-          actions[current_player] = [which_action[0], which_action[1]]
+          actions[current_player] = [villain_choice[0], villain_choice[1]]
+  if actions[current_player][0] is 2:
+    print("e")
   return actions		
 	
 	

@@ -12,13 +12,16 @@ if "../" not in sys.path:
 
 with_render = True
 
+n_episodes = 1001 # n games we want agent to play (default 1001)
+
+villain = "Strong"
 
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
-	current_player = community_infos[-1]
+	current_player = community_infos[-3]
 	player_object = env._player_dict[current_player]
-	to_call = community_infos[-2]
-	empty, seat, stack, is_playing_hand, hand_rank, played_this_round, betting, allin, lastsidepot = player_infos[current_player]
+	to_call = env._tocall
+	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
 	if _round is not "Preflop": # preflop already evaluated
@@ -30,19 +33,28 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 		probs = policy(state)
 		choice = np.random.choice(np.arange(len(probs)), p=probs)
 		best_nonlearning_action = player_object.choose_action(_round, range_structure, env) # Doesn't use
-		if choice is 1:
-			total_bet = env._tocall + env._bigblind - env.opponent.currentbet
-			choice = (2, total_bet)
-		player_actions = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
+		player_actions = holdem.safe_actions(to_call, community_infos, which_action=None, n_seats=n_seats, choice=choice, player_o = player_object, best_nonlearning_action=best_nonlearning_action)
 		
 	else: # bot move 
-		
-		which_action = player_object.choose_action(_round, range_structure, env) 
-		player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats, choice=None)
+		if villain == "CallChump":
+			player_actions = utilities.safe_actions_call_bot(community_infos, which_action=None, n_seats=n_seats)
+		else:
+			villain_choice = player_object.choose_action(_round, range_structure, env) 
+			player_actions = holdem.safe_actions(to_call, community_infos, villain_choice, n_seats=n_seats, choice=None, player_o = player_object)
 	
+	this_lr = (sum(p == player_object.get_seat() for p,v in env.level_raises.items()))
+	if env.highest_in_LR()[1] is not player_object.get_seat() and env.highest_in_LR()[0] > this_lr:
+		prohibit_action(player_actions, current_player, ban = [0, 0])
+		# a,b = env.highest_in_LR()
+		print(player_actions)
+		# which_action = player_object.choose_action(_round, range_structure, env) 
+		# player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats, choice=None)
 	return player_actions
 
-
+def prohibit_action(li_actions, current_player, ban):
+	if(li_actions[current_player] == ban):
+		if env.learner_bot.action_type == "bet" or env.learner_bot.action_type == "raise":
+			print("ERROR")
 
 def generate_episode(env, n_seats):
 	# state observation
@@ -56,7 +68,7 @@ def generate_episode(env, n_seats):
 	while not terminal:
 
 		_round = utilities.which_round(community_cards)
-		current_player = community_infos[-1]
+		current_player = community_infos[-3]
 		a = (env._current_player.currentbet)
 		actions = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats)
 		(player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(actions)
@@ -235,6 +247,8 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
     policy = make_epsilon_greedy_policy(Q, epsilon, env.action_space.n)
     
     for i_episode in range(1, num_episodes + 1):
+        print("\n\n********{}*********".format(i_episode))
+        
         # Print out which episode we're on, useful for debugging.
         if i_episode % 10 == 0:
             print("\rEpisode {}/{}.".format(i_episode, num_episodes), end="")
@@ -248,7 +262,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         (player_states, (community_infos, community_cards)) = env.reset()
         (player_infos, player_hands) = zip(*player_states)
         current_state = ((player_infos, player_hands), (community_infos, community_cards))
-
+        print(env.level_raises)
         # Only want the state set that is relevant to learner bot every step. 
         state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
@@ -258,10 +272,10 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         while not terminal:
 
             _round = utilities.which_round(community_cards)
-            current_player = community_infos[-1]
+            current_player = community_infos[-3]
             a = (env._current_player.currentbet)
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
-            
+            print(env.level_raises)
             (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
             parsed_return_state = utilities.convert_step_return_to_set((current_state, action, env.learner_bot.reward))
@@ -294,7 +308,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
     
     return Q, policy
 
-Q, policy = mc_control_epsilon_greedy(num_episodes=100, epsilon=0.1)
+Q, policy = mc_control_epsilon_greedy(num_episodes=100, epsilon= 0.8)
 
 
 for item in Q.items():

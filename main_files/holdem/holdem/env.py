@@ -47,7 +47,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._round = 0
 		self._button = 0
 		self._discard = []
-
+		self.game_resolved = False
+		self.is_new_r = True
 		self._side_pots = [0] * n_seats
 		self._current_sidepot = 0 # index of _side_pots
 		self._totalpot = 0
@@ -313,7 +314,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self.playedthisround = True
 
 			elif move[0] == 'raise':
-			
+				if self._current_player is self.learner_bot and self.level_raises == {0: 1, 1: 0, 2: 2} or self.level_raises == {0: 2, 1: 0, 2: 3} or self.level_raises == {0: 3, 1: 0, 2: 4} or self.level_raises == {0: 4, 1: 0, 2: 5} or self.level_raises == {0: 5, 1: 0, 2: 6} or self.level_raises == {0: 5, 1: 0, 2: 6} and 'R' in self.last_seq_move:
+					print("watch")
 				assert self.action_space.contains(1)
 				
 				self._player_bet(self._current_player, move[1]+self._current_player.currentbet, is_posting_blind=False, bet_type="bet/raise")
@@ -328,6 +330,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._current_player.round['raises_i_owe'] = 0
 				
 			elif move[0] == 'fold':
+				if self.highest_in_LR()[0] > 4:
+					print("watch")
 				assert self.action_space.contains(2)
 				self._current_player.playing_hand = False
 				self._current_player.playedthisround = True
@@ -476,15 +480,25 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		player.playedthisround = False
 		self._lastraise = self._bigblind
 
-	def highest_in_LR(self):
+	def highest_in_LR(self, specific=None, request_is_seq=None):
 		highest_lr_bot = 0
 		highest_lr_value = 0
-		
-		for key, value in self.level_raises.items():
+		if specific is None:
+			spec = self.level_raises
+		else:
+			spec = specific
+		for key, value in spec.items():
 			if value > highest_lr_value:
 				highest_lr_value = value
 				highest_lr_bot = key
-		return highest_lr_value, highest_lr_bot
+		rep = [(highest_lr_value, highest_lr_bot)]
+		if request_is_seq:
+			for key, value in spec.items():
+				if value == highest_lr_value and key != highest_lr_bot:
+					rep.append((value, key))
+			return rep
+		else:
+			return highest_lr_value, highest_lr_bot
 
 	def is_level_raises_allzero(self):
 		count_zero = 0
@@ -497,6 +511,14 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			return False
 
 	def _player_bet(self, player, total_bet, **special_betting_type):
+		# Case 1: New round, players have incosistent raises
+		# Case 2: End of round, difference of raises is 2
+		import operator
+		sorted_lr = sorted(self.level_raises.items(), key=operator.itemgetter(1))
+		
+		if (self.is_off_balance_LR() and self.is_new_r) or ( ((int(self.highest_in_LR()[0]) - int(sorted_lr[1][1])) == 2) and (self.is_new_r is False)):
+			print("raise")
+
 		if "is_posting_blind" in special_betting_type and "bet_type" not in special_betting_type: # posting blind (not remainder to match preceding calls/raises)
 			if special_betting_type["is_posting_blind"] is True:
 				self.level_raises[player.get_seat()] = 0 
@@ -506,32 +528,32 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			if special_betting_type["is_posting_blind"] is False:
 				if special_betting_type["bet_type"] == "bet/raise":
 					if self.level_raises[player.get_seat()] < highest_lr_value:
-						action_type = "raise"
+						player.action_type = "raise"
 						self.level_raises[player.get_seat()] = highest_lr_value + 1
 					elif self.level_raises[player.get_seat()] == highest_lr_value:
-						action_type = "bet"
+						player.action_type = "bet"
 						self.level_raises[player.get_seat()] += 1
 
 				elif special_betting_type["bet_type"] == "call":
 					if self.level_raises[player.get_seat()] < highest_lr_value:
-						action_type = "call"
+						player.action_type = "call"
 						self.level_raises[player.get_seat()] = highest_lr_value
 
 					elif self.is_level_raises_allzero():
 						if player.position == 0:
-							action_type = "call"
+							player.action_type = "call"
 							self.level_raises[player.get_seat()] = 1
 
 
 					elif player.position == 2:
-						action_type = "call"
+						player.action_type = "call"
 						self.level_raises[player.get_seat()] = highest_lr_value
 
 				elif special_betting_type["bet_type"] == "check" and self._round is 0:	# BB checking preflop
 					if player.position == 2:
 						self.level_raises[player.get_seat()] = 1
 					
-
+		
 		# relative_bet is how much _additional_ money is the player betting this turn,
 		# on top of what they have already contributed
 		# total_bet is the total contribution by player to pot in this round
@@ -543,6 +565,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		if self._tocall > 0:
 			self._tocall = max(self._tocall, self._bigblind)
 		self._lastraise = max(self._lastraise, relative_bet  - self._lastraise)
+		self.is_new_r = False
 
 	def _first_to_act(self, players, my_event="Postflop"):
 		# if self._round == 0 and len(players) == 2:
@@ -656,13 +679,31 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			player.currentbet = 0
 			player.playedthisround = False
 			player.round = {'moves_i_made_in_this_round_sofar': '', 'possible_moves': set([]), 'raises_owed_to_me': 0, "raises_i_owe": 0}
-		
+			player.round_track_stack =  player.stack
+
+		self.is_new_r = True
 		self._round += 1
 		self._tocall = 0
 		self._lastraise = 0
 		self.last_seq_move = []
+		self.is_off_balance_LR()
+		
+	def is_off_balance_LR(self):
+		
+		lr = self.level_raises
+		highest_value, highest_bot  = self.highest_in_LR()
+		lr_without_highest = dict(lr)
+		del lr_without_highest[highest_bot]
+		next_highest_value, next_highest_bot = self.highest_in_LR(specific=lr_without_highest)
+		
+		if highest_value != next_highest_value:
+			return True
+		elif highest_value == next_highest_value:
+			return False
 
+		
 	def _resolve_round(self, players):
+		assert(self._player_dict[0].stack + self._player_dict[2].stack + self._totalpot == 2*self.starting_stack_size)
 		if len(players) == 1:
 			if (self._round == 1 or self._round == 2) and self._last_player.get_seat() == 0 and self._last_actions[0] == 'fold':
 				if self.learner_bot.position == 0:
@@ -708,7 +749,10 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			# for player in players: ## THIS IS AT THE END OF THE GAME. NOT DURING. (safe)
 			# 	if(player.stack == 0):
 			# 		self.remove_player(player.get_seat())
+		self.game_resolved = True
 
+		assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
+		
 	def report_game(self, requested_attributes, specific_player=None):
 		if "stack" in requested_attributes:
 			player_stacks = {}
@@ -753,6 +797,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._deck.shuffle()
 		self.level_raises = {0:0, 1:0, 2:0}
 		self.winning_players = None
+		self.game_resolved = False
+
 
 		if playing:
 			self._button = (self._button + 1) % len(self._seats)
@@ -799,6 +845,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			int(max(self._bigblind, self._lastraise + self._tocall)),
 			int(self._tocall - self._current_player.currentbet),
 		], self._pad(self.community, 5, -1))
+		if sum(self.level_raises.values()) > 6:
+			print("")
 		return (tuple(player_states), community_states)
 
 	def _get_current_reset_returns(self):
@@ -809,7 +857,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		if self.learner_bot is self.winning_players:
 			self.learner_bot.reward = self.compute_reward() + self._totalpot
 		else:
-			self.learner_bot.reward = self.compute_reward() - self._totalpot
+			self.learner_bot.reward = self.learner_bot.round_track_stack
 
 
 	def _get_current_step_returns(self, terminal, action=None):
@@ -826,40 +874,20 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			evaluations_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._last_player.get_seat() and x!=None]
 			
 			if (self._last_player is self.learner_bot): 					# Learner bot step return
-				
-
-				if(self.signal_end_round == True):
-					if(action == ('fold', 0)): # Learner Folded
-						self.learner_bot.reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players) - self._totalpot
-					else:
-						self.learner_bot.reward = self.compute_reward()
-					self.signal_end_round = False
-
-				else:
-					if(action == ('fold', 0)): # Learner Folded
-						self.learner_bot.reward = self.compute_reward_end_round(respective_evaluations, evaluations_opposing_players) - self._totalpot
-
-					else:
-						if self.winning_players is not None and terminal == True:
-							self.distribute_rewards_given_endgame()
-
-						else:
-							self.learner_bot.reward = self.compute_reward()		# Most common entry point (Learner Checks or raises)
-
-
-			else:  															# Artifical agent step return
 
 				if(self.signal_end_round == True):
 					self.signal_end_round = False
+			
+				self.learner_bot.reward = self.compute_reward()		# Most common entry point (Learner Checks or raises)
 
-				if(action == ('fold', 0)): # Opponent folded
-					self.learner_bot.reward = self._totalpot
-				
-				else:
-					if self.winning_players is not None and terminal == True:
-						self.distribute_rewards_given_endgame()
-					else:
-						self.learner_bot.reward = 0
+			else:  		
+																	# Artifical agent step return
+				self.learner_bot.reward = 0
+
+				if(self.signal_end_round == True):
+					if(action == ('fold', 0)): # Opponent folded
+						self.learner_bot.reward = self._totalpot
+					
 			# if action is ('fold', 0) or action is ('check', 0) or action[0] is 'call' or action[0] is 'raise':
 			# 	regret = self.compute_regret_given_action(action, respective_evaluations, evaluations_opposing_players)
 			
@@ -931,7 +959,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		reward = expected_values_order[action_taken] - mean(expected_values_order)
 		return reward 
 
-	def compute_reward_end_round(self, respective_evaluations, evaluations_opposing_players):
+	def compute_reward_end_round_fold(self, respective_evaluations, evaluations_opposing_players):
 		return (respective_evaluations[self._last_player.get_seat()] - mean([other_player_eval for other_player_eval in evaluations_opposing_players])) / self.weighting_coefficient_round_resolve
 
 	def compute_regret_given_action(self, my_action, respective_evaluations, evaluations_opposing_players):
