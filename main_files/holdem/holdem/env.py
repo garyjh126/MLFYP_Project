@@ -282,7 +282,9 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# self._last_actions = actions
 		
 
-
+		# if self._last_player.count_r(self.last_seq_move) > 1:
+		# 	if [3,0] in actions:
+		# 		print("r")	
 
 		# if current player did not play this round 
 		if not self._current_player.playedthisround and len([p for p in players if not p.isallin]) >= 1:
@@ -290,7 +292,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._current_player = self._next(players, self._current_player)
 				return self._get_current_step_returns(False)
 
-			move = self._current_player.player_move(self._output_state(self._current_player), actions[self._current_player.player_id])
+			move = self._current_player.player_move(self._output_state(self._current_player), actions[self._current_player.player_id], last_seq_move = self.last_seq_move, _round = self._round)
 			if self.am_i_only_player_wmoney() and self.level_raises[self._current_player.get_seat()] >= self.highest_in_LR()[0]:
 				move = ("check", 0) # Protects against player making bets without any other stacked/active players
 			self._last_actions = move
@@ -314,8 +316,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self.playedthisround = True
 
 			elif move[0] == 'raise':
-				if self._current_player is self.learner_bot and self.level_raises == {0: 1, 1: 0, 2: 2} or self.level_raises == {0: 2, 1: 0, 2: 3} or self.level_raises == {0: 3, 1: 0, 2: 4} or self.level_raises == {0: 4, 1: 0, 2: 5} or self.level_raises == {0: 5, 1: 0, 2: 6} or self.level_raises == {0: 5, 1: 0, 2: 6} and 'R' in self.last_seq_move:
-					print("watch")
+				# if self._current_player is self.learner_bot and self.level_raises == {0: 1, 1: 0, 2: 2} or self.level_raises == {0: 2, 1: 0, 2: 3} or self.level_raises == {0: 3, 1: 0, 2: 4} or self.level_raises == {0: 4, 1: 0, 2: 5} or self.level_raises == {0: 5, 1: 0, 2: 6} or self.level_raises == {0: 5, 1: 0, 2: 6} and 'R' in self.last_seq_move:
+				# 	print("watch")
 				assert self.action_space.contains(1)
 				
 				self._player_bet(self._current_player, move[1]+self._current_player.currentbet, is_posting_blind=False, bet_type="bet/raise")
@@ -330,8 +332,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 				self._current_player.round['raises_i_owe'] = 0
 				
 			elif move[0] == 'fold':
-				if self.highest_in_LR()[0] > 4:
-					print("watch")
+				# if self.highest_in_LR()[0] > 4:
+				# 	print("watch")
 				assert self.action_space.contains(2)
 				self._current_player.playing_hand = False
 				self._current_player.playedthisround = True
@@ -451,7 +453,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _resolve_postflop(self, players):
 		self._current_player = self._first_to_act(players)
-		print(self._current_player)
+		# print(self._current_player)
 
 	def _deal_next_round(self):
 		if self._round == 0:
@@ -516,8 +518,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		import operator
 		sorted_lr = sorted(self.level_raises.items(), key=operator.itemgetter(1))
 		
-		if (self.is_off_balance_LR() and self.is_new_r) or ( ((int(self.highest_in_LR()[0]) - int(sorted_lr[1][1])) == 2) and (self.is_new_r is False)):
-			print("raise")
+		# if (self.is_off_balance_LR() and self.is_new_r) or ( ((int(self.highest_in_LR()[0]) - int(sorted_lr[1][1])) == 2) and (self.is_new_r is False)):
+		# 	print("raise")
 
 		if "is_posting_blind" in special_betting_type and "bet_type" not in special_betting_type: # posting blind (not remainder to match preceding calls/raises)
 			if special_betting_type["is_posting_blind"] is True:
@@ -686,7 +688,9 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._tocall = 0
 		self._lastraise = 0
 		self.last_seq_move = []
-		self.is_off_balance_LR()
+		# if self.is_off_balance_LR():
+		# 	if self._last_actions[0] != 'fold':
+		# 		raise error.Error()
 		
 	def is_off_balance_LR(self):
 		
@@ -704,20 +708,35 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		
 	def _resolve_round(self, players):
 		assert(self._player_dict[0].stack + self._player_dict[2].stack + self._totalpot == 2*self.starting_stack_size)
+		# if len(players) == 1:
+		# 	if (self._round == 1 or self._round == 2) and self._last_player.get_seat() == 0 and self._last_actions[0] == 'fold':
+		# 		if self._last_player.count_r(self.last_seq_move) < 1:
+		# 			if self.learner_bot.position == 0:
+		# 				players[0].refund(self._bigblind + self._smallblind)
+		# 				self._totalpot = 0
+		# 				self.winning_players = players[0]
+		# 			else:
+		# 				players[0].refund(self._bigblind + self._smallblind + 40)
+		# 				self._totalpot = 0
+		# 				self.winning_players = players[0]
+		# 	else:
+		# 		players[0].refund(sum(self._side_pots))
+		# 		self._totalpot = 0
+		# 		self.winning_players = players[0]
 		if len(players) == 1:
-			if (self._round == 1 or self._round == 2) and self._last_player.get_seat() == 0 and self._last_actions[0] == 'fold':
-				if self.learner_bot.position == 0:
-					players[0].refund(self._bigblind + self._smallblind)
-					self._totalpot = 0
-					self.winning_players = players[0]
+			winner, loser = None, None # Heads-Up
+			for p in self._player_dict.values():
+				if p == players[0]:
+					winner = p
 				else:
-					players[0].refund(self._bigblind + self._smallblind + 40)
-					self._totalpot = 0
-					self.winning_players = players[0]
-			else:
-				players[0].refund(sum(self._side_pots))
-				self._totalpot = 0
-				self.winning_players = players[0]
+					loser = p
+			winner_investment = winner.stack_start_game - winner.stack
+			loser_loss = loser.stack_start_game - loser.stack
+
+			players[0].refund(winner_investment + loser_loss)
+			self._totalpot = 0
+			self.winning_players = players[0]
+
 		else:
 			# compute hand ranks
 			for player in players:
@@ -788,6 +807,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		
 		for player in self._seats:
 			if not player.emptyplayer and not player.sitting_out:
+				player.stack_start_game = player.stack
 				player.reset_hand()
 				playing += 1
 		self.community = []
@@ -845,8 +865,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			int(max(self._bigblind, self._lastraise + self._tocall)),
 			int(self._tocall - self._current_player.currentbet),
 		], self._pad(self.community, 5, -1))
-		if sum(self.level_raises.values()) > 6:
-			print("")
+		# if sum(self.level_raises.values()) > 6:
+		# 	print("")
 		return (tuple(player_states), community_states)
 
 	def _get_current_reset_returns(self):

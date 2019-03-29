@@ -42,6 +42,7 @@ class Player(object):
     self.raise_possible_tba = False
     self.certainty_to_call = 0
     self.round_track_stack = stack
+    self.stack_start_game = stack
    
 
   def get_seat(self):
@@ -54,13 +55,24 @@ class Player(object):
         return True
     return move_possible 
 
-  def count_r(self, my_string):
+  def count_r(self, my_string, spec=None):
     count_r = 0
-    for letter in my_string:
-      if letter == 'R' or letter == 'r':
-        count_r = count_r + 1
+
+    if spec is None:
+
+      for letter in my_string:
+        if letter == 'R' or letter == 'r':
+          count_r = count_r + 1
+
+    
+    else:
+
+      for letter in my_string:
+        if letter == 'c':
+          count_r = count_r + 1
 
     return count_r
+
 
   def set_handrank(self, value):
     self.handrank = value
@@ -162,7 +174,7 @@ class Player(object):
     self.playedthisround = True
     if not bet_size:
       return
-    self.stack -= (bet_size - self.currentbet)
+    self.stack -= (bet_size - self.currentbet) # Total - 10 in case of SB calling to see flop
     self.currentbet = bet_size
     if self.stack == 0:
       self.isallin = True
@@ -181,19 +193,41 @@ class Player(object):
     self.hand = table_state.get('pocket_cards')
 
   # cleanup
-  def player_move(self, table_state, action):
+  def player_move(self, table_state, action, last_seq_move=None, _round=None):
     self.update_localstate(table_state)
     bigblind = table_state.get('bigblind')
     tocall = min(table_state.get('tocall', 0), self.stack)
-    minraise = table_state.get('minraise', 0)
-    minraise = 25
+    minraise = 0 #table_state.get('minraise', 0) - 10
+    [action_idx, raise_amount] = action
+    raise_amount = int(raise_amount) 
+    action_idx = int(action_idx)
+    # if tocall == 0:
+      # if not(action_idx in [Player.CHECK, Player.RAISE]):
+      #   print("watch")
+
+    if action[0] == 2:
+      if _round == 0:
+        if self.position == 0 and self.count_r(last_seq_move) == 0:
+          action[1] = 40
+        elif self.position == 2:
+          action[1] = 50 if self.count_r(last_seq_move) > 0 else 25
+        if self.get_seat() == 2 and self.count_r(last_seq_move) > 0:
+          action[1] = 50 if self.count_r(last_seq_move) > 1 else 25
+      else:
+      
+        action[1] = 50 if self.count_r(last_seq_move) > 0 else 25
     
-    
+    if (self.count_r(last_seq_move)) > 1 or _round != 0:
+      
+        to_call = 25 * (self.count_r(last_seq_move)) 
+
     [action_idx, raise_amount] = action
     raise_amount = int(raise_amount) 
     action_idx = int(action_idx)
 
     if tocall == 0:
+      # if not(action_idx in [Player.CHECK, Player.RAISE]):
+      #   print("watch")
       assert action_idx in [Player.CHECK, Player.RAISE]
       if action_idx == Player.RAISE:
         if raise_amount < minraise:

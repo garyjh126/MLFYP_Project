@@ -81,7 +81,7 @@ def assign_evals_player(player_o, _round, env):
 	set_attributes(hand_strength, evaluation, player_o, rc, score_desc, _round)
 	player_o.populatePlayerPossibleMoves(env)
 	player_o.round['raises_i_owe'] = calc_raises_i_face(player_o, env)
-	print("")
+	# print("")
 
 def do_necessary_env_cleanup(env):
     list_players = env._player_dict.copy()
@@ -114,15 +114,15 @@ def convert_step_return_to_action(action_from_step):
 	else:
 		return 2
 
-def safe_actions_call_bot(community_infos, which_action, n_seats):
+def safe_actions_call_bot(community_infos, villain_choice, n_seats):
 	current_player = community_infos[-3]
 	to_call = community_infos[-1]
 	actions = [[action_table.CHECK, action_table.NA]] * n_seats
 	if to_call > 0:
-		if which_action is None:
+		if villain_choice is None:
 			actions[current_player] = [action_table.CALL, action_table.NA]
 		else:
-			actions[current_player] = [which_action[0], which_action[1]]
+			actions[current_player] = [villain_choice[0], villain_choice[1]]
 	return actions
 
 def convert_step_return_to_set(sar):

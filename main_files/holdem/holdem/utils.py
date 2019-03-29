@@ -77,10 +77,13 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
         actions[current_player] = [choice[0], choice[1]] 
       elif choice == 1:
         if player_o.is_possible('r'):
-          if best_nonlearning_action[1] is 40:
-            actions[current_player] = [2, 25] if best_nonlearning_action is None else [2, best_nonlearning_action[1]]
+          
+            actions[current_player] = [2, 50]
         else:
-          actions[current_player] = [action_table.CALL, action_table.NA]
+          if player_o.round['raises_i_owe'] > 0:
+            actions[current_player] = [action_table.CALL, action_table.NA]
+          else:
+            actions[current_player] = [action_table.CHECK, action_table.NA]
       else:
         actions[current_player] = [3, 0]
     else:
@@ -99,10 +102,12 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
         actions[current_player] = [choice[0], choice[1]]
       elif choice == 1:
         if player_o.is_possible('r'):
-          if best_nonlearning_action[1] is 40:
-            actions[current_player] = [2, 25] if best_nonlearning_action is None else [2, best_nonlearning_action[1]]
+            actions[current_player] = [2, 25] 
         else:
-          actions[current_player] = [action_table.CALL, action_table.NA]
+          if player_o.round['raises_i_owe'] > 0:
+            actions[current_player] = [action_table.CALL, action_table.NA]
+          else:
+            actions[current_player] = [action_table.CHECK, action_table.NA]
     else:
       if type(villain_choice) is list: # Check
         actions[current_player] = [villain_choice[1][0], villain_choice[1][1]]
@@ -111,8 +116,8 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
           actions[current_player] = [action_table.CHECK, action_table.NA]
         else:
           actions[current_player] = [villain_choice[0], villain_choice[1]]
-  if actions[current_player][0] is 2:
-    print("e")
+  # if actions[current_player][0] is 2:
+  #   print("e")
   return actions		
 	
 	

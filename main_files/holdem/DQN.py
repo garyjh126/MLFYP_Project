@@ -15,7 +15,7 @@ import os # for creating directories
 
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
-starting_stack_size = 2000
+starting_stack_size = 100
 env.add_player(0, stack=starting_stack_size) # add a player to seat 0 with 2000 "chips"
 # env.add_player(1, stack=2000) # tight
 env.add_player(2, stack=starting_stack_size) # aggressive#
@@ -26,7 +26,7 @@ action_size = env.action_space.n
 
 batch_size = 32
 
-epsilon = 1.0
+epsilon = 0.8
 
 n_episodes = 1001 # n games we want agent to play (default 1001)
 
@@ -56,8 +56,8 @@ class DQNAgent:
     def _build_model(self):
         # neural net to approximate Q-value function:
         model = Sequential()
-        model.add(Dense(24, input_dim=self.state_size, activation='relu')) # 1st hidden layer; states as input
-        model.add(Dense(24, activation='relu')) # 2nd hidden layer
+        model.add(Dense(32, input_dim=self.state_size, activation='relu')) # 1st hidden layer; states as input
+        model.add(Dense(32, activation='relu')) # 2nd hidden layer
         model.add(Dense(self.action_size, activation='linear')) # 2 actions, so 2 output neurons: 0 and 1 (L/R)
         model.compile(loss='mse',
                       optimizer=Adam(lr=self.learning_rate))
@@ -72,6 +72,9 @@ class DQNAgent:
             return action
         act_values = self.model.predict(state) # if not acting according to safe_strategy, predict reward value based on current state
         predicted_action = np.argmax(act_values[0])
+        env.learner_bot.he.set_community_cards(community_cards, _round)
+        range_structure = utilities.fill_range_structure(_round, env.learner_bot)
+        utilities.assign_evals_player(env.learner_bot, _round, env)
         choice = None
         if predicted_action == 0:
             choice = 1
@@ -80,7 +83,7 @@ class DQNAgent:
             choice = (2, total_bet)
         elif predicted_action == 2:
             choice = 3
-        predicted_action = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
+        predicted_action = holdem.safe_actions(community_infos[-1], community_infos, villain_choice=None, n_seats=n_seats, choice=choice, player_o=env.learner_bot)
         return predicted_action # pick the action that will give the highest reward (i.e., go left or right?)
 
     def replay(self, batch_size): # method that trains NN with experiences sampled from memory
@@ -150,8 +153,8 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	
 	player_actions = None
 	current_player = community_infos[-3]
-	if current_player == 0:
-		print("raise")
+	# if current_player == 0:
+	# 	print("raise")
 	player_object = env._player_dict[current_player]
 	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
@@ -166,14 +169,14 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 		probs = policy(state)
 		choice = np.random.choice(np.arange(len(probs)), p=probs)
 		best_nonlearning_action = player_object.choose_action(_round, range_structure, env) # Doesn't use
-		player_actions = holdem.safe_actions(community_infos, which_action=None, n_seats=n_seats, choice=choice)
+		player_actions = holdem.safe_actions(to_call, community_infos, villain_choice=None, n_seats=n_seats, choice=choice, player_o = player_object, best_nonlearning_action=best_nonlearning_action)
 		
 	else: # bot move 
 		if villain == "CallChump":
-			player_actions = utilities.safe_actions_call_bot(community_infos, which_action=None, n_seats=n_seats)
+			player_actions = utilities.safe_actions_call_bot(community_infos, villain_choice=None, n_seats=n_seats)
 		else:
-			which_action = player_object.choose_action(_round, range_structure, env) 
-			player_actions = holdem.safe_actions(community_infos, which_action, n_seats=n_seats, choice=None)
+			villain_choice = player_object.choose_action(_round, range_structure, env) 
+			player_actions = holdem.safe_actions(to_call, community_infos, villain_choice, n_seats=n_seats, choice=None, player_o = player_object)
 	
 	return player_actions
 
