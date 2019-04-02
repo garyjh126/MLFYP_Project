@@ -21,7 +21,11 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
      
  ### Changing Hyperparameters ###
  
- The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows: ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
+ The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows: 
+ 
+ 
+ 
+ ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
 
 ### "Tkinter GUI enables users to play against various agent types (A work in progress)" ###
  ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
@@ -54,11 +58,24 @@ Re-solving is one of the **subgame solving techniques**. Subgame is a game tree 
 Creators of Deepstack used **continual re-solving** where only two vectors were maintained throughout the game. The two vectors turned out to be sufficient to continuously reconstruct a strategy profile that approximates Nash Equilibrium in a current subgame (decision point). 
 
 
-## Counterfactual Regret Minimization
+## Approach to Problem
 
-CFR is a self-play algorithm: it learns to play a game by repeatedly playing against itself.  The program starts off with a strategy that is uniformly random, where it will play every action at every decision point with an equal probability.  It then simulates playing games against itself.  After every game, it revisits its decisions, and finds ways to improve its strategy.  It repeats this process for billions of games, improving its strategy each time.  As it plays, it gets closer and closer towards an optimal strategy for the game: a strategy that can do no worse than tie against any opponent.
-
-The way it improves over time is by summing the total amount of regret it has for each action at each decision point, where regret means: how much better would I have done over all the games so far if I had just always played this one action at this decision, instead of choosing whatever mixture over actions that my strategy said I should use?  Positive regret means that we would have done better if we had taken that action more often.  Negative regret means that we would have done better by not taking that action at all.  After each game that the program plays against itself, it computes and adds in the new regret values for all of its decisions it just made.  It then recomputes its strategy so that it takes actions with probabilities proportional to their positive regret.  If an action would have been good in the past, then it will choose it more often in the future.
-
-It repeats this process for billions of games.  So you have this long sequence of strategies that it was using on each game.  Counter-intuitively, that sequence of strategies does not necessarily converge to anything useful (although it sometimes does so in practice, now, with the new CFR+ algorithm described in the Science paper).  However, in a two-player zero-sum game, if you compute the average strategy over those billions of strategies in the sequence, then that average strategy will converge towards a Nash equilibrium for the game.  After it's finished learning how to play by playing against itself, it doesn't have to change any further: it just uses that average strategy against any human or computer opponent it faces.
+The solution carried out in this project has been developed by using an incremental build
+approach. The final application consists of a model-free deep reinforcement learning algorithm,
+and a Monte-Carlo simulation that works in an environment of two bots. The first bot serves as
+the benchmark agent as used in that simply plays actions according to both the public game
+state and their own private hole cards. The second bot acts as the ‘learner’ that learns to orient
+its own strategy according to the environment. The environment feeds rewards to the learner
+agent as a way of incentivising actions that performed well in a particular state. In the case of
+poker, optimal results are those which lead to building a higher profit margin. The agent must
+learn the optimal policy which determines the best path for an agent to take. A policy simply
+maps a state to an action.
+Solutions are tested using a unique approach taken by the researchers at the University of
+Alberta. This approach is called Counterfactual Regret Minimization (CFR), a self-play
+iterative algorithm that learns by accumulating regret for each action at each decision point.
+Acting as an initial approach, CFR was soon replaced by the idea of using deep reinforcement
+learning in the hopes that deep learning could solve the problem. In Q-learning, a Neural
+network acts as the agent that learns to map state-action pairs to rewards, thereby enabling a
+bot to learn the optimal Q-function ‘ Q * ( s, a ) ’,​ and returning the policy that was associated with
+such high rewards.
 
