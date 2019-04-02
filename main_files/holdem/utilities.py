@@ -88,6 +88,9 @@ def do_necessary_env_cleanup(env):
     for player in list_players.values():
         if player.stack <= 0:
             env.remove_player(player.get_seat())
+            return True # End Game
+        else: 
+            return False
     env.assign_positions()
 
 def convert_list_to_tupleA(learner_bot_state, community_state):

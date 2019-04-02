@@ -14,14 +14,14 @@ from keras.optimizers import Adam
 import os # for creating directories
 
 
+starting_stack_size = 2000
+
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
-starting_stack_size = 100
 env.add_player(0, stack=starting_stack_size) # add a player to seat 0 with 2000 "chips"
-# env.add_player(1, stack=2000) # tight
 env.add_player(2, stack=starting_stack_size) # aggressive#
 
-
 state_size = 18
+
 action_size = env.action_space.n
 
 batch_size = 32
@@ -34,7 +34,11 @@ output_dir = 'model_output/TexasHoldemDirectory/'
 
 with_render = True
 
-villain = "Strong"
+with_graph = True
+
+villain = "CallChump"
+
+
 
 
 if not os.path.exists(output_dir):
@@ -217,7 +221,7 @@ if __name__ == "__main__":
             else:
                 action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
             
-            #STEP
+            #STEP - SET BREAKPOINT ON THE FOLLOWING LINE TO OBSERVE ACTIONS TAKEN ONE BY ONE
             (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
             action = utilities.convert_step_return_to_action(action)
@@ -264,4 +268,5 @@ if __name__ == "__main__":
     plt.ylabel('Stack Size')
     plt.xlabel('Episode')
     plt.legend()
-    plt.show()
+    if with_graph:
+        plt.show()

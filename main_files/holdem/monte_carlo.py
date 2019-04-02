@@ -10,13 +10,15 @@ import utilities
 if "../" not in sys.path:
   sys.path.append("../") 
 
-with_render = False
+with_render = True
 
-n_episodes = 100 # n games we want agent to play (default 1001)
+n_episodes = 1001 # n games we want agent to play (default 1001)
 
-villain = "Strong"
+villain = "CallChump"
 
-starting_stack_size = 20000
+starting_stack_size = 2000
+
+with_graph = True
 
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
@@ -220,6 +222,8 @@ def make_epsilon_greedy_policy(Q, epsilon, nA):
 
 stacks_over_time = {}
 
+
+
 def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is_with_rendering=with_render):
     """
     Monte Carlo Control using Epsilon-Greedy policies.
@@ -295,7 +299,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
             if is_with_rendering:
                 env.render(mode='human')
 
-        utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
+        is_end_game = utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
         stack_list = env.report_game(requested_attributes = ["stack"])
         count_existing_players = 0
         for stack_record_index, stack_record in env._player_dict.items():
@@ -322,6 +326,8 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
             Q[state][action] = returns_sum[sa_pair] / returns_count[sa_pair]
         
         # The policy is improved implicitly by changing the Q dictionary
+        if is_end_game:
+            break
     
     # Episode end
     for player_idx, stack in stacks_over_time.items():
@@ -341,7 +347,8 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
     plt.ylabel('Stack Size')
     plt.xlabel('Episode')
     plt.legend()
-    # plt.show()
+    if with_graph:
+        plt.show()
 
     return Q, policy
 
@@ -363,6 +370,6 @@ Q, policy = mc_control_epsilon_greedy(num_episodes=n_episodes, epsilon= 0.9)
 # for i,j in V.items():
 #     print(i, j)
 
-for stack in stacks_over_time:
-        print (stack)
+# for stack in stacks_over_time:
+#         print (stack)
 

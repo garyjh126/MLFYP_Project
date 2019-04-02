@@ -55,6 +55,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self._tocall = 0
 		self._lastraise = 0
 		self._number_of_hands = 0
+		self._record_players = []
 
 		# fill seats with dummy players
 		self._seats = [Player(i, stack=0, emptyplayer=True) for i in range(n_seats)]
@@ -180,6 +181,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			self.learner_bot = new_player
 		else:
 			self.villain = new_player
+		self._record_players.append(new_player)
 			
 			
 			
@@ -595,6 +597,10 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# 	my_return = [player for player in players if player.get_seat() > self._button][0]
 			
 		#assert first_to_act is not None and not(first_to_act.emptyplayer) and not(first_to_act.stack <= 0)
+
+		if len(players) == 1:
+			first_to_act = self._record_players[0]
+
 		return first_to_act
 
 	def assign_next_to_act(self, players, precedence_positions):
@@ -707,7 +713,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 		
 	def _resolve_round(self, players):
-		assert(self._player_dict[0].stack + self._player_dict[2].stack + self._totalpot == 2*self.starting_stack_size)
 		# if len(players) == 1:
 		# 	if (self._round == 1 or self._round == 2) and self._last_player.get_seat() == 0 and self._last_actions[0] == 'fold':
 		# 		if self._last_player.count_r(self.last_seq_move) < 1:
@@ -725,7 +730,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# 		self.winning_players = players[0]
 		if len(players) == 1:
 			winner, loser = None, None # Heads-Up
-			for p in self._player_dict.values():
+			for p in self._record_players:
 				if p == players[0]:
 					winner = p
 				else:
@@ -733,14 +738,21 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			winner_investment = winner.stack_start_game - winner.stack
 			loser_loss = loser.stack_start_game - loser.stack
 
-			players[0].refund(winner_investment + loser_loss)
+			if loser.stack_start_game < 15 and loser.position == 0:
+				players[0].refund((self.starting_stack_size - winner.stack) )
+			elif loser.stack_start_game < 25 and loser.position == 2:
+				players[0].refund((self.starting_stack_size - winner.stack) )
+		
+			else:
+				players[0].refund(winner_investment + loser_loss)
+				
 			self._totalpot = 0
 			self.winning_players = players[0]
 
 		else:
 			# compute hand ranks
 			for player in players:
-				assert (len(self.community) <= 5) is True
+				# assert (len(self.community) <= 5) is True
 				player.handrank = self._evaluator.evaluate(player.hand, self.community)
 
 			# trim side_pots to only include the non-empty side pots
@@ -802,7 +814,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		
 		playing = 0
 
-		assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
+		# if self._player_dict[0].stack is not None and self._player_dict[2].stack is not None:
+		# 	assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
 
 		
 		for player in self._seats:
