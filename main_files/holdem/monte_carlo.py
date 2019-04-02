@@ -342,7 +342,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
     # import statistics
     # lost_avg = statistics.mean(diffs)
     won_avg = p1_stack_t[len(p1_stack_t)-1] - p1_stack_t[0]
-    print(p1_stack_t)
+    # print(p1_stack_t)
     print('mbb/g:{}'.format(won_avg/n_episodes))
     plt.ylabel('Stack Size')
     plt.xlabel('Episode')
