@@ -19,6 +19,7 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
      python monte_carlo.py
      python DQN.py
      
+     
  ### Changing Hyperparameters ###
  
  The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows: 
@@ -27,8 +28,10 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
  
  ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
 
+
 ### "Tkinter GUI enables users to play against various agent types (A work in progress)" ###
  ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
+ 
 
 # Background
 
