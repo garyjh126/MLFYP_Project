@@ -21,9 +21,8 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
      
  ### Changing Hyperparameters ###
  
- The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default they are set as follows:
+ The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows:
  ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
-
 
 The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
 
@@ -32,9 +31,22 @@ I also take inspiration from other ambitious projects which set out to solve No 
  ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
 
 
+# Background
+
+Poker is recognised as the quintessential game of imperfect information. Researchers around
+the world have explored the depths of problems associated with solving such games and only a
+handful have been successful in applying their methods to the game of poker. The recent
+success of researchers sparked global interest and serves as the context for building a poker
+bot in today’s climate. Contained in this project report will be a discussion about the research
+carried out in solving the game of Limit Texas Hold’em and a personal pursuit in building a bot
+that can do something similar.
+The main purpose of this project is to test applications of deep reinforcement learning methods
+on an imperfect information environment, to derive results, and hopefully build an intelligent
+poker bot in the process.
+
 ## Cepheus – AI playing Limit Texas Hold’em Poker
 
-Even though the titles of the research papers claim solving poker – formally it was essentially solved. Essentially solving Heads Up Limit* Texas Hold’em meant researchers were able to come up with an approximation (indistinguishable from original one for human during a lifetime) of a strategy profile called Nash Equilibrium. In two person zero-sum games playing a strategy from a Nash Equilibrium is also the best any player can do in case of no knowledge of his opponent’s strategy.
+Even though the titles of the research papers claim solving poker – formally it was essentially solved. Essentially solving Heads Up Limit* Texas Hold’em meant researchers were able to come up with an approximation (indistinguishable from original one for human during a lifetime) of a strategy profile coined 'Nash Equilibrium'. In two person zero-sum games playing a strategy from a Nash Equilibrium is also the best any player can do in case of no knowledge of his opponent’s strategy.
 
 
 ## DeepStack 
