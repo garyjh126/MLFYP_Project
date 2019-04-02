@@ -10,7 +10,7 @@
 
 ## Instructions ##
 
-To review the DQN at optimal performance, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title").
+To review the DQN at optimal performance, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title"), and click 'Open in Playground'. Run all the cells in the notebook and observe the output. Rendering can be switched on and off.
 
 Alternatively, the code can be run from the DQN.py script [here](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title"). The Monte-Carlo simulation can also be run here. 
     
@@ -20,13 +20,16 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
      python DQN.py
      
  ### Changing Hyperparameters ###
+ 
+ The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default they are set as follows:
+ ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
 
 
 The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
 
 I also take inspiration from other ambitious projects which set out to solve No limit Texas Hold 'em which has extended complications due to the continuous range of betting values; hence the label 'No limit'. Such projects include [Deepstack](https://matchpoker.net/deepstack-ai/) and [Libratus](https://www.cs.cmu.edu/~noamb/papers/17-IJCAI-Libratus.pdf).
 
-![alt text](https://i.ytimg.com/vi/jLXPGwJNLHk/maxresdefault.jpg "Libratus")
+ ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
 
 
 ## Cepheus – AI playing Limit Texas Hold’em Poker
