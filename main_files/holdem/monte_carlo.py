@@ -606,7 +606,7 @@ class StartGame(tk.Frame):
 
 
 	def generate_episode_guest(self):
-		episode = []
+		part_ep = []
 		
 		self.get_action_for_page()
 		
@@ -614,10 +614,10 @@ class StartGame(tk.Frame):
 
 		parsed_return_state = utilities.convert_step_return_to_set((self.current_state, self.action, env.learner_bot.reward))
 		self.action = utilities.convert_step_return_to_action(self.action)
-		episode.append((parsed_return_state, self.action, env.learner_bot.reward))
+		part_ep.append((parsed_return_state, self.action, env.learner_bot.reward))
 		current_state = (self.player_states, (self.community_infos, self.community_cards)) # state = next_state
 		
-		return episode
+		return part_ep
 
 	def generate_episode_learner_move(self):
 		episode = []
