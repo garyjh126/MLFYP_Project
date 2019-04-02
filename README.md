@@ -21,15 +21,10 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
      
  ### Changing Hyperparameters ###
  
- The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows:
- ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
+ The hyperparameters can be changed from within the text editor if the user wants to disable rendering etc. By default, they are set in both monte_carlo.py and DQN.py as follows: ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
 
-The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
-
-I also take inspiration from other ambitious projects which set out to solve No limit Texas Hold 'em which has extended complications due to the continuous range of betting values; hence the label 'No limit'. Such projects include [Deepstack](https://matchpoker.net/deepstack-ai/) and [Libratus](https://www.cs.cmu.edu/~noamb/papers/17-IJCAI-Libratus.pdf).
-
+### "Tkinter GUI enables users to play against various agent types (A work in progress)" ###
  ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
-
 
 # Background
 
@@ -44,6 +39,7 @@ The main purpose of this project is to test applications of deep reinforcement l
 on an imperfect information environment, to derive results, and hopefully build an intelligent
 poker bot in the process.
 
+The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/). I also take inspiration from other ambitious projects which set out to solve No limit Texas Hold 'em which has extended complications due to the continuous range of betting values; hence the label 'No limit'. Such projects include [Deepstack](https://matchpoker.net/deepstack-ai/) and [Libratus](https://www.cs.cmu.edu/~noamb/papers/17-IJCAI-Libratus.pdf).
 ## Cepheus – AI playing Limit Texas Hold’em Poker
 
 Even though the titles of the research papers claim solving poker – formally it was essentially solved. Essentially solving Heads Up Limit* Texas Hold’em meant researchers were able to come up with an approximation (indistinguishable from original one for human during a lifetime) of a strategy profile coined 'Nash Equilibrium'. In two person zero-sum games playing a strategy from a Nash Equilibrium is also the best any player can do in case of no knowledge of his opponent’s strategy.
