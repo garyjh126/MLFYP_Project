@@ -2,13 +2,25 @@
 
 [Link to main code](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title")
 
-# Install Requirements #
+## Requirements ##
 
-    pip install matplotlib
     pip install gym
-    pip install holdem
     pip install treys
     pip install keras
+
+## Instructions ##
+
+To review the DQN at optimal performance, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title").
+
+Alternatively, the code can be run from the DQN.py script [here](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title"). The Monte-Carlo simulation can also be run here. 
+    
+**Example**
+
+     python monte_carlo.py
+     python DQN.py
+     
+ ### Changing Hyperparameters ###
+
 
 The project is inspired by the work of the students and teachers at the [University of Alberta](http://poker.cs.ualberta.ca/). The project set out here was named [Cepheus](http://poker.srv.ualberta.ca/).
 
