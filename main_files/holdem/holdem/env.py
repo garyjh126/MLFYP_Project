@@ -227,6 +227,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			self._post_smallblind(self._current_player)
 			self._current_player = self._next(players, self._current_player)
 			self._post_bigblind(self._current_player)
+			self.is_new_r = True # Caution: Setting true after SB and BB could lead to unexpected bugs
 			self._current_player = self._next(players, self._current_player)
 			self._tocall = self._bigblind
 			self._round = 0
@@ -818,7 +819,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		self.level_raises = {0:0, 1:0, 2:0}
 		self.winning_players = None
 		self.game_resolved = False
-
 
 		if playing:
 			self._button = (self._button + 1) % len(self._seats)

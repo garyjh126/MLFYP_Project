@@ -65,8 +65,6 @@ def prohibit_action(li_actions, current_player, ban):
 			# print("ERROR")
 			pass
 
-
-
 def simulate_episodes_with_graphs(no_of_episodes=100):
 	episode_list = []
 	stacks_over_time = {}
@@ -206,14 +204,14 @@ class SeaofBTCapp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         # tk.Tk.iconbitmap(self, default="clienticon.ico")
-        tk.Tk.wm_title(self, "Sea of BTC client")
+        tk.Tk.wm_title(self, "Texas Hold'em Casino")
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand = True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-
+        
         for F in (StartPage, PageOne, PagePokerGameMC, StartGame):
 
             frame = F(container, self)
@@ -311,8 +309,10 @@ class StartGame(tk.Frame):
 		self.separator = tk.LabelFrame(self, width=50, height=150, text="Board", bd=10)
 		self.separator.pack(fill='x', padx=5, pady=5)
 
-		
-	
+		self.s = ttk.Style()
+		self.s.configure('call.TButton', foreground='green')
+		self.s.configure('raise.TButton', foreground='red')
+		self.s.configure('fold.TButton', foreground='blue')
 
 		self.returns_sum = defaultdict(float)
 		self.returns_count = defaultdict(float)
@@ -345,20 +345,27 @@ class StartGame(tk.Frame):
 		self.episodes = []
 		self.last_bet_label = None
 		self.community_display = []
+		self.is_new_game = False
 
 		self.delegate_state_info(reset=True)
-
-		self.set_info_before_loop()
-		self.simulate(initial=True)
+		self.simulate(initial=True, part_init=True)
 
 		
 
 
 	def restart_game(self):
+		self.is_new_game = True
+		self.guest_action = None
 		utilities.do_necessary_env_cleanup(env)
 		self.delegate_state_info(reset=True)
-		self.set_info_before_loop()
-		self.simulate()
+
+		print("guest position", self.p2.position)
+		print("learner position", self.p1.position)
+		
+		print("currentPlayer after sb and bb payed (SB)", self.community_infos[-3])
+		if (self.community_infos[-3] == 0):
+			self.simulate(initial=self.is_initial())
+			
 
 
 	# def start_new_round(self):
@@ -366,26 +373,30 @@ class StartGame(tk.Frame):
 	# 	while not(self.terminal):
 	# 		self.simulate()
 
+	def is_initial(self):
+		if self.is_new_game:
+			initial = True
+		else:
+			initial = False
+		return initial
+
 	def set_guest_action(self, action):
-		# self.update_local_state(reset=False)
-		# self.populate_info_pre_action()
+		self.update_local_state(reset=False)
 		self.guest_action = action
-
+		initial = self.is_initial()
+		if (self.community_infos[-3] == 0):
+			print("before")
 		if (self.community_infos[-3] == 2):
-			self.simulate()
-		
-			if self.community_infos[-3] == 0 and not env.is_new_r:
-				self.simulate()
+			self.simulate(initial=self.is_initial())
+			print("1")
+			if self.community_infos[-3] == 0 and not self.is_new_game:
+				self.simulate(initial=self.is_initial())
+				print("2")
+		if (self.community_infos[-3] == 0):
+			print("after")
 
-		
-
-		# if env.is_new_r:
-		# 	self.start_new_round()
-
-	def simulate(self, initial = False):
+	def simulate(self, initial = False, part_init=False):
 		# for i_episode in range(1, n_episodes + 1):
-		
-
 		self.populate_info_pre_action()
 		if self.current_player == 0:
 			self.episodes.append(self.generate_episode_learner_move())
@@ -393,34 +404,22 @@ class StartGame(tk.Frame):
 			self.episodes.append(self.generate_episode_guest())
 		
 		if self.terminal:
-			
-			self.restart_game()
-			
-
+			if part_init:
+				self.delegate_state_info(reset=True)
+				self.simulate(initial=True, part_init=True)
+			else:
+				self.restart_game()
 		else:
-			
-			self.update_local_state(reset=False)
-			
-		# utilities.do_necessary_env_cleanup(env)
-
-
-	def update_local_state(self, reset=True):
-		self.p1_pos = 'SB' if self.p1.position == 0 else 'BB'
-		self.p2_pos = 'SB' if self.p2.position == 0 else 'BB'
-
-		if reset:
-			self.state = env.reset()
-			
-		else:
-			self.state = env._get_current_state()
-			self.set_info_before_loop()
+			if part_init:
+				self.update_local_state(reset=False)
+				
 			self.update_display()
 
+		if initial:
+			self.is_new_game = False
 
-	def update_display(self):
 		
-		self.update_pot_size()
-
+	def update_display(self):
 		self.assign_player_objects_to_display(reset=True)
 		
 		self.assign_cards_to_display(self.guest_cards_st, self.learner_cards_st, reset=True)
@@ -429,6 +428,7 @@ class StartGame(tk.Frame):
 
 		self.assign_guest_buttons()
 
+		self.update_pot_size()
 
 	def print_last_action(self, spec=None):
 		if self.last_bet_label is not None:
@@ -444,22 +444,37 @@ class StartGame(tk.Frame):
 				self.print_last_action(spec='Player 1 Folded')
 				time.sleep(2)
 
+	def update_local_state(self, reset=True):
+		self.p1_pos = 'SB' if self.p1.position == 0 else 'BB' # Learner
+		self.p2_pos = 'SB' if self.p2.position == 0 else 'BB' # Guest
+
+		if reset:
+			self.state = env.reset()
+			self.set_info_before_loop()
+			
+		else:
+			self.state = env._get_current_state()
+			self.set_info_before_loop()
+			# self.update_display()
+
 	def delegate_state_info(self, reset):
-		
 		self.update_local_state(reset=reset)
 		
-		player_label = [Card.int_to_str(self.p2.hand[0]).upper(), Card.int_to_str(self.p2.hand[1]).upper()]
-		
-		self.assign_player_objects_to_display()
+		self.assign_player_objects_to_display(reset=reset)
 
-		# LEFT OF SCREEN
 		self.guest_cards_st = [Card.int_to_str(self.p2.hand[0]).upper(), Card.int_to_str(self.p2.hand[1]).upper()]
-		# RIGHT OF SCREEN
 		self.learner_cards_st = [Card.int_to_str(self.p1.hand[0]).upper(), Card.int_to_str(self.p1.hand[1]).upper()]
 
-		self.assign_cards_to_display(self.guest_cards_st, self.learner_cards_st, reset=False)
+		self.assign_cards_to_display(self.guest_cards_st, self.learner_cards_st, reset=reset)
 
 		self.update_pot_size()
+
+	def set_info_before_loop(self):
+		# (player_states, (community_infos, community_cards)) = env.reset()
+		(self.player_states, (self.community_infos, self.community_cards)) = self.state
+		(self.player_infos, self.player_hands) = zip(*self.player_states)
+		self.current_state = ((self.player_infos, self.player_hands), (self.community_infos, self.community_cards))
+		self.state_set = utilities.convert_list_to_tupleA(self.player_states[env.learner_bot.get_seat()], self.current_state[1])
 
 	def update_pot_size(self):
 		if self.total_pot_label is not None:
@@ -471,15 +486,18 @@ class StartGame(tk.Frame):
 		for button in self.guest_buttons:
 			if button is not None:
 				button.pack_forget()
-		self.call_button = ttk.Button(self, text="Call",
-						command=lambda: self.set_guest_action('c'))
-		self.call_button.pack(side='bottom')
-		self.raise_button = ttk.Button(self, text="Raise",
-						command=lambda: self.set_guest_action('r'))
-		self.raise_button.pack(side='bottom')
-		self.fold_button = ttk.Button(self, text="Fold",
+		
+		self.fold_button = ttk.Button(self, text="Fold", style="fold.TButton",
 						command=lambda: self.set_guest_action('f'))
-		self.fold_button.pack(side='bottom')
+		self.fold_button.pack(side='bottom', padx=5, pady=5)
+
+		self.raise_button = ttk.Button(self, text="Raise", style="raise.TButton",
+						command=lambda: self.set_guest_action('r'))
+		self.raise_button.pack(side='bottom', padx=5, pady=5)
+		
+		self.call_button = ttk.Button(self, text="Call", style="call.TButton",
+						command=lambda: self.set_guest_action('c'))
+		self.call_button.pack(side='bottom', padx=5, pady=5)
 		self.guest_buttons = [self.call_button, self.raise_button, self.fold_button]
 
 		
@@ -500,6 +518,10 @@ class StartGame(tk.Frame):
 			learner_card.pack(side='right', expand = False, padx=position_cards[0], pady=position_cards[1])
 			self.learner_cards.append(learner_card)
 		cd = []
+		if self.community_display is not None:
+			for card in self.community_display:
+				card.pack_forget()
+
 		if self.community_cards is not None:
 			if not(all(i < 0 for i in self.community_cards)):
 				if self.community_cards[0] is not -1 and self.community_cards[1] is not -1 and self.community_cards[2] is not -1:
@@ -511,9 +533,7 @@ class StartGame(tk.Frame):
 				if self.community_cards[4] is not -1:
 					cd.append(Card.int_to_str(self.community_cards[4]).upper())
 
-				if self.community_display is not None:
-					for card in self.community_display:
-						card.pack_forget()
+				
 
 				for card in cd:
 					c = self.form_image(card, community=True)
@@ -527,7 +547,7 @@ class StartGame(tk.Frame):
 			self.guest_label.pack_forget()
 			self.learner_label.pack_forget()
 		position_cards = [10, 10]
-		self.guest_label = tk.Label(self, text="Player\n\nStack:{}\n{}".format(self.p2.stack, self.p2_pos), font=("Arial Bold", 12))
+		self.guest_label = tk.Label(self, text="Guest\n\nStack:{}\n{}".format(self.p2.stack, self.p2_pos), font=("Arial Bold", 12))
 		self.guest_label.pack(side='left', pady=40,padx=40)
 		self.learner_label = tk.Label(self, text="Learner\n\nStack:{}\n{}".format(self.p1.stack, self.p1_pos), font=("Arial Bold", 12))
 		self.learner_label.pack(side='right', pady=40,padx=40)
@@ -544,7 +564,9 @@ class StartGame(tk.Frame):
 
 	def form_image(self, card, community=False):
 		from PIL import Image, ImageTk
-		card_image = Image.open("./JPEG/"+ card +".jpg")
+		import os
+		dir_path = os.path.dirname(os.path.realpath(__file__))
+		card_image = Image.open(dir_path+"/JPEG/"+ card +".jpg")
 		photo = ImageTk.PhotoImage(card_image)
 		label = tk.Label(self, image=photo) if community is False else tk.Label(self.separator, image=photo)
 		label.image = photo # keep a reference!
@@ -569,6 +591,8 @@ class StartGame(tk.Frame):
 
 	def get_guest_action(self):
 		action = self.guest_action
+		if action is 'f' or action is 2:
+			print("raise")
 		action = self.parse_action(action)
 		player_actions = holdem.safe_actions(self.community_infos[-1], self.community_infos, action, n_seats=env.n_seats, choice=None, player_o = self.p2)
 		return player_actions
@@ -581,15 +605,7 @@ class StartGame(tk.Frame):
 	# plotting.plot_value_function(v, title="10 Steps")
 
 
-	def set_info_before_loop(self, reset=True):
-		# (player_states, (community_infos, community_cards)) = env.reset()
 
-		(self.player_states, (self.community_infos, self.community_cards)) = self.state
-		if not reset:
-			pass
-		(self.player_infos, self.player_hands) = zip(*self.player_states)
-		self.current_state = ((self.player_infos, self.player_hands), (self.community_infos, self.community_cards))
-		self.state_set = utilities.convert_list_to_tupleA(self.player_states[env.learner_bot.get_seat()], self.current_state[1])
 
 	def populate_info_pre_action(self):
 		self._round = utilities.which_round(self.community_cards)
