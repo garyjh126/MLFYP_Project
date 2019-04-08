@@ -13,6 +13,8 @@ import tkinter as tk
 from tkinter import ttk
 from treys import Card
 import time
+from PIL import Image, ImageTk
+import os
 
 with_render = False
 
@@ -282,6 +284,13 @@ class PagePokerGameMC(tk.Frame):
 
 
 		tk.Frame.__init__(self, parent)
+		# dir_path = os.path.dirname(os.path.realpath(__file__))
+		# bi = Image.open(dir_path+"/JPEG/green_background.jpg")
+		# background_image = ImageTk.PhotoImage(bi)
+		# background_label = tk.Label(self, image=background_image)
+		# background_label.place(x=0, y=0, relwidth=1, relheight=1)
+		# background_label.pack()
+
 		label = tk.Label(self, text="Poker Room", font=("Arial Bold", 30))
 		label.pack(pady=10,padx=10)
 		button1 = ttk.Button(self, text="Back to Home",
@@ -292,6 +301,7 @@ class PagePokerGameMC(tk.Frame):
 							command=lambda: controller.show_frame(StartGame))
 		start_button.pack() 
 
+
 		
 
 
@@ -299,14 +309,16 @@ class StartGame(tk.Frame):
 
 
 	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Poker Room", font=("Arial Bold", 30))
+		tk.Frame.__init__(self, parent, bg='Green4')
+		
+
+		label = tk.Label(self, text="Poker Room", font=("Arial Bold", 30), bg='Green4')
 		label.pack(pady=10,padx=10)
 		button1 = ttk.Button(self, text="Back to Home",
 							command=lambda: controller.show_frame(StartPage))
 		button1.pack()
 
-		self.separator = tk.LabelFrame(self, width=50, height=150, text="Board", bd=10)
+		self.separator = tk.LabelFrame(self, width=50, height=150, text="Board", bd=10, bg='OrangeRed4')
 		self.separator.pack(fill='x', padx=5, pady=5)
 
 		self.s = ttk.Style()
@@ -389,20 +401,22 @@ class StartGame(tk.Frame):
 		if (self.community_infos[-3] == 2):
 			self.simulate(initial=self.is_initial())
 			print("1")
-			if self.community_infos[-3] == 0 and not self.is_new_game:
-				self.simulate(initial=self.is_initial())
-				print("2")
+			# if self.community_infos[-3] == 0 and not self.is_new_game:
+			# 	self.simulate(initial=self.is_initial())
+			# 	print("2")
 		if (self.community_infos[-3] == 0):
 			print("after")
 
 	def simulate(self, initial = False, part_init=False):
 		# for i_episode in range(1, n_episodes + 1):
+		mrp = self.current_player
 		self.populate_info_pre_action()
 		if self.current_player == 0:
 			self.episodes.append(self.generate_episode_learner_move())
 		elif self.current_player == 2:
 			self.episodes.append(self.generate_episode_guest())
-		
+			
+
 		if self.terminal:
 			if part_init:
 				self.delegate_state_info(reset=True)
@@ -410,39 +424,44 @@ class StartGame(tk.Frame):
 			else:
 				self.restart_game()
 		else:
-			if part_init:
-				self.update_local_state(reset=False)
-				
-			self.update_display()
+			self.update_local_state(reset=False)
+			if self.community_infos[-3] == 0:
+				time.sleep(0.5)
+			self.update_display(mrp=mrp)
 
 		if initial:
 			self.is_new_game = False
-
 		
-	def update_display(self):
+		if self.community_infos[-3] == 0: # When learner is BB, has first go flop (last go preflop)
+			self.simulate(initial=self.is_initial())
+		
+	def update_display(self, mrp=None):
 		self.assign_player_objects_to_display(reset=True)
 		
 		self.assign_cards_to_display(self.guest_cards_st, self.learner_cards_st, reset=True)
 		
-		self.print_last_action()
+		self.print_last_action(mrp=mrp)
 
 		self.assign_guest_buttons()
 
 		self.update_pot_size()
 
-	def print_last_action(self, spec=None):
+	def print_last_action(self, spec=None, mrp=None):
 		if self.last_bet_label is not None:
 			self.last_bet_label.pack_forget()
-		if spec:
-			self.last_bet_label = tk.Label(self, text="Activity:\n{}".format(spec), font=("Arial Bold", 10))	
-		else:
-			self.last_bet_label = tk.Label(self, text="Activity:\n{}".format(env._last_actions[0]), font=("Arial Bold", 10))
-		self.last_bet_label.pack(side='top', pady=20,padx=20)
+		# if spec:
+		# 	self.last_bet_label = tk.Label(self, text="Activity:\n{}".format(spec), font=("Arial Bold", 10))	
+		# else:
+		# 	self.last_bet_label = tk.Label(self, text="Activity:\n{}".format(env._last_actions[0]), font=("Arial Bold", 10))
+		# self.last_bet_label.pack(side='top', pady=20,padx=20)
 
-		if env._last_actions is not None:
-			if env._last_actions[0] == 'fold':
-				self.print_last_action(spec='Player 1 Folded')
-				time.sleep(2)
+		# if env._last_actions is not None:
+		# 	if env._last_actions[0] == 'fold':
+		# 		self.print_last_action(spec='Player 1 Folded')
+		# 		time.sleep(2)
+		if mrp is env._player_dict[0]:
+			self.last_bet_label = tk.Label(self, text=str(env._last_actions[0]), font=("Comic Sans", 20))	
+			self.last_bet_label.pack(side='right', pady=2,padx=2)
 
 	def update_local_state(self, reset=True):
 		self.p1_pos = 'SB' if self.p1.position == 0 else 'BB' # Learner
@@ -479,7 +498,7 @@ class StartGame(tk.Frame):
 	def update_pot_size(self):
 		if self.total_pot_label is not None:
 			self.total_pot_label.pack_forget()
-		self.total_pot_label = tk.Label(self, text="Pot:\n{}\n".format(env._totalpot), font=("Arial Bold", 20))
+		self.total_pot_label = tk.Label(self, text="Pot:\n{}\n".format(env._totalpot), font=("Arial Bold", 20), bg='Green4')
 		self.total_pot_label.pack(side='top', pady=40,padx=40)
 
 	def assign_guest_buttons(self):
@@ -532,24 +551,19 @@ class StartGame(tk.Frame):
 					cd.append(Card.int_to_str(self.community_cards[3]).upper())
 				if self.community_cards[4] is not -1:
 					cd.append(Card.int_to_str(self.community_cards[4]).upper())
-
-				
-
 				for card in cd:
 					c = self.form_image(card, community=True)
 					c.pack(side='left', expand = False, padx=20, pady=20)
 					self.community_display.append(c)
-					# testLabel = tk.Label(self.separator, text="This is a test label")
-					# testLabel.pack(side='top')
 
 	def assign_player_objects_to_display(self, reset=False):
 		if reset and self.guest_label is not None and self.learner_label is not None:
 			self.guest_label.pack_forget()
 			self.learner_label.pack_forget()
 		position_cards = [10, 10]
-		self.guest_label = tk.Label(self, text="Guest\n\nStack:{}\n{}".format(self.p2.stack, self.p2_pos), font=("Arial Bold", 12))
+		self.guest_label = tk.Label(self, text="Guest\n\nStack:{}\n{}".format(self.p2.stack, self.p2_pos), font=("Arial Bold", 12), bg='Green4')
 		self.guest_label.pack(side='left', pady=40,padx=40)
-		self.learner_label = tk.Label(self, text="Learner\n\nStack:{}\n{}".format(self.p1.stack, self.p1_pos), font=("Arial Bold", 12))
+		self.learner_label = tk.Label(self, text="Learner\n\nStack:{}\n{}".format(self.p1.stack, self.p1_pos), font=("Arial Bold", 12), bg='Green4')
 		self.learner_label.pack(side='right', pady=40,padx=40)
 
 		# if self.community_infos is not None:
@@ -563,12 +577,11 @@ class StartGame(tk.Frame):
 			
 
 	def form_image(self, card, community=False):
-		from PIL import Image, ImageTk
-		import os
+		
 		dir_path = os.path.dirname(os.path.realpath(__file__))
 		card_image = Image.open(dir_path+"/JPEG/"+ card +".jpg")
 		photo = ImageTk.PhotoImage(card_image)
-		label = tk.Label(self, image=photo) if community is False else tk.Label(self.separator, image=photo)
+		label = tk.Label(self, image=photo, bg='Green4') if community is False else tk.Label(self.separator, image=photo, bg='Green4')
 		label.image = photo # keep a reference!
 		return label
 
@@ -591,8 +604,6 @@ class StartGame(tk.Frame):
 
 	def get_guest_action(self):
 		action = self.guest_action
-		if action is 'f' or action is 2:
-			print("raise")
 		action = self.parse_action(action)
 		player_actions = holdem.safe_actions(self.community_infos[-1], self.community_infos, action, n_seats=env.n_seats, choice=None, player_o = self.p2)
 		return player_actions
