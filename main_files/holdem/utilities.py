@@ -128,6 +128,20 @@ def safe_actions_call_bot(community_infos, villain_choice, n_seats):
 			actions[current_player] = [villain_choice[0], villain_choice[1]]
 	return actions
 
+def compress_bucket(state, env, pre=False):
+	if pre:
+		state[0][0][0][0] = round((state[0][0][0][0]/env.starting_stack_size) * (state[0][0][0][0]/100))
+		if state[0][0][0][1] != -1:
+			state[0][0][0][1] = round((state[0][0][0][1]/7462) * (16900/100))
+	else:
+		for i in range(0,3,2):
+			state[i][0][0] = round((state[i][0][0]/env.starting_stack_size) * (state[i][0][0]/100))
+			if state[i][0][1] != -1:
+				state[i][0][1] = round((state[i][0][1]/7462) * (16900/100))
+
+	return state
+
+
 def convert_step_return_to_set(sar):
     
     player_features_tuples = []

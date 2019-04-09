@@ -276,6 +276,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         (player_states, (community_infos, community_cards)) = env.reset()
         (player_infos, player_hands) = zip(*player_states)
         current_state = ((player_infos, player_hands), (community_infos, community_cards))
+        utilities.compress_bucket(current_state, env, pre=True)
         # print(env.level_raises)
         # Only want the state set that is relevant to learner bot every step. 
         state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
@@ -292,6 +293,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
             # print(env.level_raises)
             (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
+            utilities.compress_bucket(player_states, env)
             parsed_return_state = utilities.convert_step_return_to_set((current_state, action, env.learner_bot.reward))
             action = utilities.convert_step_return_to_action(action)
             episode.append((parsed_return_state, action, env.learner_bot.reward))

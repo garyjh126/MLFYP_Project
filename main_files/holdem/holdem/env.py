@@ -426,7 +426,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 		print("\n\n")
 		print('Total Pot: {}'.format(self._totalpot))
-		
+		if self._totalpot > 700:
+			print("raise")
 		(player_states, community_states) = self._get_current_state()
 		(player_infos, player_hands) = zip(*player_states)
 		(community_infos, community_cards) = community_states

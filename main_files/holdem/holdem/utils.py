@@ -74,11 +74,13 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
       if choice == 0:
         actions[current_player] = [action_table.CALL, action_table.NA]
       elif type(choice) is tuple:
-        actions[current_player] = [choice[0], choice[1]] 
+        if player_o.is_possible('r'):
+          actions[current_player] = [choice[0], choice[1]] 
+        else:
+          actions[current_player] = [action_table.CALL, action_table.NA]
       elif choice == 1:
         if player_o.is_possible('r'):
-          
-            actions[current_player] = [2, 50]
+          actions[current_player] = [2, 50]
         else:
           if player_o.round['raises_i_owe'] > 0:
             actions[current_player] = [action_table.CALL, action_table.NA]

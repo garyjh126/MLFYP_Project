@@ -28,7 +28,7 @@ batch_size = 32
 
 epsilon = 0.8
 
-n_episodes = 1001 # n games we want agent to play (default 1001)
+n_episodes = 100 # n games we want agent to play (default 1001)
 
 output_dir = 'model_output/TexasHoldemDirectory/'
 
@@ -36,7 +36,7 @@ with_render = True
 
 with_graph = True
 
-villain = "CallChump"
+villain = "Strong"
 
 
 
@@ -190,20 +190,21 @@ if __name__ == "__main__":
         
     # The policy we're following
     policy = make_epsilon_greedy_policy(Q, agent.epsilon, env.action_space.n)
-
+    last_episode = None
     episode_list = []
     stacks_over_time = {}
     for index, player in env._player_dict.items():
         stacks_over_time.update({player.get_seat(): [player.stack]})
     for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
 
-        
+        last_episode = e + 1
         if with_render:
             print("\n\n********Episode {}*********".format(e)) 
         episode = []
         (player_states, (community_infos, community_cards)) = env.reset()
         (player_infos, player_hands) = zip(*player_states)
         current_state = ((player_infos, player_hands), (community_infos, community_cards))
+        utilities.compress_bucket(current_state, env, pre=True)
         state = create_np_array(player_infos, player_hands, community_cards, community_infos)
 
         # Only want the state set that is relevant to learner bot every step. 
@@ -224,6 +225,7 @@ if __name__ == "__main__":
             #STEP - SET BREAKPOINT ON THE FOLLOWING LINE TO OBSERVE ACTIONS TAKEN ONE BY ONE
             (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
 
+            utilities.compress_bucket(player_states, env)
             action = utilities.convert_step_return_to_action(action)
             ps = list(zip(*player_states))
             next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
@@ -256,6 +258,7 @@ if __name__ == "__main__":
         episode_list.append(episode)
 
         if(count_existing_players == 1):
+            
             break
 
     # Episode end
@@ -264,7 +267,14 @@ if __name__ == "__main__":
             plt.plot(stack, label = "Player {} - Learner".format(player_idx))
         else:	
             plt.plot(stack, label = "Player {}".format(player_idx))
-
+    p1_stack_t = list(stacks_over_time.values())[0]
+    p2_stack_t = list(stacks_over_time.values())[1]
+    # diffs = [j-i for i, j in zip(p1_stack_t[:-1], p1_stack_t[1:])]
+    # import statistics
+    # lost_avg = statistics.mean(diffs)
+    won_avg = p1_stack_t[len(p1_stack_t)-1] - p1_stack_t[0]
+    # print(p1_stack_t)
+    print('mbb/g:{}'.format(1000 * won_avg/(env._bigblind*last_episode)))
     plt.ylabel('Stack Size')
     plt.xlabel('Episode')
     plt.legend()
