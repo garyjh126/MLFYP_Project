@@ -157,8 +157,7 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	
 	player_actions = None
 	current_player = community_infos[-3]
-	# if current_player == 0:
-	# 	print("raise")
+	
 	player_object = env._player_dict[current_player]
 	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]

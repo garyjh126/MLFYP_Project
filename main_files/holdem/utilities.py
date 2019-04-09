@@ -85,13 +85,15 @@ def assign_evals_player(player_o, _round, env):
 
 def do_necessary_env_cleanup(env):
     list_players = env._player_dict.copy()
+    is_end_game = None
     for player in list_players.values():
         if player.stack <= 0:
             env.remove_player(player.get_seat())
-            return True # End Game
+            is_end_game = True # End Game
         else: 
-            return False
+            is_end_game = False
     env.assign_positions()
+    return is_end_game
 
 def convert_list_to_tupleA(learner_bot_state, community_state):
     

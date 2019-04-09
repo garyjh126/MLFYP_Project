@@ -426,8 +426,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 		print("\n\n")
 		print('Total Pot: {}'.format(self._totalpot))
-		if self._totalpot > 700:
-			print("raise")
 		(player_states, community_states) = self._get_current_state()
 		(player_infos, player_hands) = zip(*player_states)
 		(community_infos, community_cards) = community_states
@@ -783,7 +781,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			# 		self.remove_player(player.get_seat())
 		self.game_resolved = True
 
-		assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
+		# assert(self._player_dict[0].stack + self._player_dict[2].stack + self._totalpot == 2*self.starting_stack_size)
 		
 	def report_game(self, requested_attributes, specific_player=None):
 		if "stack" in requested_attributes:
