@@ -127,8 +127,6 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
   # if actions[current_player][0] is 2:
   #   print("e")
   return actions		
-	
-	
 
 
 def safe_actions_call_bot(community_infos, which_action, n_seats):

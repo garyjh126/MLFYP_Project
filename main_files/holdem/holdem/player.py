@@ -201,10 +201,6 @@ class Player(object):
     [action_idx, raise_amount] = action
     raise_amount = int(raise_amount) 
     action_idx = int(action_idx)
-    # if tocall == 0:
-      # if not(action_idx in [Player.CHECK, Player.RAISE]):
-      #   print("watch")
-
     if action[0] == 2:
       if _round == 0:
         if self.position == 0 and self.count_r(last_seq_move) == 0:
