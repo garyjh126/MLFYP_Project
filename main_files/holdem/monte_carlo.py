@@ -410,12 +410,13 @@ class StartGame(tk.Frame):
 	def simulate(self, initial = False, part_init=False):
 		# for i_episode in range(1, n_episodes + 1):
 		mrp = self.current_player
+        episode = None
 		self.populate_info_pre_action()
 		if self.current_player == 0:
-			self.episodes.append(self.generate_episode_learner_move())
+            episode = self.generate_episode_learner_move()
 		elif self.current_player == 2:
-			self.episodes.append(self.generate_episode_guest())
-			
+			episode = self.generate_episode_guest()
+        self.episodes.append(episode)
 
 		if self.terminal:
 			if part_init:
@@ -429,9 +430,28 @@ class StartGame(tk.Frame):
 				time.sleep(0.5)
 			self.update_display(mrp=mrp)
 
+        episode = self.generate_episode()
+		utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
+
+		# Find all (state, action) pairs we've visited in this episode
+		# We convert each state to a tuple so that we can use it as a dict key
+		sa_in_episode = set([(tuple(sar[0]), sar[1]) for sar in episode])
+		for state, action in sa_in_episode:
+			state = state[0]
+			sa_pair = (state, action)
+			# Find the first occurance of the (state, action) pair in the episode
+			first_occurence_idx = next(i for i,x in enumerate(episode)
+									if x[0][0] == state and x[1] == action)
+			# Sum up all rewards since the first occurance
+			G = sum([x[2]*(discount_factor**i) for i,x in enumerate(episode[first_occurence_idx:])])
+			# Calculate average return for this state over all sampled episodes
+			self.returns_sum[sa_pair] += G
+			self.returns_count[sa_pair] += 1.0
+			self.Q[state][action] = self.returns_sum[sa_pair] / self.returns_count[sa_pair]
+
 		if initial:
 			self.is_new_game = False
-		
+		        
 		if self.community_infos[-3] == 0: # When learner is BB, has first go flop (last go preflop)
 			self.simulate(initial=self.is_initial())
 		
@@ -662,7 +682,7 @@ class StartGame(tk.Frame):
 
 			
 
-	def mc_control_epsilon_greedy(self, num_episodes, discount_factor=1.0, epsilon=0.1, is_with_rendering=with_render, forgo_flag=0):
+	def mc_control_epsilon_greedy(self, discount_factor=1.0, epsilon=0.1):
 
 
 		# Keeps track of sum and count of returns for each state
@@ -670,7 +690,7 @@ class StartGame(tk.Frame):
 		# returns (like in the book) but that's memory inefficient.
 		
 		
-		self.set_info_before_actions()
+		
 
 		episode = self.generate_episode()
 		utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
