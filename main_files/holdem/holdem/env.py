@@ -802,7 +802,8 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	def _reset_game(self):
 		
 		playing = 0
-
+		if self._player_dict[0].stack + self._player_dict[2].stack != 2*self.starting_stack_size:
+			print("raise")
 		assert(self._player_dict[0].stack + self._player_dict[2].stack == 2*self.starting_stack_size)
 
 		
