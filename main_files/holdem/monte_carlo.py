@@ -27,7 +27,8 @@ starting_stack_size = 2000
 
 epsilon = 0.9
 
-def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
+def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy, part_init=None):
+	
 	player_actions = None
 	current_player = community_infos[-3]
 	player_object = env._player_dict[current_player]
@@ -44,14 +45,14 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 		probs = policy(state)
 		choice = np.random.choice(np.arange(len(probs)), p=probs)
 		best_nonlearning_action = player_object.choose_action(_round, range_structure, env) # Doesn't use
-		player_actions = holdem.safe_actions(to_call, community_infos, villain_choice=None, n_seats=n_seats, choice=choice, player_o = player_object, best_nonlearning_action=best_nonlearning_action)
+		player_actions = holdem.safe_actions(to_call, community_infos, villain_choice=None, n_seats=n_seats, choice=choice, player_o = player_object, best_nonlearning_action=best_nonlearning_action, part_init=part_init)
 		
 	else: # bot move 
 		if villain == "CallChump":
 			player_actions = utilities.safe_actions_call_bot(community_infos, villain_choice=None, n_seats=n_seats)
 		else:
 			villain_choice = player_object.choose_action(_round, range_structure, env) 
-			player_actions = holdem.safe_actions(to_call, community_infos, villain_choice, n_seats=n_seats, choice=None, player_o = player_object)
+			player_actions = holdem.safe_actions(to_call, community_infos, villain_choice, n_seats=n_seats, choice=None, player_o = player_object, part_init=part_init)
 	
 	this_lr = (sum(p == player_object.get_seat() for p,v in env.level_raises.items()))
 	if env.highest_in_LR()[1] is not player_object.get_seat() and env.highest_in_LR()[0] > this_lr:

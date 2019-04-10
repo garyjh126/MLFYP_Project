@@ -66,9 +66,9 @@ class DQNAgent:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done)) # list of previous experiences, enabling re-training later
 
-    def act(self, state, player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy):
+    def act(self, state, player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy, part_init=None):
         if np.random.rand() <= self.epsilon: # if acting randomly, take random action
-            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy, villain)
+            action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy, villain, part_init=part_init)
             return action
         act_values = self.model.predict(state) # if not acting according to safe_strategy, predict reward value based on current state
         predicted_action = np.argmax(act_values[0])
@@ -83,6 +83,8 @@ class DQNAgent:
             choice = (2, total_bet)
         elif predicted_action == 2:
             choice = 3
+        if part_init: # Presentation purposes
+            choice = 1 
         predicted_action = holdem.safe_actions(community_infos[-1], community_infos, villain_choice=None, n_seats=n_seats, choice=choice, player_o=env.learner_bot)
         return predicted_action # pick the action that will give the highest reward (i.e., go left or right?)
 
@@ -149,7 +151,7 @@ def make_epsilon_greedy_policy(Q, epsilon, nA):
 
 
 
-def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy, villain):
+def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy, villain, part_init=None):
 	
 	player_actions = None
 	current_player = community_infos[-3]

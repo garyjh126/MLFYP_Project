@@ -63,7 +63,7 @@ def hand_to_str(hand):
   return output
 
 
-def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None, player_o=None, best_nonlearning_action=None):
+def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None, player_o=None, best_nonlearning_action=None, part_init=None):
   current_player = community_infos[-3]
   # to_call = community_infos[-1]
   actions = [[action_table.CHECK, action_table.NA]] * n_seats
@@ -95,6 +95,9 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
         
       else:
         actions[current_player] = [villain_choice[0], villain_choice[1]]
+
+    if part_init: 
+      actions[current_player] = [action_table.CALL, action_table.NA]
   else:
     ## This is where a player may take initiative and BET (Rule excludes opening up with paying of the blinds)
     ## They may also CHECK
@@ -122,6 +125,8 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
           actions[current_player] = [villain_choice[0], villain_choice[1]]
   # if actions[current_player][0] is 2:
   #   print("e")
+    if part_init: 
+      actions[current_player] = [action_table.CHECK, action_table.NA]
   return actions		
 	
 	

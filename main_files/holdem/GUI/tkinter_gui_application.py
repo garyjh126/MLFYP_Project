@@ -1,4 +1,3 @@
-
 import numpy as np
 import sys
 import os
@@ -17,6 +16,7 @@ import time
 from PIL import Image, ImageTk
 
 from monte_carlo import get_action_policy, make_epsilon_greedy_policy
+from DQN import create_np_array, agent
 
 with_render = False
 
@@ -65,11 +65,11 @@ class SeaofBTCapp(tk.Tk):
 
         # PagePokerGameMC.simulation(PagePokerGameMC)
 
-    def show_frame(self, cont, info=None, agent=None):
+    def show_frame(self, cont, info=None, ag=None):
 
         frame = self.frames[cont]
         frame.info = info
-        frame.agent = agent
+        frame.ag = ag
         if frame.__str__() == 'StartGame':
             frame.start()
         frame.tkraise()
@@ -115,11 +115,11 @@ class PageOne(tk.Frame):
         s.configure('Kim.TButton', foreground='maroon', padding = 6, relief='raised', background="#ccc")
 
         button1 = ttk.Button(self, text="Monte-Carlo Agent", style='Kim.TButton',
-                            command=lambda: controller.show_frame(PagePokerGameMC, info=self.info, agent='MC'))
+                            command=lambda: controller.show_frame(PagePokerGameMC, info=self.info, ag='MC'))
         button1.place(relx=0.5, rely=0.45, anchor='center')
 
         button2 = ttk.Button(self, text="Deep Q-Learning Agent", style='Kim.TButton',
-                            command=lambda: controller.show_frame(PagePokerGameDQN, info=self.info, agent='DQN'))
+                            command=lambda: controller.show_frame(PagePokerGameDQN, info=self.info, ag='DQN'))
         button2.place(relx=0.5, rely=0.55, anchor='center')
 
 
@@ -127,47 +127,47 @@ class PageOne(tk.Frame):
 
 class PagePokerGameMC(tk.Frame):
 
-    def __init__(self, parent, controller, info=None, agent=None):
+    def __init__(self, parent, controller, info=None, ag=None):
 
         tk.Frame.__init__(self, parent, bg='#218c16')
         label = tk.Label(self, text="Monte Carlo Agent", font=("Arial Bold", 30), bg='#218c16')
         label.pack(pady=10,padx=10)
         self.info = info 
-        self.agent = agent
+        self.ag = ag
         start_button = ttk.Button(self, text="Start Game",
-                            command=lambda: controller.show_frame(StartGame, info=self.info, agent=self.agent))
+                            command=lambda: controller.show_frame(StartGame, info=self.info, ag=self.ag))
         start_button.pack() 
 
         button1 = ttk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage, info=self.info, agent='DQN'))
+                            command=lambda: controller.show_frame(StartPage, info=self.info))
         button1.pack()
 
 
 class PagePokerGameDQN(tk.Frame):
 
-    def __init__(self, parent, controller, info=None, agent=None):
+    def __init__(self, parent, controller, info=None, ag=None):
 
         tk.Frame.__init__(self, parent, bg='#218c16')
         label = tk.Label(self, text="Deep Q-Learning Agent", font=("Arial Bold", 30), bg='#218c16')
         label.pack(pady=10,padx=10)
         self.info = info 
-        self.agent = agent
+        self.ag = ag
         start_button = ttk.Button(self, text="Start Game",
-                            command=lambda: controller.show_frame(StartGame, info=self.info, agent='MC'))
+                            command=lambda: controller.show_frame(StartGame, info=self.info, ag=self.ag))
         start_button.pack() 
 
         button1 = ttk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage, info=self.info, agent='DQN'))
+                            command=lambda: controller.show_frame(StartPage, info=self.info))
         button1.pack()
 
 		
 
 class StartGame(tk.Frame):
 
-	def __init__(self, parent, controller, info=None, agent=None):
+	def __init__(self, parent, controller, info=None, ag=None):
 		tk.Frame.__init__(self, parent, bg='#218c16')
 		self.info = info
-		self.agent = agent
+		self.ag = ag
 
 		dir_path = os.path.dirname(os.path.realpath(__file__))
 		card_image = Image.open(dir_path[0:-4]+"/JPEG/coollogo_com-16865976.png")
@@ -223,7 +223,8 @@ class StartGame(tk.Frame):
 		self.is_end_game = False
 		self.mrp = None
 		self.sd_tr = False
-	
+		self.last_learner_cards = None
+		self.part_init = None
 
 	def __str__(self):
 		return 'StartGame'
@@ -235,7 +236,7 @@ class StartGame(tk.Frame):
 	def restart_game(self):
 		self.is_new_game = True
 		self.guest_action = None
-		if self.terminal:
+		if self.terminal and self.info == 'Compete':
 			if self.is_showdown():
 				self.sd_tr = True
 				self.last_learner_cards = tk.Label(self, text="Last Cards:\n" + str(self.learner_cards_st[0]+"\n"+self.learner_cards_st[1]), font=LARGE_FONT, bg='#218c16')	
@@ -269,7 +270,7 @@ class StartGame(tk.Frame):
 		
 	def simulate(self, initial = False, part_init=False):
 		# for i_episode in range(1, n_episodes + 1):
-		
+		self.part_init = part_init
 		episode = None
 		self.populate_info_pre_action()
 		if self.current_player == 0:
@@ -280,11 +281,8 @@ class StartGame(tk.Frame):
 
 		if self.terminal:
 			self.sd_tr = True
-			if part_init:
-				self.delegate_state_info(reset=True)
-				self.simulate(initial=True, part_init=True)
-			else:
-				self.restart_game()
+			
+			self.restart_game()
 		else:
 			self.update_local_state(reset=False)
 			# if self.community_infos[-3] == 0:
@@ -359,7 +357,10 @@ class StartGame(tk.Frame):
 		(self.player_infos, self.player_hands) = zip(*self.player_states)
 		self.current_state = ((self.player_infos, self.player_hands), (self.community_infos, self.community_cards))
 		utilities.compress_bucket(self.current_state, env, pre=True)
+		if self.ag == 'DQN':
+			self.state = create_np_array(self.player_infos, self.player_hands, self.community_cards, self.community_infos)
 		self.state_set = utilities.convert_list_to_tupleA(self.player_states[env.learner_bot.get_seat()], self.current_state[1])
+		
 
 	def update_pot_size(self):
 		if self.total_pot_label is not None:
@@ -514,11 +515,17 @@ class StartGame(tk.Frame):
 
 
 	def get_action_for_page(self):
-		if self.current_player == 0: # Learner (RHS Screen)
-			self.action = get_action_policy(self.player_infos, self.community_infos, self.community_cards, env, self._round, env.n_seats, self.state_set, self.policy)
-
-		elif self.current_player == 2: # Player on page (LHS Screen)
-			self.action = self.get_guest_action()
+		if self.ag == 'MC':
+			if self.current_player == 0: # Learner (RHS Screen)
+				self.action = get_action_policy(self.player_infos, self.community_infos, self.community_cards, env, self._round, env.n_seats, self.state_set, self.policy, self.part_init)
+			elif self.current_player == 2: # Player on page (LHS Screen)
+				self.action = self.get_guest_action()
+		elif self.ag == 'DQN':
+			if self.current_player == 0: # Learner (RHS Screen)
+				self.action = agent.act(self.state, self.player_infos, self.community_infos, self.community_cards, env, self._round, env.n_seats, self.state_set, self.policy, self.part_init)
+			elif self.current_player == 2: # Player on page (LHS Screen)
+				self.action = self.get_guest_action()
+		
 
 
 
@@ -532,6 +539,11 @@ class StartGame(tk.Frame):
 		utilities.compress_bucket(self.player_states, env)
 		parsed_return_state = utilities.convert_step_return_to_set((self.current_state, self.action, env.learner_bot.reward))
 		self.action = utilities.convert_step_return_to_action(self.action)
+		if self.ag == 'DQN':
+			ps = list(zip(*self.player_states))
+			next_state = create_np_array(ps[0], ps[1], self.community_cards, self.community_infos) # Numpy array
+			agent.remember(self.state, self.action, env.learner_bot.reward, next_state, self.terminal)
+			self.state = next_state
 		part_ep.append((parsed_return_state, self.action, env.learner_bot.reward))
 		current_state = (self.player_states, (self.community_infos, self.community_cards)) # state = next_state
 		
