@@ -8,17 +8,24 @@
     pip install treys
     pip install keras
 
+Ubuntu 18.04
+
+Python 3.7.1
+
 ## Instructions ##
 
-To review the DQN at optimal performance, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title"), and click 'Open in Playground'. Run all the cells in the notebook and observe the output. Rendering can be switched on and off.
+To run the GUI, navigate to [this directory](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem/GUI "GUI"), and run:
 
-Alternatively, the code can be run from the DQN.py script [here](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title"). The Monte-Carlo simulation can also be run here. 
+     python tkinter_gui_application.py
+
+The code can be run from the DQN.py script [here](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title"). The Monte-Carlo simulation can also be run here. 
     
 **Example**
 
      python monte_carlo.py
      python DQN.py
-     
+   
+Alternatively, to review the DQN in google colab, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title"), and click 'Open in Playground'. Run all the cells in the notebook and observe the output. Rendering can be switched on and off.
      
  ### Changing Hyperparameters ###
  
@@ -30,7 +37,7 @@ Alternatively, the code can be run from the DQN.py script [here](https://github.
 
 
 ### "Tkinter GUI enables users to play against various agent types (A work in progress)" ###
- ![alt text](screenshots/Tkinter_display.png "Tkinter Display (A work in progress)")
+ ![alt text](screenshots/update_gui.png "Tkinter Display")
  
 
 # Background
@@ -81,4 +88,3 @@ learning in the hopes that deep learning could solve the problem. In Q-learning,
 network acts as the agent that learns to map state-action pairs to rewards, thereby enabling a
 bot to learn the optimal Q-function ‘ Q * ( s, a ) ’,​ and returning the policy that was associated with
 such high rewards.
-
