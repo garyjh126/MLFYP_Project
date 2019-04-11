@@ -197,7 +197,7 @@ env.add_player(2, stack=starting_stack_size) # aggressive
 
 # plotting.plot_value_function(v, title="10 Steps")
 
-def make_epsilon_greedy_policy(Q, epsilon, nA):
+def make_epsilon_greedy_policy(Q, nA, epsilon):
     """
     Creates an epsilon-greedy policy based on a given Q-function and epsilon.
     
@@ -253,7 +253,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
     Q = defaultdict(lambda: np.zeros(env.action_space.n))
     
     # The policy we're following
-    policy = make_epsilon_greedy_policy(Q, epsilon, env.action_space.n)
+    policy = make_epsilon_greedy_policy(Q, env.action_space.n, epsilon)
 
     episode_list = []
     stacks_over_time = {}
@@ -354,7 +354,9 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
 
     return Q, policy
 
-Q, policy = mc_control_epsilon_greedy(num_episodes=n_episodes, epsilon= 0.9)
+
+if __name__=='__main__':
+    Q, policy = mc_control_epsilon_greedy(num_episodes=n_episodes, epsilon= 0.9)
 
 
 # Here we have a Q-table defined which allows us to reference state-action pairs from our poker environment,

@@ -84,14 +84,13 @@ def assign_evals_player(player_o, _round, env):
 	# print("")
 
 def do_necessary_env_cleanup(env):
+    is_end_game = False
     list_players = env._player_dict.copy()
     is_end_game = None
     for player in list_players.values():
         if player.stack <= 0:
             env.remove_player(player.get_seat())
             is_end_game = True # End Game
-        else: 
-            is_end_game = False
     env.assign_positions()
     return is_end_game
 
