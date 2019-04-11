@@ -25,6 +25,8 @@ The code can be run from the DQN.py script [here](https://github.com/garyjh126/M
      python monte_carlo.py
      python DQN.py
    
+A graphical rendering will appear with the game played to 1000 episodes. The learner agent is at seat 0 by default.
+
 Alternatively, to review the DQN in google colab, go to [this open Jupyter Notebook](https://colab.research.google.com/drive/1L_fNNEGkZcBInyVv-br1gUkMOh7sWYYZ "Named link title"), and click 'Open in Playground'. Run all the cells in the notebook and observe the output. Rendering can be switched on and off.
      
  ### Changing Hyperparameters ###
