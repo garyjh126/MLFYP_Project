@@ -224,6 +224,7 @@ class StartGame(tk.Frame):
 		self.mrp = None
 		self.sd_tr = False
 		self.last_learner_cards = None
+		self.initial_action = True
 		# self.part_init = None
 
 	def __str__(self):
@@ -518,14 +519,19 @@ class StartGame(tk.Frame):
 		if self.ag == 'MC':
 			if self.current_player == 0: # Learner (RHS Screen)
 				self.action = get_action_policy(self.player_infos, self.community_infos, self.community_cards, env, self._round, env.n_seats, self.state_set, self.policy)
+				if self.initial_action and self.action[self.current_player] == [3, 0]:
+					self.action[self.current_player] = [1, 0]
 			elif self.current_player == 2: # Player on page (LHS Screen)
 				self.action = self.get_guest_action()
 		elif self.ag == 'DQN':
 			if self.current_player == 0: # Learner (RHS Screen)
 				self.action = agent.act(self.state, self.player_infos, self.community_infos, self.community_cards, env, self._round, env.n_seats, self.state_set, self.policy)
+				if self.initial_action and self.action[self.current_player] == [3, 0]:
+					self.action[self.current_player] = [1, 0]
 			elif self.current_player == 2: # Player on page (LHS Screen)
 				self.action = self.get_guest_action()
 		
+		self.initial_action = False
 
 
 

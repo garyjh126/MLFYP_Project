@@ -12,13 +12,16 @@ if "../" not in sys.path:
 
 with_render = True
 
-n_episodes = 1001 # n games we want agent to play (default 1001)
+n_episodes = 100 # n games we want agent to play (default 1001)
 
 villain = "CallChump"
 
 starting_stack_size = 2000
 
 with_graph = True
+
+delay = None
+
 
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
@@ -68,7 +71,7 @@ def generate_episode(env, n_seats):
 	(player_infos, player_hands) = zip(*player_states)
 	current_state = ((player_infos, player_hands), (community_infos, community_cards))
 
-	env.render(mode='human', initial=True)
+	env.render(mode='human', initial=True, delay=delay)
 	terminal = False
 	while not terminal:
 
@@ -79,7 +82,7 @@ def generate_episode(env, n_seats):
 		(player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(actions)
 		current_state = (player_states, (community_infos, community_cards))
 		episode.append((current_state, action, env.learner_bot.reward))
-		env.render(mode='human')
+		env.render(mode='human', delay=delay)
 
 	return episode
 
@@ -282,7 +285,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
         if is_with_rendering:
-            env.render(mode='human', initial=True)
+            env.render(mode='human', initial=True, delay=delay)
         terminal = False
         while not terminal:
 
@@ -299,7 +302,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
             episode.append((parsed_return_state, action, env.learner_bot.reward))
             current_state = (player_states, (community_infos, community_cards)) # state = next_state
             if is_with_rendering:
-                env.render(mode='human')
+                env.render(mode='human', delay=delay)
 
         is_end_game = utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
         stack_list = env.report_game(requested_attributes = ["stack"])

@@ -8,7 +8,7 @@ from .player import Player
 from .utils import hand_to_str, format_action
 from collections import OrderedDict
 from statistics import mean
-
+import time
 
 class TexasHoldemEnv(Env, utils.EzPickle):
 	BLIND_INCREMENTS = [[10,25], [25,50], [50,100], [75,150], [100,200],
@@ -415,7 +415,10 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 
 
-	def render(self, mode='human', close=False, initial=False):
+	def render(self, mode='human', close=False, initial=False, delay=None):
+		if delay:
+			time.sleep(delay)
+
 		if(initial is True):
 			print("\n")
 				
@@ -988,6 +991,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		highest_paying_action = [i for i, j in enumerate(expected_values_order) if j == max_ev]
 		
 		# reward = expected_values_order[action_taken]/max_ev
+		# how much does reward deviate from mean - this determines quality of action in the context of all possible actions
 		reward = expected_values_order[action_taken] - mean(expected_values_order)
 		return reward 
 

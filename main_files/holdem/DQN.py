@@ -36,9 +36,9 @@ with_render = True
 
 with_graph = True
 
-villain = "Strong"
+villain = "CallChump"
 
-
+delay = None
 
 
 if not os.path.exists(output_dir):
@@ -71,7 +71,7 @@ class DQNAgent:
         self.memory.append((state, action, reward, next_state, done)) # list of previous experiences, enabling re-training later
 
     def act(self, state, player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy):
-        if np.random.rand() <= self.epsilon: # if acting randomly, take random action
+        if np.random.rand() <= self.epsilon: 
             action = get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state_set, policy, villain)
             return action
         act_values = self.model.predict(state) # if not acting according to safe_strategy, predict reward value based on current state
@@ -210,7 +210,7 @@ if __name__ == "__main__":
         state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
         if with_render:
-            env.render(mode='human', initial=True)
+            env.render(mode='human', initial=True, delay=delay)
         terminal = False
         while not terminal:
 
@@ -230,13 +230,13 @@ if __name__ == "__main__":
             next_state = create_np_array(ps[0], ps[1], community_cards, community_infos) # Numpy array
             agent.remember(state, action, env.learner_bot.reward, next_state, terminal)
             state = next_state
-            if terminal: # episode ends if agent drops pole or we reach timestep 5000
+            if terminal: 
                 print("episode: {}/{}, reward: {}, e: {:.2}, Profit Margin {}" # print the episode's score and agent's epsilon
                     .format(e, n_episodes, env.learner_bot.reward, agent.epsilon, env.learner_bot.stack - starting_stack_size))
             
             current_state = (player_states, (community_infos, community_cards)) # state = next_state
             if with_render:
-                env.render(mode='human')
+                env.render(mode='human', delay=delay)
 
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size) # train the agent by replaying the experiences of the episode

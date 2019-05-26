@@ -93,7 +93,11 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
         actions[current_player] = [3, 0]
     else:
       if type(villain_choice) is list: # Call
-        actions[current_player] = [villain_choice[0][0], villain_choice[0][1]]
+        
+        if villain_choice == [3, 0]:
+          actions[current_player] = [3, 0] # ~
+        else: 
+          actions[current_player] = [villain_choice[0][0], villain_choice[0][1]]
       else:
         actions[current_player] = [villain_choice[0], villain_choice[1]]
   else:
@@ -118,7 +122,11 @@ def safe_actions(to_call, community_infos, villain_choice, n_seats, choice=None,
             actions[current_player] = [action_table.CHECK, action_table.NA]
     else:
       if type(villain_choice) is list: # Check
-        actions[current_player] = [villain_choice[1][0], villain_choice[1][1]]
+        
+        if villain_choice == [3, 0]:
+          actions[current_player] = [3, 0] # ~
+        else:
+          actions[current_player] = [villain_choice[1][0], villain_choice[1][1]]
       else:
         if [villain_choice[0], villain_choice[1]] == [3, 0]: # Prevent against folding when to_call = 0
           actions[current_player] = [action_table.CHECK, action_table.NA]
