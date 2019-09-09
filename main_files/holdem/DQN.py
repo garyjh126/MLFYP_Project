@@ -14,7 +14,7 @@ from keras.optimizers import Adam
 import os # for creating directories
 
 
-starting_stack_size = 2000
+starting_stack_size = 200000
 
 env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
 env.add_player(0, stack=starting_stack_size) # add a player to seat 0 with 2000 "chips"
@@ -28,7 +28,7 @@ batch_size = 32
 
 epsilon = 0.8
 
-n_episodes = 100 # n games we want agent to play (default 1001)
+n_episodes = 10000 # n games we want agent to play (default 1001)
 
 output_dir = 'model_output/TexasHoldemDirectory/'
 
@@ -112,7 +112,7 @@ class DQNAgent:
 
 file ="./model_output/TexasHoldemDirectory/weights_1000.hdf5"
 agent = DQNAgent(state_size, action_size) # initialise agent
-agent.load(file)
+
 
 
 def create_np_array(player_infos, player_hands, community_cards, community_infos):
@@ -197,7 +197,8 @@ if __name__ == "__main__":
     for index, player in env._player_dict.items():
         stacks_over_time.update({player.get_seat(): [player.stack]})
     for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
-
+        if e % 50 == 0:
+            agent.load(output_dir + "weights_" + '{:04d}'.format(e) + ".hdf5")
         last_episode = e + 1
         if with_render:
             print("\n\n********Episode {}*********".format(e)) 
