@@ -36,7 +36,7 @@ with_render = True
 
 with_graph = True
 
-villain = "CallChump"
+villain = "Strong"
 
 delay = None
 
@@ -110,8 +110,10 @@ class DQNAgent:
         self.model.save_weights(name)
 
 
-
+file ="./model_output/TexasHoldemDirectory/weights_1000.hdf5"
 agent = DQNAgent(state_size, action_size) # initialise agent
+agent.load(file)
+
 
 def create_np_array(player_infos, player_hands, community_cards, community_infos):
     ps1 = (player_infos[0])
