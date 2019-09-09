@@ -2,6 +2,8 @@
 
 [Link to main code](https://github.com/garyjh126/MLFYP_Project/tree/master/main_files/holdem "Named link title")
 
+[My Dissertation *Building Poker Agent Using Reinforcement Learning*](https://drive.google.com/file/d/1s_U-9vSjbGeQGAQQIKFpax9t-2DY2SOl/view?usp=sharing "Named link title") 
+
 ## Requirements ##
 
     pip install gym
