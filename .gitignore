@@ -8,11 +8,10 @@ pokercasino/*
 !pokercasino/bot.cpp
 !pokercasino/casino.h
 !pokercasino/includes.h
-<<<<<<< HEAD
 !pokercasino/botfiles/
-=======
-!pokercasino/botfiles/
->>>>>>> 826758caf97737fcdebcbf425b9526f7c736ed41
+
 
 main_files/__pycache__/*
+main_files/holdem/__pycache__/*
+main_files/holdem/holdem/__pycache__/*
 

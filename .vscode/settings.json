@@ -12,18 +12,18 @@
         "chrono": "cpp"
     },
     "python.linting.pylintEnabled": false,
-    "python.linting.pep8Enabled": true,
+    "python.linting.pycodestyleEnabled": true,
     "python.linting.enabled": false,
-    "python.pythonPath": "/home/gary/anaconda3/bin/python",
-    "python.unitTest.unittestArgs": [
+    "python.pythonPath": "/home/gary/.local/share/virtualenvs/MLFYP_Project-LYM33M8n/bin/python",
+    "python.testing.unittestArgs": [
         "-v",
         "-s",
         "./main_files",
         "-p",
         "*_test.py"
     ],
-    "python.unitTest.pyTestEnabled": false,
-    "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.unittestEnabled": false,
-    "python.unitTest.promptToConfigure": false
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": false,
+    "python.testing.promptToConfigure": false
 }
