@@ -40,8 +40,11 @@ Alternatively, to review the DQN in google colab, go to [this open Jupyter Noteb
  ![alt text](screenshots/hyperparameter_instruction.png "Enable/Disable Rendering")
 
 
-### "Tkinter GUI enables users to play against various agent types (A work in progress)" ###
+### Tkinter GUI enables users to play against various agent types ###
  ![alt text](screenshots/update_gui.png "Tkinter Display")
+ 
+### Terminal displaying hands being played by the AI bot ###
+ ![alt text](screenshots/terminal_output.png "Terminal Output")
  
 
 # Background
