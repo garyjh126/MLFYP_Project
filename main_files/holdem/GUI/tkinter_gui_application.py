@@ -318,13 +318,15 @@ class StartGame(tk.Frame):
 
 
 	def print_last_action(self, spec=None):
-		if self.last_bet_label is not None:
-			self.last_bet_label.place_forget()
+		# if self.last_bet_label is not None:
+		# 	self.last_bet_label.place_forget()
 	
-		if self.mrp is 0:
-			self.last_bet_label = tk.Label(self, text="Learner action:\n" + str(env._last_actions[0]), font=LARGE_FONT, bg='#218c16')	
+		# if self.mrp is 0:
+		# 	self.last_bet_label = tk.Label(self, text="Learner action:\n" + str(env._last_actions[0]), font=LARGE_FONT, bg='#218c16')	
 			
-			self.last_bet_label.place(relx=0.85, rely=0.90, anchor='center')
+		# 	self.last_bet_label.place(relx=0.85, rely=0.90, anchor='center')
+
+		return "Learner action:\n" + str(env._last_actions[0])
 
 
 	def update_local_state(self, reset=True):
