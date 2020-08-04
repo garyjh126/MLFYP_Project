@@ -9,7 +9,7 @@ from collections import defaultdict
 import numpy as np
 from django.views import View
 import poker.models as poker_model
-from rest_framework import generics
+from rest_framework import viewsets
 from .serializers import GameSerializer
 
 from DQN import create_np_array, agent
@@ -230,8 +230,7 @@ class table_view(View):
         self.state_set = utilities.convert_list_to_tupleA(self.player_states[self.env.learner_bot.get_seat()], self.current_state[1])
 
     def update_pot_size(self):
-        print("UPDATE POT SIZE")
-        self.total_pot_label = "Pot:{}".format(self.env._totalpot)
+        self.total_pot_label = str(self.env._totalpot)
 
     def assign_guest_buttons(self):
         for button in self.guest_buttons:
@@ -425,12 +424,21 @@ class table_view(View):
         
         return episode
 
-
-
     # return render(request, template_name="poker/poker.html"):
     #     pass
 
 
-class GameListCreate(generics.ListCreateAPIView):
-    queryset = poker_model.Game.objects.all()
+class GameViewSet(viewsets.ModelViewSet):
+    queryset = poker_model.Game.objects.all().order_by('created_at')
     serializer_class = GameSerializer
+
+
+from django.shortcuts import render
+from django.http import HttpResponseNotAllowed, JsonResponse
+from .models import Game
+
+
+def game_list(request, game_id):
+    if request.method == 'GET':
+        object_list = Game.objects.filter(game__id=game_id)
+        return JsonResponse(object_list)

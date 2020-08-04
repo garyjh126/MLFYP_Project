@@ -15,3 +15,5 @@ main_files/__pycache__/*
 main_files/holdem/__pycache__/*
 main_files/holdem/holdem/__pycache__/*
 
+secrets.json
+

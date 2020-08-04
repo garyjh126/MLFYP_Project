@@ -1,39 +1,62 @@
 from django.db import models
-
-# Create your models here.
+from treys import *
+from djmoney.models.fields import MoneyField
+from djmoney.money import Money
 
 class Game(models.Model):
-    total_pot = models.CharField(max_length=20)
-    guest_cards = models.ForeignKey('CardHolding', related_name='guest_cards', on_delete=models.CASCADE)
-    learner_cards = models.ForeignKey('CardHolding', related_name='learner_cards', on_delete=models.CASCADE)
-    community_cards = models.ForeignKey('CommunityCards', on_delete=models.CASCADE)
+
+    total_pot = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+    players = models.ManyToManyField('Player')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "Total Pot: {}\nGuest Cards: {}\nLearner Cards: {}\nCommunity Cards: {}\n".format(self.total_pot, self.guest_cards, self.learner_cards, self.community_cards)
+        return "Total Pot: {}\tGuest Cards: {}\tLearner Cards: {}\tCommunity Cards: {}\tPlayers: {}".format(self.total_pot, __str__(self.guest_cards), __str__(self.learner_cards), __str__(self.community_cards), __str__(self.players))
 
-class CommunityCards(models.Model):
-    flop_0 = models.ForeignKey('Card', default="", related_name='flop_0', on_delete=models.CASCADE)
-    flop_1 = models.ForeignKey('Card', default="", related_name='flop_1', on_delete=models.CASCADE)
-    flop_2 = models.ForeignKey('Card', default="", related_name='flop_2', on_delete=models.CASCADE)
-    turn = models.ForeignKey('Card', default="", related_name='turn', on_delete=models.CASCADE)
-    river = models.ForeignKey('Card', default="", related_name='river', on_delete=models.CASCADE)
+    @classmethod
+    def create(cls, total_pot, players):
+        
+        game = cls(total_pot=Money(total_pot, 'USD'), players=players)
+        # do something with the book
+        return game
+
+    class Meta: 
+        ordering = ["created_at"]
+
+class Player(models.Model):
+    name = models.CharField(max_length=100, default="Player")
+    stack = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+
+    @classmethod
+    def create(cls, name, stack):
+        
+        game = cls(name=name, stack=Money(stack, 'USD'))
+        # do something with the book
+        return game
 
     def __str__(self):
-        return "{}{}{}{}{}".format(self.flop_0, self.flop_1, self.flop_2, self.turn, self.river)
-
-class CardHolding(models.Model):
-    first = models.ForeignKey('Card', default="", related_name='first', on_delete=models.CASCADE)
-    second = models.ForeignKey('Card', default="", related_name='second', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return "{},{}".format(self.first, self.second)
-
+        return "Name: {}\tStack: {}".format(self.name, self.stack)
+    
 
 class Card(models.Model):
-    # It includes 13 ranks in each of the four French suits: clubs (♣), diamonds (♦), hearts (♥) and spades (♠)
-    rank = models.CharField(max_length=2, default="", null=True)
-    suit = models.CharField(max_length=2, default="", null=True)
+    card_str = models.CharField(max_length=2, null=True)
+    image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
-        return "{}{}".format(self.rank, self.suit)
+        return self.name
+
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
+
+    class Meta:
+        abstract = True
+
+class Card_Player(Card):
+    player = models.ForeignKey('Player', on_delete=models.CASCADE)
+    
+class Card_Community(Card):
+    game = models.ForeignKey('Game', on_delete=models.CASCADE)
