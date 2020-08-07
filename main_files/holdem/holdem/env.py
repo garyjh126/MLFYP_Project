@@ -133,7 +133,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			count_players = len(self._player_dict)
 			for player in self._player_dict.values():
 				if not(player.emptyplayer):
-					player.position = (player.position == count_players - 1) if 0 else player.position + 1
+					player.position = 0 if (player.position == count_players - 1) else player.position + 1
 
 		elif (self.filled_seats == 2):
 			new_positions = []
