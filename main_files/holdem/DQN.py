@@ -163,9 +163,10 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	player_object = env._player_dict[current_player]
 	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
+	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player == 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
 	
-	if _round is not "Preflop": # preflop already evaluated
+	if _round != "Preflop": # preflop already evaluated
 		player_object.he.evaluate(_round)
 	range_structure = utilities.fill_range_structure(_round, player_object)
 	utilities.assign_evals_player(player_object, _round, env)
@@ -219,7 +220,7 @@ if __name__ == "__main__":
 
             _round = utilities.which_round(community_cards)
             current_player = community_infos[-3]
-            if current_player is not 0:
+            if current_player != 0:
                 action = get_action_policy(player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy, villain)
             else:
                 action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)

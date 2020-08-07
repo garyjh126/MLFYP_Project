@@ -727,23 +727,21 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# 		self._totalpot = 0
 		# 		self.winning_players = players[0]
 		if len(players) == 1:
-			winner, loser = None, None # Heads-Up
+			winner = None # Heads-Up
+			losers = []
 			for p in self._record_players:
 				if p == players[0]:
 					winner = p
 				else:
-					loser = p
-			winner_investment = winner.stack_start_game - winner.stack
-			loser_loss = loser.stack_start_game - loser.stack
+					losers.append(p)
 
-			if loser.stack_start_game < 15 and loser.position == 0:
-				players[0].refund((self.starting_stack_size - winner.stack) )
-			elif loser.stack_start_game < 25 and loser.position == 2:
-				players[0].refund((self.starting_stack_size - winner.stack) )
-		
-			else:
-				players[0].refund(winner_investment + loser_loss)
-				
+			winner_investment = winner.stack_start_game - winner.stack
+			sum_losers_lost = 0
+			for loser in losers:
+				sum_losers_lost += loser.stack_start_game - loser.stack
+
+			players[0].refund(winner_investment + sum_losers_lost)
+
 			self._totalpot = 0
 			self.winning_players = players[0]
 
@@ -793,9 +791,9 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			# 	for i in range(3):
 			# 		if i not in player_stacks:
 			# 			player_stacks.update({i:0})
-			if specific_player is None:
+			if specific_player == None:
 				return (player_stacks)
-				assert (player_stacks.values()) is not None
+				assert (player_stacks.values()) != None
 			else:
 				return (player_dict[specific_player].values())
 				 
@@ -853,7 +851,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		}
 
 	def _pad(self, l, n, v):
-		if (not l) or (l is None):
+		if (not l) or (l == None):
 			l = []
 		return l + [v] * (n - len(l))
 
@@ -885,7 +883,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def distribute_rewards_given_endgame(self):
 	
-		if self.learner_bot is self.winning_players:
+		if self.learner_bot == self.winning_players:
 			self.learner_bot.reward = self.compute_reward() + self._totalpot
 		else:
 			self.learner_bot.reward = self.learner_bot.round_track_stack
@@ -897,14 +895,14 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		stacks = [player.stack for player in self._seats]
 		reward = None
 			
-		if(action is None):
+		if(action == None):
 			return observations, reward, terminal, [] # TODO, return some info?
 
 		else: 	 # Focus on this. At end of step, when player has already decided his action. 
-			respective_evaluations = [player.he.evaluation if player.he is not None else None for player in self._seats]
+			respective_evaluations = [player.he.evaluation if player.he != None else None for player in self._seats]
 			evaluations_opposing_players = [x for i,x in enumerate(respective_evaluations) if i!= self._last_player.get_seat() and x!=None]
 			
-			if (self._last_player is self.learner_bot): 					# Learner bot step return
+			if (self._last_player == self.learner_bot): 					# Learner bot step return
 
 				if(self.signal_end_round == True):
 					self.signal_end_round = False
@@ -946,7 +944,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 			total_pot = self._totalpot - to_call
 		else:
 			to_call = self._last_actions[1]
-			total_pot = self._totalpot if self._last_player is not self.learner_bot else (self._totalpot - self._last_actions[1])
+			total_pot = self._totalpot if self._last_player != self.learner_bot else (self._totalpot - self._last_actions[1])
 			
 				
 
@@ -1010,7 +1008,7 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		# Equity is a percentage (e.g. 70%). Equity tells you how much of the pot 
 		# “belongs” to you, or to put it another way, the percentage of the time
 		#  you expect to win the hand on average from that point onwards.
-		_round = self._round if self.signal_end_round is not True else self._round - 1
+		_round = self._round if self.signal_end_round != True else self._round - 1
 		if (_round == 1 or _round == 2 or _round ==3): # Implies last rounds were either 1 or 2
 			learner_utility, opp_utility = self.compute_winner_simulation(_round)
 			equity = learner_utility, opp_utility
