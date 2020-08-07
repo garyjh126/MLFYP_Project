@@ -248,8 +248,13 @@ if __name__ == "__main__":
 
         utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
         if len(env._player_dict) > 1:
-            if env._player_dict[0].stack + env._player_dict[2].stack != 2*starting_stack_size:
-                raise("Stacks should add to equal"+str(2*starting_stack_size))
+            count_players = len(env._player_dict)
+            sum_stack = 0
+            for param in env._player_dict:
+                sum_stack += env._player_dict[param].stack
+
+            if sum_stack != count_players * starting_stack_size:
+                raise("Stacks should add to equal"+str(count_players * starting_stack_size))
         stack_list = env.report_game(requested_attributes = ["stack"])
         count_existing_players = 0
         for stack_record_index, stack_record in env._player_dict.items():

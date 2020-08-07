@@ -129,26 +129,26 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 	# Important Note: Positions are only assigned at end of game. Be aware in 
 	# case of reporting stats on position type
 	def assign_positions(self):
-		no_active_players = self.filled_seats
-		if(self.filled_seats == 3):
-			for player in self._seats:
-				player.position = (player.position + (no_active_players-1)) % no_active_players if player in self._player_dict.values() else None
+		if (self.filled_seats > 2):
+			count_players = len(self._player_dict)
+			for player in self._player_dict.values():
+				if not(player.emptyplayer):
+					player.position = (player.position == count_players - 1) if 0 else player.position + 1
 
-		elif(self.filled_seats == 2):
+		elif (self.filled_seats == 2):
 			new_positions = []
 			# We want to only use positions 0 and 2, which are encodings of BTN and BB respectively
 
 			# Sort for positions 0 and 2 first
 			for player in self._player_dict.values():
-				if not(player.emptyplayer):
+				if not (player.emptyplayer):
 					if player.position == 2:
 						player.position = 0
 						new_positions.append(player.position)
 					elif player.position == 0:
 						player.position = 2
 						new_positions.append(player.position)
-				
-			
+
 			# Special case of former position 1 depends on new positions allocated above
 			if len(new_positions) == 1:
 				for player in self._player_dict.values():
@@ -157,10 +157,6 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 							player.position = 2
 						elif new_positions[0] == 2:
 							player.position = 0
-				
-				
-
-
 
 	def add_player(self, seat_id, stack=2000):
 		"""Add a player to the environment seat with the given stack (chipcount)"""
