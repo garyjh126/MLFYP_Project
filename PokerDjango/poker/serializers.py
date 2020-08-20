@@ -1,30 +1,40 @@
-from rest_framework import serializers
-from .models import *
+from rest_framework.serializers import ModelSerializer
 
-class GameSerializer(serializers.Serializer):
+from .models import (
+    Game,
+    Player,
+    Card,
+    Card_Player,
+    Card_Community
+)
+
+class PlayerSerializer(ModelSerializer):
+
+    class Meta:
+        model = Player  
+        fields = ['id', 'name', 'stack', 'games']
+        extra_kwargs = {'games': {'required': False}}
+
+class GameSerializer(ModelSerializer):
+    players = PlayerSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Game
+        fields = ['id', 'total_pot', 'players', 'created_at']
+        extra_kwargs = {'players': {'required': False}}
+
+class CardSerializer(ModelSerializer):
+    class Meta:
+        model = Card
+        abstract = True
     
-    id = serializers.IntegerField(read_only=True)
-    total_pot = serializers.CharField(max_length=20)
-    guest_cards = serializers.CharField()
-    learner_cards = serializers.CharField()
-    community_cards = serializers.CharField()
-
-    # Consider using image area for card representation {'base_template': 'textarea.html'}
-    def create(self, validated_data):
-        """
-        Create and return a new `Game` instance, given the validated data.
-        """
-        return Game.objects.create(**validated_data)
-
-    # def update(self, instance, validated_data):
-    #     """
-    #     Update and return an existing `Snippet` instance, given the validated data.
-    #     """
-    #     instance.title = validated_data.get('title', instance.title)
-    #     instance.code = validated_data.get('code', instance.code)
-    #     instance.linenos = validated_data.get('linenos', instance.linenos)
-    #     instance.language = validated_data.get('language', instance.language)
-    #     instance.style = validated_data.get('style', instance.style)
-    #     instance.save()
-    #     return instance
-
+class Card_PlayerSerializer(CardSerializer):
+    class Meta:
+        model = Card_Player
+        fields = ['id', 'card_str', 'player']
+    
+class Card_CommunitySerializer(CardSerializer):
+    class Meta:
+        model = Card_Community
+        fields = ['id', 'card_str', 'game']
+    

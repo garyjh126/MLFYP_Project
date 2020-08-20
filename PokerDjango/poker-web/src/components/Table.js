@@ -8,13 +8,13 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Layout } from './Layout.js';
 import Cookies from 'js-cookie';
 
-function loadGame(callback){
+function loadDetails(callback, url){
     const xhr = new XMLHttpRequest()
     const method = 'GET'
-    const url = "http://localhost:8000/api/game/"
     const responseType = "json"
     xhr.responseType = responseType
     xhr.open(method, url)
+    xhr.setRequestHeader('Authorization', 'Token caf80ff750f4fce1d5f58b6f79a90cc0ef47614c')
     xhr.onload = function(){
         callback(xhr.response, xhr.status)
     }
@@ -26,20 +26,89 @@ function loadGame(callback){
     xhr.send()
 }
 
+
 function Table(props){
-    const [pot, setPot] = useState("0")
+    const [pot, setPot] = useState("")
     const [loaded, setLoaded] = useState(false)
-    const [placeholder, setPlaceholder] = useState("Loading")
+    const [communityCards, setCommunityCards] = useState([
+        {id: 0, card_str: '9c', game: 0},
+    ])
+    const [playerGuest, setPlayerGuest] = useState([
+        {
+            "id": "",
+            "name": "",
+            "stack": "",
+            "games": [],
+            "cards": []
+        }
+    ])
+
+    const [playerAI, setPlayerAI] = useState([
+        {
+            "id": "",
+            "name": "",
+            "stack": "",
+            "games": [],
+            "cards": []
+        }
+    ])
+
+    
     
     useEffect(() => {
-        const myCallback = (response, status) => {
+        const gamesCallback = (response, status) => {
             if(status === 200){
                 const data = response.slice(response.length-1)[0]
-                console.log(data["total_pot"])
                 setPot(data["total_pot"])
             }
         }
-        loadGame(myCallback)
+        loadDetails(gamesCallback, "http://localhost:8000/api/games/")
+
+        const playersCallback = (response, status) => {
+            if(status === 200){
+                const playerGuest = response.slice(response.length-2)[0]
+                const playerAI = response.slice(response.length-1)[0]
+                console.log("playerGuest", playerGuest)
+                console.log("playerAI", playerAI)
+                setPlayerGuest(playerGuest)
+                setPlayerAI(playerAI)
+            }
+        }
+        loadDetails(playersCallback, "http://localhost:8000/api/players/")
+
+        
+        // This is to be called after preflop
+        const communityCardsCallback = (response, status) => {
+            if(status === 200){
+                console.log("communityCardsCallback", response)
+                setCommunityCards(response)
+            }
+
+        }
+        
+        loadDetails(communityCardsCallback, `http://localhost:8000/api/community_cards/`)
+
+
+        const playerGuestCardsCallback = (response, status) => {
+            if(status === 200){
+                console.log("playerGuestCardsCallback", response)
+                setPlayerGuest(...playerGuest, response)
+            }
+
+        }
+        console.log("PLAYER cards ", playerGuest)
+        console.log("PLAYER cards URL", `http://localhost:8000/api/players/${playerGuest}/display_player_cards/`)
+        loadDetails(playerGuestCardsCallback, `http://localhost:8000/api/players/${playerGuest.id}/display_player_cards/`)
+
+        const playerAICardsCallback = (response, status) => {
+            if(status === 200){
+                console.log("playerAICardsCallback", response)
+                setPlayerAI(...playerAI, response)
+            }
+
+        }
+        loadDetails(playerAICardsCallback, `http://localhost:8000/api/players/${playerAI.id}/display_player_cards/`)
+        
     }, [])
 
     return (
@@ -53,12 +122,15 @@ function Table(props){
                     </Col>
                 </Row>
                 <div className="table">
-                    <div className="board">
-                        <Card value={'A'} suit={'s'}/>
-                        <Card value={'K'} suit={'s'}/>
-                        <Card value={'5'} suit={'d'}/>
-                        <Card value={'7'} suit={'c'}/>
-                        <Card value={'J'} suit={'h'}/>
+                    <div id="board" className="board">
+                        {communityCards.map((card, index) => (
+                            <Card 
+                                key={index}
+                                index={index}
+                                value={card.card_str.substring(0,1)}
+                                suit={card.card_str.substring(1,2)}
+                            />
+                        ))}
                     </div>
                     <Row>
                         <Col>

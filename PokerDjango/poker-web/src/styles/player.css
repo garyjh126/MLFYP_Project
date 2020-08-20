@@ -31,7 +31,11 @@
 }
 
 
-
+.holding {
+    position: relative; 
+    top: 90%;   
+    left: 32.5%;  
+}
 
 
 

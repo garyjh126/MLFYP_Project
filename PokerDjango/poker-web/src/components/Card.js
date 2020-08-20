@@ -13,6 +13,7 @@ function format_card(suit){
     }
 }
 function Card(props) {
+    // console.log(props)
     const [suit, colour] = format_card(props.suit)
     const suit_element = <p class={`card-img ${colour}`}>{suit}</p>;
     return (

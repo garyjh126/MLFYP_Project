@@ -9,16 +9,38 @@ from collections import defaultdict
 import numpy as np
 from django.views import View
 import poker.models as poker_model
-from rest_framework import viewsets
-from .serializers import GameSerializer
+from .serializers import ( 
+    GameSerializer, 
+    PlayerSerializer,
+    CardSerializer,
+    Card_PlayerSerializer,
+    Card_CommunitySerializer
+)
 
-from DQN import create_np_array, agent
+from rest_framework.mixins import (
+    CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+)
+from rest_framework import routers, serializers, viewsets, status
+from rest_framework.response import Response
+from .models import Game
+from django.shortcuts import render
+from django.http import HttpResponseNotAllowed, JsonResponse
+from .models import (
+    Game,
+    Player,
+    Card,
+    Card_Player,
+    Card_Community
+)
+
+# from DQN import create_np_array, agent
 from monte_carlo import get_action_policy, make_epsilon_greedy_policy
 import utilities
 
+
 import gym
 from treys import Card
-from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.decorators import action
 from django.utils.decorators import method_decorator
 
 
@@ -27,7 +49,6 @@ epsilon = 0.9
 
 class table_view(View):
 
-    @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         self.env = gym.make('TexasHoldem-v1') # holdem.TexasHoldemEnv(2)
         self.env.add_player(0, stack=2000) # add a player to seat 0 with 2000 "chips"
@@ -77,35 +98,8 @@ class table_view(View):
         # part_init = None
         self.start()
 
-        cc = [Card.int_to_str(card).upper() for card in self.community_cards] if any([x+1 for x in self.community_cards]) else ["", "", "", "", ""]
-        cc_gen = self.yield_card_set(*cc)
-        a,b,c,d,e = [next(cc_gen) for _ in cc]
-        commu = poker_model.CommunityCards(flop_0=a, flop_1=b, flop_2=c, turn=d, river=e)
-        commu.save()
-
-        player_gen = self.yield_card_set(*(self.guest_cards_st+self.learner_cards_st))
-        guest_a, guest_b, learner_a, learner_b = [next(player_gen) for _ in self.guest_cards_st+self.learner_cards_st]
-        guest_cards = poker_model.CardHolding(first=guest_a, second=guest_b)
-        learner_cards = poker_model.CardHolding(first=learner_a, second=learner_b)
-        guest_cards.save()
-        learner_cards.save()
-        
-        game = poker_model.Game(total_pot=self.total_pot_label, guest_cards=guest_cards, learner_cards=learner_cards, community_cards=commu).save()
-
         return render(request, "poker/poker.html")
 
-    def yield_card_set(self, *args):
-        for card in args:
-            try:
-                c = poker_model.Card(rank=card[0], suit=card[1])
-                c.save()
-                yield c
-            except IndexError:
-                c = poker_model.Card(rank='', suit='')
-                c.save()
-                yield c
-            except StopIteration: 
-                break
 
     def start(self):
         self.delegate_state_info(reset=True)
@@ -372,9 +366,6 @@ class table_view(View):
 
     # plotting.plot_value_function(v, title="10 Steps")
 
-
-
-
     def populate_info_pre_action(self):
         self._round = utilities.which_round(self.community_cards)
         self.current_player = self.community_infos[-3]
@@ -427,18 +418,46 @@ class table_view(View):
     # return render(request, template_name="poker/poker.html"):
     #     pass
 
+# class GameViewSet(GenericViewSet,  # generic view functionality
+#                      CreateModelMixin,  # handles POSTs
+#                      RetrieveModelMixin,  # handles GETs for 1 Game
+#                      UpdateModelMixin,  # handles PUTs and PATCHes
+#                      ListModelMixin):  # handles GETs for many Companies
 
-class GameViewSet(viewsets.ModelViewSet):
-    queryset = poker_model.Game.objects.all().order_by('created_at')
+#     serializer_class = GameSerializer
+#     queryset = Game.objects.all()
+    
+class GameViewSet(viewsets.ModelViewSet):  
+
+    queryset = Game.objects.all()
     serializer_class = GameSerializer
+    
+class PlayerViewSet(viewsets.ModelViewSet):
+    """
+    List all players, or create a new player.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    @action(detail=True)
+    def display_player_cards(self, request, pk=None):
+        """
+        Returns the cards pertaining to the player 
+        """
+
+        player = self.get_object()
+        cards = player.card_player_set.all()
+        return Response([card.card_str for card in cards])
+
+class CommunityCardSet(viewsets.ModelViewSet):
+    most_recent_game = Game.objects.all().order_by('-id')[0]
+    queryset = most_recent_game.card_community_set.all()
+    serializer_class = Card_CommunitySerializer
+
+# class PlayerCardSet(viewsets.ModelViewSet):
+#     most_recent_game_players = Game.objects.all().order_by('-id')[0].players.all()
+#     queryset = most_recent_game_players.card_player_set.all()
+#     serializer_class = Card_PlayerSerializer
 
 
-from django.shortcuts import render
-from django.http import HttpResponseNotAllowed, JsonResponse
-from .models import Game
-
-
-def game_list(request, game_id):
-    if request.method == 'GET':
-        object_list = Game.objects.filter(game__id=game_id)
-        return JsonResponse(object_list)
+    
