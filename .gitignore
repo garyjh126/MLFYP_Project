@@ -16,4 +16,7 @@ main_files/holdem/__pycache__/*
 main_files/holdem/holdem/__pycache__/*
 
 PokerDjango/secrets.json
-PokerDjango/static-root/css/
+PokerDjango/static/
+PokerDjango/static-root/
+PokerDjango/poker/migrations/
+secrets.json.save
