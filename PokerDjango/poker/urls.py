@@ -9,7 +9,6 @@ from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 
-
 router = DefaultRouter()
 router.register(r'api/games', GameViewSet, basename='game')
 router.register(r'api/players', PlayerViewSet, basename='player')

@@ -12,6 +12,8 @@ coverage = "*"
 django-cors-headers = "*"
 django-money = "*"
 psycopg2-binary = "*"
+pillow = "*"
+factory-boy = "*"
 
 [requires]
 python_version = "3.6"

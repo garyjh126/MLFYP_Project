@@ -16,7 +16,7 @@ import time
 from PIL import Image, ImageTk
 
 from monte_carlo import get_action_policy, make_epsilon_greedy_policy
-from DQN import create_np_array, agent
+# from DQN import create_np_array, agent
 
 with_render = False
 

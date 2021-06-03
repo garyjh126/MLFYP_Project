@@ -13,7 +13,7 @@ class Game(models.Model):
     def create(cls, *args):
         
         game = cls(total_pot=args[0])
-
+        
         return game
 
     class Meta: 

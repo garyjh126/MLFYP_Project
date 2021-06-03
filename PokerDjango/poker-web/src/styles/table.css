@@ -4,7 +4,7 @@
   
 .table {
     background-color: green;
-    height: 500px;
+    height: 550px;
     width: 80%;
     border-radius: 50%;
     margin: 0 auto;
@@ -38,7 +38,7 @@
 .card-img {
     text-align: center;
     margin: auto;
-    font-size: 2em;
+    font-size: 1.5em;
     position: relative;
 }
 

@@ -11,9 +11,9 @@ from .models import (
 class PlayerSerializer(ModelSerializer):
 
     class Meta:
-        model = Player  
+        model = Player
         fields = ['id', 'name', 'stack', 'games']
-        extra_kwargs = {'games': {'required': False}}
+        extra_kwargs = {'games': {'required': False} }
 
 class GameSerializer(ModelSerializer):
     players = PlayerSerializer(many=True, read_only=True)
@@ -27,14 +27,13 @@ class CardSerializer(ModelSerializer):
     class Meta:
         model = Card
         abstract = True
-    
+
 class Card_PlayerSerializer(CardSerializer):
     class Meta:
         model = Card_Player
         fields = ['id', 'card_str', 'player']
-    
+
 class Card_CommunitySerializer(CardSerializer):
     class Meta:
         model = Card_Community
         fields = ['id', 'card_str', 'game']
-    

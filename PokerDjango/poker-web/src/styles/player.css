@@ -6,8 +6,8 @@
     border-bottom: 100px solid red;
 
     position: relative;
-    margin-left: -460px;
-    margin-top: 150px;
+    margin-left: -200px;
+    margin-top: 120px;
 }
 
 .player2{
@@ -18,15 +18,16 @@
     border-bottom: 100px solid red;
     
     position: relative;
-    margin-left: 300px;
-    margin-top: 150px;
+    margin-left: 400px;
+    margin-top: 120px;
 }
 
 .playerTag {
     text-align: center;
     position: relative;
     padding-top: 100px;
-    right: 15px;
+    top: -130px;
+    right: 70px;
     color: blue;
 }
 

@@ -33,7 +33,7 @@ function Table(props){
     const [communityCards, setCommunityCards] = useState([
         {id: 0, card_str: '9c', game: 0},
     ])
-    const [playerGuest, setPlayerGuest] = useState([
+    const [players, setPlayers] = useState([
         {
             "id": "",
             "name": "",
@@ -43,18 +43,6 @@ function Table(props){
         }
     ])
 
-    const [playerAI, setPlayerAI] = useState([
-        {
-            "id": "",
-            "name": "",
-            "stack": "",
-            "games": [],
-            "cards": []
-        }
-    ])
-
-    
-    
     useEffect(() => {
         const gamesCallback = (response, status) => {
             if(status === 200){
@@ -68,47 +56,23 @@ function Table(props){
             if(status === 200){
                 const playerGuest = response.slice(response.length-2)[0]
                 const playerAI = response.slice(response.length-1)[0]
-                console.log("playerGuest", playerGuest)
-                console.log("playerAI", playerAI)
-                setPlayerGuest(playerGuest)
-                setPlayerAI(playerAI)
+                console.log("PLAYERS LOG")
+                console.log({playerGuest, playerAI})
+                setPlayers({playerGuest, playerAI})
+                
             }
         }
         loadDetails(playersCallback, "http://localhost:8000/api/players/")
 
-        
-        // This is to be called after preflop
         const communityCardsCallback = (response, status) => {
             if(status === 200){
-                console.log("communityCardsCallback", response)
+                // console.log(response)
                 setCommunityCards(response)
+                // console.log(communityCards)
             }
-
         }
-        
         loadDetails(communityCardsCallback, `http://localhost:8000/api/community_cards/`)
 
-
-        const playerGuestCardsCallback = (response, status) => {
-            if(status === 200){
-                console.log("playerGuestCardsCallback", response)
-                setPlayerGuest(...playerGuest, response)
-            }
-
-        }
-        console.log("PLAYER cards ", playerGuest)
-        console.log("PLAYER cards URL", `http://localhost:8000/api/players/${playerGuest}/display_player_cards/`)
-        loadDetails(playerGuestCardsCallback, `http://localhost:8000/api/players/${playerGuest.id}/display_player_cards/`)
-
-        const playerAICardsCallback = (response, status) => {
-            if(status === 200){
-                console.log("playerAICardsCallback", response)
-                setPlayerAI(...playerAI, response)
-            }
-
-        }
-        loadDetails(playerAICardsCallback, `http://localhost:8000/api/players/${playerAI.id}/display_player_cards/`)
-        
     }, [])
 
     return (
@@ -127,28 +91,33 @@ function Table(props){
                             <Card 
                                 key={index}
                                 index={index}
-                                value={card.card_str.substring(0,1)}
-                                suit={card.card_str.substring(1,2)}
+                                value={card.id}
                             />
                         ))}
                     </div>
                     <Row>
                         <Col>
-                            <h1>Pot: ${pot}</h1>
+                            <h1 style={{textAlign: "center"}}>Pot: ${pot}</h1>
                         </Col>
                     </Row>
                     
                     <Row>   
+                        {players.map((player, index) => (
+                            <Card 
+                                key={index}
+                                index={index}
+                                value={player.card_str.substring(0,1)}
+                                suit={player.card_str.substring(1,2)}
+                            />
+                        ))}
+
                         <Col>   
-                            <Player is_ai={false} />
-                        </Col>  
-                        <Col>   
-                            <Player is_ai={true} />
+                            <Player greeting={"lcome to React"} is_ai={true} />
                         </Col>  
                     </Row>  
 
                     <Row>
-                        <div className="mx-auto mt-3">
+                        <div className="mx-auto">
                             <Button variant="success" size="lg" block>Check/Call</Button>
                             <Button variant="danger" size="lg" block>Bet/Raise</Button>
                             <Button variant="light" size="lg" block>Fold</Button>
