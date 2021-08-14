@@ -10,6 +10,8 @@ function format_card(suit){
         return ['♦', 'red'];
     }else if(suit === 'h'){
         return ['♥', 'red'];
+    }else{
+        return []
     }
 }
 function Card(props) {

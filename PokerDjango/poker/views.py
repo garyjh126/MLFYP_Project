@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import datetime
 from django.http.response import HttpResponse
 # Create your views here.
@@ -20,8 +20,9 @@ from .serializers import (
 from rest_framework.mixins import (
     CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 )
-from rest_framework import routers, serializers, viewsets, status
+from rest_framework import routers, serializers, viewsets, status, authentication, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Game
 from django.shortcuts import render
 from django.http import HttpResponseNotAllowed, JsonResponse
@@ -426,18 +427,71 @@ class table_view(View):
 
 #     serializer_class = GameSerializer
 #     queryset = Game.objects.all()
-    
-class GameViewSet(viewsets.ModelViewSet):  
 
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
+
+
+class GameViewSet(viewsets.ViewSet):  
+
+    # authentication_classes = [authentication.TokenAuthentication]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def list(self, request, format=None):
+        queryset = Game.objects.all()
+        serializer = GameSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data)
     
-class PlayerViewSet(viewsets.ModelViewSet):
-    """
-    List all players, or create a new player.
-    """
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
+    def create(self, request, format=None):
+        serializer = GameSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self, request, pk=None):
+        queryset = Game.objects.all()
+        game = get_object_or_404(queryset, pk=pk)
+        serializer = GameSerializer(game, data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = Game.objects.all()
+        game = get_object_or_404(queryset, pk=pk)
+        serializer = GameSerializer(game, context={'request': request})
+        return Response(serializer.data)
+
+
+    
+class PlayerViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = Player.objects.all()
+        serializer = PlayerSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, format=None):
+        serializer = PlayerSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk=None):
+        queryset = Player.objects.all()
+        player = get_object_or_404(queryset, pk=pk)
+        serializer = PlayerSerializer(player, data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = Player.objects.all()
+        player = get_object_or_404(queryset, pk=pk)
+        serializer = PlayerSerializer(player, context={'request': request})
+        return Response(serializer.data)
 
     @action(detail=True)
     def display_player_cards(self, request, pk=None):
@@ -449,15 +503,42 @@ class PlayerViewSet(viewsets.ModelViewSet):
         cards = player.card_player_set.all()
         return Response([card.card_str for card in cards])
 
-class CommunityCardSet(viewsets.ModelViewSet):
-    most_recent_game = Game.objects.all().order_by('-id')[0]
-    queryset = most_recent_game.card_community_set.all()
-    serializer_class = Card_CommunitySerializer
+class CommunityCardViewSet(viewsets.ViewSet):
 
-# class PlayerCardSet(viewsets.ModelViewSet):
-#     most_recent_game_players = Game.objects.all().order_by('-id')[0].players.all()
-#     queryset = most_recent_game_players.card_player_set.all()
-#     serializer_class = Card_PlayerSerializer
-
-
+    def list(self, request):
+        queryset = Card_Community.objects.all()
+        serializer = Card_CommunitySerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data)
     
+    def create(self, request, format=None):
+        serializer = Card_CommunitySerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = Card_Community.objects.all()
+        card = get_object_or_404(queryset, pk=pk)
+        serializer = Card_CommunitySerializer(card, context={'request': request})
+        return Response(serializer.data)
+
+class PlayerCardViewSet(viewsets.ViewSet):
+
+    def list(self, request):
+        queryset = Card_Player.objects.all()
+        serializer = Card_PlayerSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data)
+    
+    def create(self, request, format=None):
+        serializer = Card_PlayerSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = Card_Player.objects.all()
+        card = get_object_or_404(queryset, pk=pk)
+        serializer = Card_PlayerSerializer(card, context={'request': request})
+        return Response(serializer.data)

@@ -105,14 +105,14 @@ function Table(props){
                         {players.map((player, index) => (
                             <Card 
                                 key={index}
-                                index={index}
-                                value={player.card_str.substring(0,1)}
-                                suit={player.card_str.substring(1,2)}
+                                index={index}    
+                                value={player.card_str}
+                                suit={player.card_str}
                             />
                         ))}
 
                         <Col>   
-                            <Player greeting={"lcome to React"} is_ai={true} />
+                            <Player greeting={"Welcome to React"} is_ai={true} />
                         </Col>  
                     </Row>  
 
