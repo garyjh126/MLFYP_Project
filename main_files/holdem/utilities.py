@@ -85,7 +85,7 @@ def assign_evals_player(player_o, _round, env):
 
 def do_necessary_env_cleanup(env):
     is_end_game = False
-    list_players = env._player_dict.copy()
+    list_players = env.env.env._player_dict.copy()
     is_end_game = None
     for player in list_players.values():
         if player.stack <= 0:

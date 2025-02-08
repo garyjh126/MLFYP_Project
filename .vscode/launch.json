@@ -62,6 +62,14 @@
             "program": "${file}",
             "console": "externalTerminal",
             "stopOnEntry": true
+        },
+        {
+            "name": "Run DQN.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main_files/holdem/DQN.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }

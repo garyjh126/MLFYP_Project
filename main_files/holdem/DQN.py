@@ -64,7 +64,7 @@ class DQNAgent:
         model.add(Dense(32, activation='relu')) # 2nd hidden layer
         model.add(Dense(self.action_size, activation='linear')) # 2 actions, so 2 output neurons: 0 and 1 (L/R)
         model.compile(loss='mse',
-                      optimizer=Adam(lr=self.learning_rate))
+                      optimizer=Adam(learning_rate=self.learning_rate))
         return model
     
     def remember(self, state, action, reward, next_state, done):
@@ -160,7 +160,7 @@ def get_action_policy(player_infos, community_infos, community_cards, env, _roun
 	player_actions = None
 	current_player = community_infos[-3]
 	
-	player_object = env._player_dict[current_player]
+	player_object = env.env.env._player_dict[current_player]
 	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player == 2 else player_infos[current_player]
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     last_episode = None
     episode_list = []
     stacks_over_time = {}
-    for index, player in env._player_dict.items():
+    for index, player in env.env.env._player_dict.items():
         stacks_over_time.update({player.get_seat(): [player.stack]})
     for e in range(n_episodes): # iterate over new episodes of the game    # Print out which episode we're on, useful for debugging.
         if e % 50 == 0:
@@ -204,7 +204,7 @@ if __name__ == "__main__":
         if with_render:
             print("\n\n********Episode {}*********".format(e)) 
         episode = []
-        (player_states, (community_infos, community_cards)) = env.reset()
+        (player_states, (community_infos, community_cards)) = env.env.env.reset()
         (player_infos, player_hands) = zip(*player_states)
         current_state = ((player_infos, player_hands), (community_infos, community_cards))
         utilities.compress_bucket(current_state, env, pre=True)
@@ -214,7 +214,7 @@ if __name__ == "__main__":
         state_set = utilities.convert_list_to_tupleA(player_states[env.learner_bot.get_seat()], current_state[1])
 
         if with_render:
-            env.render(mode='human', initial=True, delay=delay)
+            env.env.env.render(mode='human', initial=True, delay=delay)
         terminal = False
         while not terminal:
 
@@ -226,7 +226,7 @@ if __name__ == "__main__":
                 action = agent.act(state, player_infos, community_infos, community_cards, env, _round, env.n_seats, state_set, policy)
             
             #STEP - SET BREAKPOINT ON THE FOLLOWING LINE TO OBSERVE ACTIONS TAKEN ONE BY ONE
-            (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.step(action)
+            (player_states, (community_infos, community_cards)), action, rewards, terminal, info = env.env.env.step(action)
 
             utilities.compress_bucket(player_states, env)
             action = utilities.convert_step_return_to_action(action)
@@ -240,25 +240,26 @@ if __name__ == "__main__":
             
             current_state = (player_states, (community_infos, community_cards)) # state = next_state
             if with_render:
-                env.render(mode='human', delay=delay)
+                env.env.env.render(mode='human', delay=delay)
 
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size) # train the agent by replaying the experiences of the episode
             if e % 50 == 0:
-                agent.save(output_dir + "weights_" + '{:04d}'.format(e) + ".hdf5")
+                # agent.save(output_dir + ".weights_" + '{:04d}'.format(e) + ".h5")
+                agent.save(output_dir + ".weights.h5")
 
         utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
-        if len(env._player_dict) > 1:
-            count_players = len(env._player_dict)
+        if len(env.env.env._player_dict) > 1:
+            count_players = len(env.env.env._player_dict)
             sum_stack = 0
-            for param in env._player_dict:
-                sum_stack += env._player_dict[param].stack
+            for param in env.env.env._player_dict:
+                sum_stack += env.env.env._player_dict[param].stack
 
             if sum_stack != count_players * starting_stack_size:
                 raise("Stacks should add to equal"+str(count_players * starting_stack_size))
         stack_list = env.report_game(requested_attributes = ["stack"])
         count_existing_players = 0
-        for stack_record_index, stack_record in env._player_dict.items():
+        for stack_record_index, stack_record in env.env.env._player_dict.items():
             arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
             stacks_over_time.update({stack_record_index: arr})
             if(stack_list[stack_record_index] != 0):

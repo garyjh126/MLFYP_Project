@@ -201,8 +201,8 @@ class StartGame(tk.Frame):
 		self.player_infos, self.player_hands = None, None
 		self.current_state = None
 		self.state_set = None
-		self.p1 = env._player_dict[0] # Learner
-		self.p2 = env._player_dict[2] # Guest
+		self.p1 = env.env.env._player_dict[0] # Learner
+		self.p2 = env.env.env._player_dict[2] # Guest
 		self.episode_list = []
 		self.total_pot_label = None
 		self._round = None

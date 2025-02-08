@@ -428,6 +428,10 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 		(player_states, community_states) = self._get_current_state()
 		(player_infos, player_hands) = zip(*player_states)
 		(community_infos, community_cards) = community_states
+		if(isinstance(community_cards[3], list)):
+			community_cards[3] = community_cards[3][0]
+		elif(isinstance(community_cards[4], list)):
+			community_cards[4] = community_cards[4][0]
 
 		print('Board:')
 		print('-' + hand_to_str(community_cards))
@@ -635,13 +639,13 @@ class TexasHoldemEnv(Env, utils.EzPickle):
 
 	def _turn(self):
 		self._discard.append(self._deck.draw(1)) #burn
-		self.turn_card = self._deck.draw(1)
+		self.turn_card = self._deck.draw(1)[0]
 		self.community.append(self.turn_card)
 		# .append(self.community)
 
 	def _river(self):
 		self._discard.append(self._deck.draw(1)) #burn
-		self.river_card = self._deck.draw(1)
+		self.river_card = self._deck.draw(1)[0]
 		self.community.append(self.river_card)
 
 	def _ready_players(self):
