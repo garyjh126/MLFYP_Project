@@ -26,7 +26,7 @@ delay = None
 def get_action_policy(player_infos, community_infos, community_cards, env, _round, n_seats, state, policy):
 	player_actions = None
 	current_player = community_infos[-3]
-	player_object = env._player_dict[current_player]
+	player_object = env.env.env._player_dict[current_player]
 	to_call = community_infos[-1]
 	stack, hand_rank, played_this_round, betting, lastsidepot = player_infos[current_player-1] if current_player is 2 else player_infos[current_player]
 	player_object.he.set_community_cards(community_cards, _round)
@@ -89,7 +89,7 @@ def generate_episode(env, n_seats):
 def simulate_episodes_with_graphs(no_of_episodes=100):
 	episode_list = []
 	stacks_over_time = {}
-	for index, player in env._player_dict.items():
+	for index, player in env.env.env._player_dict.items():
 		stacks_over_time.update({player.get_seat(): [player.stack]})
 	for i in range(no_of_episodes):
 		print("\n\n********{}*********".format(i))
@@ -98,7 +98,7 @@ def simulate_episodes_with_graphs(no_of_episodes=100):
 		stack_list = env.report_game(requested_attributes = ["stack"])
 		count_existing_players = 0
 
-		for stack_record_index, stack_record in env._player_dict.items():
+		for stack_record_index, stack_record in env.env.env._player_dict.items():
 			arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
 			stacks_over_time.update({stack_record_index: arr})
 			if(stack_list[stack_record_index] != 0):
@@ -260,7 +260,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
 
     episode_list = []
     stacks_over_time = {}
-    for index, player in env._player_dict.items():
+    for index, player in env.env.env._player_dict.items():
         stacks_over_time.update({player.get_seat(): [player.stack]})
     for i_episode in range(1, num_episodes + 1):
         if with_render:
@@ -307,7 +307,7 @@ def mc_control_epsilon_greedy(num_episodes, discount_factor=1.0, epsilon=0.1, is
         is_end_game = utilities.do_necessary_env_cleanup(env) # assign new positions, remove players if stack < 0 etc ..
         stack_list = env.report_game(requested_attributes = ["stack"])
         count_existing_players = 0
-        for stack_record_index, stack_record in env._player_dict.items():
+        for stack_record_index, stack_record in env.env.env._player_dict.items():
             arr = stacks_over_time[stack_record_index] + [stack_list[stack_record_index]]
             stacks_over_time.update({stack_record_index: arr})
             if(stack_list[stack_record_index] != 0):

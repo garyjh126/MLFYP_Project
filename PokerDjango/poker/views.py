@@ -70,8 +70,8 @@ class table_view(View):
         self.player_infos, player_hands = None, None
         self.current_state = None
         self.state_set = None
-        self.p1 = self.env._player_dict[0] # Learner
-        self.p2 = self.env._player_dict[2] # Guest
+        self.p1 = self.env.env.env._player_dict[0] # Learner
+        self.p2 = self.env.env.env._player_dict[2] # Guest
         self.episode_list = []
         self.total_pot_label = None
         self._round = None
